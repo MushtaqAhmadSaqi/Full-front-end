@@ -118,21 +118,24 @@ function _injectHeader(currentPage, session, userName) {
   const isQuizActive = currentPage === 'quiz.html';
   const isDashboardActive = currentPage === 'dashboard.html';
 
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
+  const base = inSubDir ? '../' : '';
+
   const html = `
     <header class="sticky top-0 z-50 transition-all duration-300 w-full">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-xl px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between transition-all duration-300 gap-2 sm:gap-3">
-          <a href="index.html" class="flex items-center gap-3 group" aria-label="Go to home page">
+          <a href="${base}index.html" class="flex items-center gap-3 group" aria-label="Go to home page">
             <div class="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform ring-2 ring-blue-300/60 dark:ring-blue-500/30">C</div>
             <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white hidden sm:block">COMSATSPrepHub</span>
             <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white sm:hidden">COMSATS</span>
           </a>
 
           <nav class="hidden md:flex items-center bg-gray-100/50 dark:bg-black/20 rounded-full p-1 border border-gray-200/50 dark:border-white/5" aria-label="Primary">
-            <a href="index.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'index.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Home</a>
-            <a href="subjects.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isSubjectsActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Subjects</a>
-            <a href="quiz.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isQuizActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Quiz</a>
-            <a href="dashboard.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isDashboardActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Dashboard</a>
+            <a href="${base}index.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'index.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Home</a>
+            <a href="${base}subjects.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isSubjectsActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Subjects</a>
+            <a href="${base}quiz.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isQuizActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Quiz</a>
+            <a href="${base}dashboard.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isDashboardActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Dashboard</a>
           </nav>
 
           <div class="flex items-center gap-2 sm:gap-3">
@@ -155,7 +158,7 @@ function _injectHeader(currentPage, session, userName) {
                 </button>
                 <div id="dashboard-dropdown" 
                      class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10 py-2 z-50">
-                  <a href="dashboard.html"
+                  <a href="${base}dashboard.html"
                      class="block px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">dashboard</span>
                     Dashboard
@@ -198,25 +201,28 @@ function _injectMobileNav(currentPage) {
   const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
   const isDashboardActive = currentPage === 'dashboard.html';
 
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
+  const base = inSubDir ? '../' : '';
+
   const html = `
     <nav id="mobileBottomNav" aria-label="Mobile navigation" class="mobile-nav-shell">
       <div class="mobile-nav-grid">
-        <a href="index.html" class="mobile-nav-item ${currentPage === 'index.html' ? 'active' : ''}">
+        <a href="${base}index.html" class="mobile-nav-item ${currentPage === 'index.html' ? 'active' : ''}">
           <span class="material-symbols-outlined">home</span>
           <span class="label">Home</span>
         </a>
 
-        <a href="subjects.html" class="mobile-nav-item ${isSubjectsActive ? 'active' : ''}">
+        <a href="${base}subjects.html" class="mobile-nav-item ${isSubjectsActive ? 'active' : ''}">
           <span class="material-symbols-outlined">menu_book</span>
           <span class="label">Subjects</span>
         </a>
 
-        <a href="quiz.html" class="mobile-nav-item ${currentPage === 'quiz.html' ? 'active' : ''}">
+        <a href="${base}quiz.html" class="mobile-nav-item ${currentPage === 'quiz.html' ? 'active' : ''}">
           <span class="material-symbols-outlined">quiz</span>
           <span class="label">Quiz</span>
         </a>
 
-        <a href="about-us.html" class="mobile-nav-item ${currentPage === 'about-us.html' ? 'active' : ''}">
+        <a href="${base}about-us.html" class="mobile-nav-item ${currentPage === 'about-us.html' ? 'active' : ''}">
           <span class="material-symbols-outlined">group</span>
           <span class="label">Team</span>
         </a>
@@ -318,6 +324,9 @@ function _injectFooter() {
   const container = document.getElementById('app-footer');
   if (!container && document.querySelector('footer')) return;
 
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
+  const base = inSubDir ? '../' : '';
+
   const html = `
     <footer class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 py-6 px-4 sm:px-6 transition-colors duration-300 rounded-t-[1.5rem]">
       <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
@@ -326,8 +335,8 @@ function _injectFooter() {
           <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Verified academic resources.</p>
         </div>
         <div class="flex items-center justify-center gap-4">
-          <a href="about-us.html" class="nav-link-premium text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">About</a>
-          <a href="terms.html" class="nav-link-premium text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">Terms</a>
+          <a href="${base}about-us.html" class="nav-link-premium text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">About</a>
+          <a href="${base}terms.html" class="nav-link-premium text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">Terms</a>
           <a href="https://github.com/MushtaqAhmadSaqi" target="_blank" rel="noopener noreferrer" class="nav-link-premium text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">Github</a>
         </div>
         <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest opacity-60">

@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "test": "node ComsatsGPA/tests/gpa-logic.test.mjs",
     "build:css": "tailwindcss -c tailwind.config.cjs -i ./styles/tailwind-input.css -o ./styles/tailwind-built.css --minify",
     "watch:css": "tailwindcss -c tailwind.config.cjs -i ./styles/tailwind-input.css -o ./styles/tailwind-built.css --watch"
   },

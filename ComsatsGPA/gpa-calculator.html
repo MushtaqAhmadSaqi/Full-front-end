@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COMSATS GPA Calculator | ComsatsPrepHub</title>
+  <meta name="description" content="Calculate COMSATS semester GPA and CGPA with theory/lab credit handling.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles/tailwind-built.css">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../auth-modal.css">
+  <link rel="stylesheet" href="styles/gpa-calculator.css">
+
+  <script src="../js/dark-mode.js" defer></script>
+</head>
+
+<body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300">
+  <div id="app-header"></div>
+
+  <main class="gpa-page page-transition">
+    <section class="gpa-hero-mini">
+      <div class="gpa-hero-copy-wrap">
+        <span class="gpa-kicker">COMSATS GPA Calculator</span>
+        <h1>Calculate your semester GPA and updated CGPA in minutes.</h1>
+        <p>
+          Add courses, theory/lab credits, and marks. The calculator instantly shows GPA,
+          CGPA, credit hours, quality points, and course-wise grades.
+        </p>
+      </div>
+
+      <div class="gpa-hero-card">
+        <span class="material-symbols-outlined">school</span>
+        <strong>Built for COMSATS students</strong>
+        <p>Simple, fast, mobile-friendly, and easy to update when grading rules change.</p>
+      </div>
+    </section>
+
+    <section class="gpa-results-grid" aria-label="GPA results">
+      <article class="gpa-result-card is-primary">
+        <span>Semester GPA</span>
+        <strong id="semester-gpa">0.00</strong>
+        <small id="performance-summary">Add valid courses to see your performance.</small>
+      </article>
+
+      <article class="gpa-result-card">
+        <span>Updated CGPA</span>
+        <strong id="updated-cgpa">0.00</strong>
+        <small>Based on previous record plus this semester.</small>
+      </article>
+
+      <article class="gpa-result-card">
+        <span>Current Credits</span>
+        <strong id="current-credits">0</strong>
+        <small>Credits counted in this semester.</small>
+      </article>
+
+      <article class="gpa-result-card">
+        <span>Total Credits</span>
+        <strong id="total-completed-credits">0</strong>
+        <small>Previous credits plus current credits.</small>
+      </article>
+    </section>
+
+    <section class="gpa-workspace" id="calculator">
+      <div class="gpa-main-panel">
+        <div class="gpa-section-header">
+          <div>
+            <span class="gpa-kicker">Calculator</span>
+            <h2>Course details</h2>
+            <p>
+              Enter marks as percentages. Course name is optional, but useful when saving history.
+            </p>
+          </div>
+
+          <button id="add-course-btn" type="button" class="gpa-btn gpa-btn-primary">
+            <span class="material-symbols-outlined">add</span>
+            Add Course
+          </button>
+        </div>
+
+        <div id="course-list" class="gpa-course-list" aria-live="polite"></div>
+
+        <div id="validation-summary" class="gpa-validation-box" aria-live="polite">
+          <p class="success-text">Add a course to start calculating.</p>
+        </div>
+
+        <div class="gpa-action-row">
+          <button id="save-semester-btn" type="button" class="gpa-btn gpa-btn-primary">
+            <span class="material-symbols-outlined">bookmark_add</span>
+            Save Calculation
+          </button>
+
+          <button id="reset-btn" type="button" class="gpa-btn gpa-btn-soft">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <aside class="gpa-sidebar">
+        <section class="gpa-side-card">
+          <div class="gpa-side-icon blue">
+            <span class="material-symbols-outlined">functions</span>
+          </div>
+
+          <h3>Previous CGPA</h3>
+          <p>Add your previous CGPA and completed credits to calculate updated CGPA.</p>
+
+          <label for="previous-cgpa">Previous CGPA</label>
+          <input id="previous-cgpa" type="number" min="0" max="4" step="0.01" placeholder="e.g. 3.25">
+
+          <label for="previous-credits">Completed credit hours</label>
+          <input id="previous-credits" type="number" min="0" step="1" placeholder="e.g. 72">
+
+          <div class="gpa-quality-card">
+            <span>Current quality points</span>
+            <strong id="quality-points">0.00</strong>
+          </div>
+        </section>
+
+        <section class="gpa-side-card">
+          <div class="gpa-side-card-head">
+            <div>
+              <div class="gpa-side-icon green">
+                <span class="material-symbols-outlined">history</span>
+              </div>
+              <h3>Saved history</h3>
+            </div>
+
+            <button id="clear-history-btn" type="button" class="gpa-link-btn">Clear</button>
+          </div>
+
+          <div id="history-list" class="gpa-history-list">
+            <p class="muted-text">No saved GPA calculations yet.</p>
+          </div>
+        </section>
+
+        <section class="gpa-side-card">
+          <div class="gpa-side-icon purple">
+            <span class="material-symbols-outlined">grading</span>
+          </div>
+
+          <h3>COMSATS grading scale</h3>
+          <p>Quick reference for grade ranges and grade points.</p>
+
+          <div class="gpa-scale-mini">
+            <div><b>A</b><span>85–100</span><small>3.67–4.00</small></div>
+            <div><b>A-</b><span>80–84</span><small>3.34–3.66</small></div>
+            <div><b>B+</b><span>75–79</span><small>3.01–3.33</small></div>
+            <div><b>B</b><span>71–74</span><small>2.67–3.00</small></div>
+            <div><b>B-</b><span>68–70</span><small>2.34–2.66</small></div>
+            <div><b>C+</b><span>64–67</span><small>2.01–2.33</small></div>
+            <div><b>C</b><span>61–63</span><small>1.67–2.00</small></div>
+            <div><b>C-</b><span>58–60</span><small>1.31–1.66</small></div>
+            <div><b>D+</b><span>54–57</span><small>1.01–1.30</small></div>
+            <div><b>D</b><span>50–53</span><small>0.10–1.00</small></div>
+            <div class="danger"><b>F</b><span>&lt;50</span><small>0.00</small></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div id="app-footer"></div>
+  <div id="app-mobile-nav"></div>
+
+  <script type="module" src="../js/layout.js"></script>
+  <script src="js/gpa-logic.js"></script>
+  <script src="js/gpa-calculator.js" defer></script>
+</body>
+</html>
