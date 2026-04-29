@@ -34,13 +34,22 @@
       /* Bug 4: prevent revealed model answers from breaking the mobile viewport */
       [id^="model-"] {
         max-width: 100%;
-        overflow-x: hidden;
+        overflow-x: auto;
       }
 
-      [id^="model-"] .prose {
+      [id^="model-"] .prose,
+      .question-prose {
         max-width: 100%;
         overflow-wrap: anywhere;
         word-break: break-word;
+        overflow-x: auto;
+      }
+
+      /* Make display math scrollable if too wide */
+      mjx-container[display="true"] {
+        max-width: 100%;
+        overflow-x: auto !important;
+        overflow-y: hidden;
       }
 
       [id^="model-"] pre,
@@ -219,8 +228,9 @@
                                 <button
                                     id="downloadBtn"
                                     type="button"
-                                    class="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="btn btn-primary bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                     style="display:none;"
+                                    aria-label="Download paper as Word document"
                                 >
                                     <span class="material-symbols-outlined text-[18px]" aria-hidden="true">download</span>
                                     <span class="hidden sm:inline">Word</span>
@@ -265,8 +275,8 @@
                                 every question. Review the model answers above to assess your understanding and pinpoint
                                 areas for improvement.</p>
                             <a href="subjects.html"
-                                class="inline-flex items-center gap-2 bg-white text-teal-700 font-bold px-6 py-3 rounded-xl hover:bg-teal-50 transition-all shadow-sm text-sm">
-                                <span class="material-symbols-outlined text-[18px]">library_books</span>
+                                class="btn btn-white text-teal-700 text-sm shadow-sm hover:bg-teal-50">
+                                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">library_books</span>
                                 Browse More Papers
                             </a>
                         </div>
@@ -833,7 +843,7 @@
                     <!-- Answer Section -->
                     <div class="border-t border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-slate-800/40 p-6 sm:p-8">
                         <div class="mb-4">
-                            <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Write Your Solution</label>
+                            <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest" for="answer-${q.id}">Write Your Solution</label>
                             <textarea id="answer-${q.id}" rows="4" 
                                 class="mt-2 w-full px-5 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl text-[15px] focus:border-brand-500 focus:ring-4 focus:ring-brand-400/15 focus:outline-none resize-y transition-all text-slate-700 dark:text-gray-200 shadow-sm"
                                 placeholder="Explain your answer here before revealing the model solution..."></textarea>
@@ -841,8 +851,8 @@
                         
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                             <button onclick="submitAnswer('${q.id}')" id="btn-${q.id}"
-                                class="button-press inline-flex items-center justify-center gap-2 px-8 py-3 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-bold rounded-2xl text-sm transition-all shadow-md hover:shadow-lg">
-                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                class="btn btn-primary text-sm shadow-md hover:shadow-lg">
+                                <span class="material-symbols-outlined text-[20px]" aria-hidden="true">visibility</span>
                                 <span>Submit & Reveal Answer</span>
                             </button>
                             
