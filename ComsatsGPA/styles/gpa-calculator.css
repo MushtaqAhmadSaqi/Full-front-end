@@ -1,788 +1,207 @@
-.gpa-page {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 38px 0 90px;
-}
-
-.gpa-hero-mini {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 24px;
-  align-items: stretch;
-  margin-bottom: 24px;
-  padding: 34px;
-  border-radius: 36px;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.20), transparent 32%),
-    linear-gradient(135deg, #eff6ff 0%, #e0f2fe 50%, #f8fafc 100%);
-  border: 1px solid #dbeafe;
-  overflow: hidden;
-}
-
-html.dark .gpa-hero-mini {
-  background:
-    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.18), transparent 34%),
-    linear-gradient(135deg, #111827 0%, #0f172a 100%);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.gpa-kicker {
-  display: inline-block;
-  margin-bottom: 10px;
-  color: var(--primary, #0ea5e9);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.gpa-hero-copy-wrap h1 {
-  max-width: 760px;
-  margin: 0;
-  color: #1a1a2e;
-  font-size: clamp(2.25rem, 5vw, 4.25rem);
-  font-weight: 900;
-  line-height: 0.98;
-  letter-spacing: -0.07em;
-}
-
-html.dark .gpa-hero-copy-wrap h1 {
-  color: #f8fafc;
-}
-
-.gpa-hero-copy-wrap p,
-.gpa-hero-card p,
-.gpa-section-header p,
-.gpa-side-card p,
-.muted-text {
-  color: #64748b;
-  line-height: 1.7;
-}
-
-html.dark .gpa-hero-copy-wrap p,
-html.dark .gpa-hero-card p,
-html.dark .gpa-section-header p,
-html.dark .gpa-side-card p,
-html.dark .muted-text {
-  color: #94a3b8;
-}
-
-.gpa-hero-copy-wrap p {
-  max-width: 660px;
-  margin: 18px 0 0;
-  font-size: 1.03rem;
-}
-
-.gpa-hero-card {
-  align-self: center;
-  padding: 24px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(16px);
-}
-
-html.dark .gpa-hero-card {
-  background: rgba(30, 41, 59, 0.80);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.gpa-hero-card .material-symbols-outlined {
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 18px;
-  border-radius: 20px;
-  color: #0284c7;
-  background: #e0f2fe;
-  font-size: 30px;
-}
-
-.gpa-hero-card strong {
-  display: block;
-  color: #111827;
-  font-size: 1.2rem;
-  font-weight: 900;
-}
-
-html.dark .gpa-hero-card strong {
-  color: #f8fafc;
-}
-
-.gpa-results-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.gpa-result-card,
-.gpa-main-panel,
-.gpa-side-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-}
-
-html.dark .gpa-result-card,
-html.dark .gpa-main-panel,
-html.dark .gpa-side-card {
-  background: #1e293b;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.26);
-}
-
-.gpa-result-card {
-  min-height: 160px;
-  padding: 22px;
-  border-radius: 28px;
-}
-
-.gpa-result-card.is-primary {
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
-  color: #ffffff;
-  border-color: transparent;
-}
-
-.gpa-result-card span {
-  display: block;
-  color: #64748b;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.gpa-result-card.is-primary span,
-.gpa-result-card.is-primary small {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-html.dark .gpa-result-card span {
-  color: #94a3b8;
-}
-
-.gpa-result-card strong {
-  display: block;
-  margin: 10px 0;
-  color: #111827;
-  font-size: 3rem;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.gpa-result-card.is-primary strong,
-html.dark .gpa-result-card.is-primary strong {
-  color: #ffffff;
-}
-
-html.dark .gpa-result-card strong {
-  color: #f8fafc;
-}
-
-.gpa-result-card small {
-  color: #64748b;
-  line-height: 1.55;
-}
-
-html.dark .gpa-result-card small {
-  color: #94a3b8;
-}
-
-.gpa-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 24px;
-  align-items: start;
-}
-
-.gpa-main-panel,
-.gpa-side-card {
-  border-radius: 32px;
-}
-
-.gpa-main-panel {
-  padding: 24px;
-}
-
-.gpa-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 18px;
-  margin-bottom: 18px;
-}
-
-.gpa-section-header h2 {
-  margin: 0;
-  color: #111827;
-  font-size: clamp(1.8rem, 3.4vw, 3rem);
-  font-weight: 900;
-  letter-spacing: -0.06em;
-}
-
-html.dark .gpa-section-header h2 {
-  color: #f8fafc;
-}
-
-.gpa-btn {
-  min-height: 48px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
-  font-weight: 900;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-}
-
-.gpa-btn:hover {
-  transform: translateY(-2px);
-}
-
-.gpa-btn-primary {
-  background: var(--primary, #0ea5e9);
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.22);
-}
-
-.gpa-btn-primary:hover {
-  background: var(--primary-hover, #0284c7);
-}
-
-.gpa-btn-soft {
-  color: #0f172a;
-  background: #f1f5f9;
-}
-
-html.dark .gpa-btn-soft {
-  color: #f8fafc;
-  background: #0f172a;
-}
-
-.gpa-course-list {
-  display: grid;
-  gap: 14px;
-}
-
-.course-row {
-  position: relative;
-  padding: 18px;
-  border-radius: 28px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  transition: transform 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
-}
-
-.course-row:hover {
-  border-color: rgba(14, 165, 233, 0.35);
-  transform: translateY(-1px);
-}
-
-html.dark .course-row {
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.course-row.has-error {
-  border-color: rgba(239, 68, 68, 0.75);
-}
-
-.course-row.is-excluded {
-  opacity: 0.64;
-}
-
-.course-row.is-removing {
-  opacity: 0;
-  transform: translateX(16px);
-}
-
-.course-card-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.course-count-label {
-  color: #0ea5e9;
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.course-card-top h3 {
-  margin: 4px 0 0;
-  color: #111827;
-  font-size: 1.08rem;
-  font-weight: 900;
-}
-
-html.dark .course-card-top h3 {
-  color: #f8fafc;
-}
-
-.course-top-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.include-toggle {
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  color: #64748b;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  font-size: 0.85rem;
-  font-weight: 800;
-}
-
-html.dark .include-toggle {
-  color: #94a3b8;
-  background: #1e293b;
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.include-toggle input {
-  width: 18px;
-  height: 18px;
-  accent-color: #0ea5e9;
-}
-
-.course-result {
-  min-width: 92px;
-  min-height: 48px;
-  display: grid;
-  place-items: center;
-  padding: 7px 12px;
-  border-radius: 18px;
-  background: #e0f2fe;
-  color: #0369a1;
-  text-align: center;
-}
-
-html.dark .course-result {
-  background: rgba(14, 165, 233, 0.12);
-  color: #7dd3fc;
-}
-
-.course-result strong {
-  font-size: 1.05rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.course-result span {
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.remove-course {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 16px;
-  color: #ef4444;
-  background: #fee2e2;
-  cursor: pointer;
-}
-
-.remove-course:hover {
-  color: #ffffff;
-  background: #ef4444;
-}
-
-html.dark .remove-course {
-  background: rgba(239, 68, 68, 0.13);
-}
-
-.course-fields-grid {
-  display: grid;
-  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(120px, 1fr));
-  gap: 12px;
-}
-
-.field {
-  display: grid;
-  gap: 7px;
-}
-
-.field span,
-.gpa-side-card label {
-  color: #64748b;
-  font-size: 0.78rem;
-  font-weight: 900;
-}
-
-html.dark .field span,
-html.dark .gpa-side-card label {
-  color: #94a3b8;
-}
-
-.field input,
-.gpa-side-card input {
+/* ==========================================================================
+   GPA Calculator Custom Styles
+   ========================================================================== */
+
+/* ── Variables ── */
+:root {
+  --primary-color: #14b8a6;
+  --error-color: #ef4444;
+  --success-color: #10b981;
+  --transition-speed: 0.15s;
+}
+
+/* ── Input Styling ── */
+.gpa-input {
   width: 100%;
-  min-height: 48px;
-  padding: 12px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  outline: none;
-  color: #111827;
-  background: #ffffff;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: #cbd5e1; /* Light mode contrast fix */
+  background-color: #ffffff;
+  color: #1e293b;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem; /* Base size for better mobile readability */
+  line-height: 1.5rem;
+  transition: all var(--transition-speed) ease;
+  background-image: linear-gradient(to right, rgba(20, 184, 166, 0.1) var(--progress, 0%), transparent var(--progress, 0%)); /* Progress fill */
 }
 
-.field input:focus,
-.gpa-side-card input:focus {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.14);
-}
-
-html.dark .field input,
-html.dark .gpa-side-card input {
+.dark .gpa-input {
+  border-color: #475569;
+  background-color: #1e293b;
   color: #f8fafc;
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
+  background-image: linear-gradient(to right, rgba(45, 212, 191, 0.15) var(--progress, 0%), transparent var(--progress, 0%));
 }
 
-.course-message {
-  margin: 12px 0 0;
-  color: #64748b;
-  font-size: 0.86rem;
-}
-
-html.dark .course-message {
+.gpa-input::placeholder {
   color: #94a3b8;
 }
 
-.gpa-validation-box {
-  margin: 16px 0;
-  padding: 16px 18px;
-  border-radius: 22px;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-}
-
-html.dark .gpa-validation-box {
+.dark .gpa-input::placeholder {
   color: #94a3b8;
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
 }
 
-.gpa-validation-box ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
+.gpa-input:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-color: transparent;
+  box-shadow: none;
 }
 
-.success-text {
-  margin: 0;
-  color: #10b981;
-  font-weight: 800;
+/* Error/Valid States */
+.gpa-input.is-invalid {
+  border-color: var(--error-color);
+  animation: shake 0.4s ease-in-out;
 }
 
-.gpa-action-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+.gpa-input.is-valid {
+  border-color: var(--success-color);
 }
 
-.gpa-sidebar {
-  display: grid;
-  gap: 18px;
-  position: sticky;
-  top: 96px;
-}
-
-.gpa-side-card {
-  padding: 24px;
-}
-
-.gpa-side-card h3 {
-  margin: 0 0 8px;
-  color: #111827;
-  font-size: 1.16rem;
-  font-weight: 900;
-}
-
-html.dark .gpa-side-card h3 {
-  color: #f8fafc;
-}
-
-.gpa-side-card label {
+/* ── Typography & Hierarchy ── */
+.gpa-label {
   display: block;
-  margin: 16px 0 8px;
-}
-
-.gpa-side-icon {
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 16px;
-  border-radius: 20px;
-}
-
-.gpa-side-icon.blue {
-  color: #2563eb;
-  background: #dbeafe;
-}
-
-.gpa-side-icon.green {
-  color: #10b981;
-  background: #dcfce7;
-}
-
-.gpa-side-icon.purple {
-  color: #7c3aed;
-  background: #ede9fe;
-}
-
-html.dark .gpa-side-icon.blue {
-  background: rgba(37, 99, 235, 0.14);
-  color: #93c5fd;
-}
-
-html.dark .gpa-side-icon.green {
-  background: rgba(16, 185, 129, 0.14);
-  color: #6ee7b7;
-}
-
-html.dark .gpa-side-icon.purple {
-  background: rgba(124, 58, 237, 0.16);
-  color: #c4b5fd;
-}
-
-.gpa-quality-card {
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 22px;
-  background: #e0f2fe;
-}
-
-html.dark .gpa-quality-card {
-  background: rgba(14, 165, 233, 0.12);
-}
-
-.gpa-quality-card span {
-  color: #64748b;
   font-size: 0.75rem;
-  font-weight: 900;
-  letter-spacing: 0.1em;
+  font-weight: 500; /* hierarchy fix */
+  color: #475569; /* contrast fix */
+  margin-bottom: 0.25rem;
+}
+
+.dark .gpa-label {
+  color: #94a3b8;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #059669; /* contrast fix */
+  margin-bottom: 0.75rem;
 }
 
-html.dark .gpa-quality-card span {
-  color: #94a3b8;
+.dark .section-title {
+  color: #2dd4bf;
 }
 
-.gpa-quality-card strong {
-  display: block;
-  margin-top: 6px;
-  color: #0369a1;
-  font-size: 2.2rem;
-  font-weight: 900;
-  letter-spacing: -0.05em;
+/* ── Hero Gradient ── */
+.hero-gradient {
+  background: linear-gradient(135deg, #0f766e 0%, #0ea5e9 100%);
 }
 
-html.dark .gpa-quality-card strong {
-  color: #7dd3fc;
+@media (max-width: 640px) {
+  header.hero-gradient {
+    padding: 2rem 0.75rem;
+  }
 }
 
-.gpa-side-card-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  align-items: start;
+/* ── Glassmorphism Card ── */
+.glass-card {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.5);
 }
 
-.gpa-link-btn {
-  border: 0;
+.dark .glass-card {
+  background: rgba(15,23,42,0.7);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── Overall GPA Panel ── */
+.overall-panel {
+  background: linear-gradient(135deg, #0f766e, #0284c7);
+}
+
+/* ── Grading Scale Reference ── */
+.scale-row {
+  font-weight: 500;
+}
+
+.scale-row:nth-child(odd) {
+  background: rgba(15,118,110,0.04);
+}
+
+.dark .scale-row:nth-child(odd) {
+  background: rgba(20,184,166,0.06);
+}
+
+details > summary {
+  list-style: none; /* Hide default arrow */
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.chevron-icon {
+  transition: transform var(--transition-speed) ease;
+}
+details[open] .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* ── Animations ── */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in { animation: slideIn 0.25s ease both; }
+
+.slide-delay-1 { animation-delay: 0.05s; }
+.slide-delay-2 { animation-delay: 0.10s; }
+.slide-delay-3 { animation-delay: 0.15s; }
+.slide-delay-4 { animation-delay: 0.20s; }
+.slide-delay-5 { animation-delay: 0.25s; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+}
+
+.is-pulsing {
+  animation: pulseRing 2s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Inline error messages */
+.field-error {
+  font-size: 0.7rem;
+  color: var(--error-color);
+  margin-top: 0.25rem;
+  animation: fadeIn 0.2s ease-in-out;
+}
+.dark .field-error {
+  color: #f87171;
+}
+
+/* Clear Form button */
+.btn-ghost {
   background: transparent;
-  color: #0ea5e9;
-  cursor: pointer;
-  font-weight: 900;
-}
-
-.gpa-history-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.history-card {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 18px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-}
-
-html.dark .history-card {
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.history-card strong {
-  display: block;
-  color: #111827;
-  font-weight: 900;
-}
-
-html.dark .history-card strong {
-  color: #f8fafc;
-}
-
-.history-card span {
-  display: block;
-  margin-top: 4px;
   color: #64748b;
-  font-size: 0.78rem;
+  border: 1px solid transparent;
 }
-
-html.dark .history-card span {
+.btn-ghost:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+.dark .btn-ghost {
   color: #94a3b8;
 }
-
-.history-values {
-  text-align: right;
-  white-space: nowrap;
-}
-
-.gpa-scale-mini {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.gpa-scale-mini div {
-  padding: 12px;
-  border-radius: 16px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-}
-
-html.dark .gpa-scale-mini div {
-  background: #0f172a;
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.gpa-scale-mini b {
-  display: block;
-  color: #0ea5e9;
-  font-size: 1.1rem;
-  font-weight: 900;
-}
-
-.gpa-scale-mini .danger b {
-  color: #ef4444;
-}
-
-.gpa-scale-mini span,
-.gpa-scale-mini small {
-  display: block;
-  color: #64748b;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-html.dark .gpa-scale-mini span,
-html.dark .gpa-scale-mini small {
-  color: #94a3b8;
-}
-
-@media (max-width: 1080px) {
-  .gpa-hero-mini,
-  .gpa-workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .gpa-sidebar {
-    position: static;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gpa-side-card:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .gpa-results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .course-fields-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .field-name {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 720px) {
-  .gpa-page {
-    width: min(100% - 22px, 1180px);
-    padding-top: 20px;
-  }
-
-  .gpa-hero-mini,
-  .gpa-main-panel,
-  .gpa-side-card {
-    border-radius: 26px;
-  }
-
-  .gpa-hero-mini {
-    padding: 24px;
-  }
-
-  .gpa-results-grid,
-  .gpa-sidebar,
-  .course-fields-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gpa-section-header,
-  .course-card-top,
-  .course-top-actions,
-  .gpa-action-row {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .gpa-btn {
-    width: 100%;
-  }
-
-  .course-result,
-  .include-toggle,
-  .remove-course {
-    width: 100%;
-  }
-
-  .history-card {
-    flex-direction: column;
-  }
-
-  .history-values {
-    text-align: left;
-  }
+.dark .btn-ghost:hover {
+  background: #1e293b;
+  color: #e2e8f0;
 }
