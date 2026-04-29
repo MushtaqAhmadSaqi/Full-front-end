@@ -2,7 +2,9 @@ module.exports = {
   darkMode: 'class',
   content: [
     './*.html',
-    './auth.html'
+    './auth.html',
+    './ComsatsGPA/**/*.html',
+    './ComsatsGPA/**/*.js'
   ],
   theme: {
     extend: {

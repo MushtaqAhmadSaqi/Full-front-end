@@ -1,332 +1,200 @@
-/*
- * COMSATS GPA/CGPA calculation utilities.
+/**
+ * gpa-logic.js — COMSATS GPA Calculation Engine
  *
- * Confirmed from available COMSATS/CUI handbook and grading notification copies:
- * - Theory/lab overall percentage is weighted by theory/practical credit hours.
- * - F is below 50 and carries 0.00 grade points.
- * - Current Fall 2021+ CUI/HEC grading notification lists grade-point ranges.
+ * Official COMSATS University Islamabad absolute grading scale.
+ * Grade points are fixed (not interpolated) per the university handbook.
  *
- * Assumption kept in one place:
- * - Because the public notification lists grade-point ranges but does not publish the
- *   exact mark-to-point formula, this module uses linear interpolation inside each
- *   grade band. To switch to fixed grade points later, update getGradeInfo only.
+ * Theory Component (out of 100):
+ *   4 Assignments + 4 Quizzes + Midterm (25 marks) + Final (50 marks)
+ *   Proportional marks from assignments/quizzes fill the remaining 25 marks.
+ *   Assignments total = 12.5 marks, Quizzes total = 12.5 marks (each group contributes 12.5/100)
+ *
+ * Lab Component (optional, out of 100):
+ *   4 Lab Assignments + Lab Midterm (25 marks) + Lab Final (50 marks)
+ *   Lab Assignments total = 25 marks
+ *
+ * Weighting:
+ *   Theory only  → Final % = Theory Total
+ *   With Lab     → Final % = (Theory Total × 0.67) + (Lab Total × 0.33)
+ *
+ * Exposed API (window.GpaLogic):
+ *   GRADING_SCALE  — the raw scale array
+ *   getGradeInfo(percentage) → { letter, point, percentage }
+ *   calcTheoryTotal(fields)  → number 0–100
+ *   calcLabTotal(fields)     → number 0–100
+ *   calcFinalPercentage(theoryTotal, labTotal, hasLab) → number
+ *   getPerformanceLabel(gpa) → string
  */
-(function initGpaLogic(root, factory) {
+(function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
     root.GpaLogic = factory();
   }
-})(typeof globalThis !== 'undefined' ? globalThis : window, function createGpaLogic() {
+})(typeof globalThis !== 'undefined' ? globalThis : window, function () {
   'use strict';
 
-  const MIN_GPA = 0;
-  const MAX_GPA = 4;
-  const MAX_PERCENTAGE = 100;
-  const MAX_COURSE_CREDITS = 6;
-
+  /* ─────────────────────────────────────────────
+   * 1. OFFICIAL COMSATS GRADING SCALE
+   * Fixed (absolute) grade points — no interpolation.
+   * ───────────────────────────────────────────── */
   const GRADING_SCALE = Object.freeze([
-    { letter: 'A', percentMin: 85, percentMax: 100, pointMin: 3.67, pointMax: 4.00 },
-    { letter: 'A-', percentMin: 80, percentMax: 84, pointMin: 3.34, pointMax: 3.66 },
-    { letter: 'B+', percentMin: 75, percentMax: 79, pointMin: 3.01, pointMax: 3.33 },
-    { letter: 'B', percentMin: 71, percentMax: 74, pointMin: 2.67, pointMax: 3.00 },
-    { letter: 'B-', percentMin: 68, percentMax: 70, pointMin: 2.34, pointMax: 2.66 },
-    { letter: 'C+', percentMin: 64, percentMax: 67, pointMin: 2.01, pointMax: 2.33 },
-    { letter: 'C', percentMin: 61, percentMax: 63, pointMin: 1.67, pointMax: 2.00 },
-    { letter: 'C-', percentMin: 58, percentMax: 60, pointMin: 1.31, pointMax: 1.66 },
-    { letter: 'D+', percentMin: 54, percentMax: 57, pointMin: 1.01, pointMax: 1.30 },
-    { letter: 'D', percentMin: 50, percentMax: 53, pointMin: 0.10, pointMax: 1.00 },
-    { letter: 'F', percentMin: 0, percentMax: 49, pointMin: 0.00, pointMax: 0.00 }
+    { letter: 'A',  percentMin: 85, percentMax: 100, point: 4.00 },
+    { letter: 'A-', percentMin: 80, percentMax: 84,  point: 3.67 },
+    { letter: 'B+', percentMin: 75, percentMax: 79,  point: 3.33 },
+    { letter: 'B',  percentMin: 71, percentMax: 74,  point: 3.00 },
+    { letter: 'B-', percentMin: 68, percentMax: 70,  point: 2.67 },
+    { letter: 'C+', percentMin: 64, percentMax: 67,  point: 2.33 },
+    { letter: 'C',  percentMin: 60, percentMax: 63,  point: 2.00 },
+    { letter: 'C-', percentMin: 57, percentMax: 59,  point: 1.67 },
+    { letter: 'D+', percentMin: 53, percentMax: 56,  point: 1.33 },
+    { letter: 'D',  percentMin: 50, percentMax: 52,  point: 1.00 },
+    { letter: 'F',  percentMin: 0,  percentMax: 49,  point: 0.00 },
   ]);
 
-  function toNumber(value, fallback = 0) {
-    if (value === '' || value === null || value === undefined) return fallback;
-    const numeric = Number(value);
-    return Number.isFinite(numeric) ? numeric : fallback;
+  /* ─────────────────────────────────────────────
+   * 2. HELPERS
+   * ───────────────────────────────────────────── */
+
+  /** Safely parse a value to a finite number, defaulting to `fallback`. */
+  function toNum(value, fallback = 0) {
+    if (value === '' || value == null) return fallback;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
   }
 
-  function roundTo(value, decimals = 2) {
-    const factor = 10 ** decimals;
-    return Math.round((toNumber(value) + Number.EPSILON) * factor) / factor;
+  /** Round to 2 decimal places. */
+  function round2(value) {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
+  /** Clamp a number between min and max. */
   function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, toNumber(value)));
+    return Math.min(max, Math.max(min, value));
   }
 
-  function isEmptyCourse(course = {}) {
-    return !String(course.name || '').trim()
-      && !toNumber(course.theoryCr)
-      && !toNumber(course.theoryMarks)
-      && !toNumber(course.labCr)
-      && !toNumber(course.labMarks);
-  }
+  /* ─────────────────────────────────────────────
+   * 3. GRADE LOOKUP
+   * ───────────────────────────────────────────── */
 
+  /**
+   * Look up grade info for a given percentage.
+   * @param {number} percentage — 0 to 100
+   * @returns {{ letter: string, point: number, percentage: number }}
+   */
   function getGradeInfo(percentage) {
-    const rawPercentage = toNumber(percentage, NaN);
-
-    if (!Number.isFinite(rawPercentage)) {
-      return { letter: 'F', grade: 'F', point: 0, points: 0, percentage: 0 };
-    }
-
-    const clampedPercentage = clamp(rawPercentage, 0, MAX_PERCENTAGE);
-    const roundedPercentage = Math.round(clampedPercentage);
-
-    const band = GRADING_SCALE.find((item) => (
-      roundedPercentage >= item.percentMin && roundedPercentage <= item.percentMax
-    )) || GRADING_SCALE[GRADING_SCALE.length - 1];
-
-    if (band.letter === 'F' || band.percentMin === band.percentMax) {
-      return {
-        letter: band.letter,
-        grade: band.letter,
-        point: band.pointMin,
-        points: band.pointMin,
-        percentage: roundTo(clampedPercentage, 2)
-      };
-    }
-
-    const span = band.percentMax - band.percentMin;
-    const ratio = span === 0 ? 1 : (clampedPercentage - band.percentMin) / span;
-    const interpolatedPoint = band.pointMin + ratio * (band.pointMax - band.pointMin);
-    const point = roundTo(clamp(interpolatedPoint, band.pointMin, band.pointMax), 2);
-
-    return {
-      letter: band.letter,
-      grade: band.letter,
-      point,
-      points: point,
-      percentage: roundTo(clampedPercentage, 2)
-    };
+    const pct = clamp(Math.round(toNum(percentage, 0)), 0, 100);
+    const band = GRADING_SCALE.find(b => pct >= b.percentMin && pct <= b.percentMax)
+              || GRADING_SCALE[GRADING_SCALE.length - 1]; // fallback to F
+    return { letter: band.letter, point: band.point, percentage: pct };
   }
 
-  function getGradePoint(percentage) {
-    return getGradeInfo(percentage).point;
+  /* ─────────────────────────────────────────────
+   * 4. MARKS CALCULATION
+   *
+   * Theory breakdown (total = 100 marks):
+   *   ┌─────────────────────────────────────────┐
+   *   │ 4 Assignments  → max 12.5 each = 50 raw │
+   *   │   Contribution: (sum / 50) × 12.5        │
+   *   │ 4 Quizzes      → max 10 each  = 40 raw  │
+   *   │   Contribution: (sum / 40) × 12.5        │
+   *   │ Midterm        → max 25                  │
+   *   │ Final          → max 50                  │
+   *   └─────────────────────────────────────────┘
+   *
+   * Lab breakdown (total = 100 marks):
+   *   ┌─────────────────────────────────────────┐
+   *   │ 4 Lab Assignments → max 12.5 each = 50  │
+   *   │   Contribution: (sum / 50) × 25          │
+   *   │ Lab Midterm    → max 25                  │
+   *   │ Lab Final      → max 50                  │
+   *   └─────────────────────────────────────────┘
+   * ───────────────────────────────────────────── */
+
+  /**
+   * Calculate Theory Total (0–100) from raw marks fields.
+   * @param {{ assignments: number[], quizzes: number[], mid: number, final: number }} fields
+   * @returns {number} 0–100
+   */
+  function calcTheoryTotal(fields) {
+    const assignMax  = 50;   // 4 × 12.5
+    const quizMax    = 40;   // 4 × 10
+    const assignContrib = 12.5;
+    const quizContrib   = 12.5;
+
+    const assignSum = (fields.assignments || []).reduce((s, v) => s + clamp(toNum(v), 0, 12.5), 0);
+    const quizSum   = (fields.quizzes    || []).reduce((s, v) => s + clamp(toNum(v), 0, 10),   0);
+    const mid       = clamp(toNum(fields.mid),   0, 25);
+    const final     = clamp(toNum(fields.final), 0, 50);
+
+    const assignScore = assignMax > 0 ? (assignSum / assignMax) * assignContrib : 0;
+    const quizScore   = quizMax   > 0 ? (quizSum   / quizMax)  * quizContrib   : 0;
+
+    return round2(clamp(assignScore + quizScore + mid + final, 0, 100));
   }
 
-  function getLetterGrade(percentage) {
-    return getGradeInfo(percentage).letter;
+  /**
+   * Calculate Lab Total (0–100) from raw marks fields.
+   * @param {{ labAssignments: number[], labMid: number, labFinal: number }} fields
+   * @returns {number} 0–100
+   */
+  function calcLabTotal(fields) {
+    const labAssignMax     = 50;  // 4 × 12.5
+    const labAssignContrib = 25;
+
+    const labAssignSum = (fields.labAssignments || []).reduce((s, v) => s + clamp(toNum(v), 0, 12.5), 0);
+    const labMid       = clamp(toNum(fields.labMid),   0, 25);
+    const labFinal     = clamp(toNum(fields.labFinal), 0, 50);
+
+    const labAssignScore = labAssignMax > 0 ? (labAssignSum / labAssignMax) * labAssignContrib : 0;
+
+    return round2(clamp(labAssignScore + labMid + labFinal, 0, 100));
   }
 
-  function normalizeCourseInput(course = {}) {
-    return {
-      id: course.id || '',
-      name: String(course.name || '').trim(),
-      theoryCr: toNumber(course.theoryCr),
-      theoryMarks: toNumber(course.theoryMarks),
-      labCr: toNumber(course.labCr),
-      labMarks: toNumber(course.labMarks),
-      includeInGpa: course.includeInGpa !== false
-    };
+  /**
+   * Calculate final weighted percentage.
+   * @param {number} theoryTotal 0–100
+   * @param {number} labTotal    0–100
+   * @param {boolean} hasLab
+   * @returns {number} 0–100
+   */
+  function calcFinalPercentage(theoryTotal, labTotal, hasLab) {
+    if (!hasLab) return round2(clamp(theoryTotal, 0, 100));
+    return round2(clamp(theoryTotal * 0.67 + labTotal * 0.33, 0, 100));
   }
 
-  function validateCourseInput(course = {}) {
-    const normalized = normalizeCourseInput(course);
-    const errors = [];
-    const warnings = [];
+  /* ─────────────────────────────────────────────
+   * 5. PERFORMANCE LABEL
+   * ───────────────────────────────────────────── */
 
-    if (isEmptyCourse(normalized)) {
-      return {
-        valid: false,
-        skipped: true,
-        errors: [],
-        warnings: [],
-        course: normalized
-      };
-    }
-
-    const original = course || {};
-
-    const theoryMarksMissing =
-      normalized.theoryCr > 0 &&
-      (original.theoryMarks === '' || original.theoryMarks === null || original.theoryMarks === undefined);
-
-    const labMarksMissing =
-      normalized.labCr > 0 &&
-      (original.labMarks === '' || original.labMarks === null || original.labMarks === undefined);
-
-    if (theoryMarksMissing) {
-      errors.push('Theory marks are required when theory credits are added.');
-    }
-
-    if (labMarksMissing) {
-      errors.push('Lab marks are required when lab credits are added.');
-    }
-
-    const totalCredits = normalized.theoryCr + normalized.labCr;
-
-    if (totalCredits <= 0) errors.push('Add at least 1 theory or lab credit hour.');
-    if (totalCredits > MAX_COURSE_CREDITS) {
-      errors.push(`Total course credits cannot exceed ${MAX_COURSE_CREDITS}.`);
-    }
-
-    if (normalized.theoryCr < 0 || normalized.labCr < 0) {
-      errors.push('Credit hours cannot be negative.');
-    }
-
-    if (!Number.isInteger(normalized.theoryCr) || !Number.isInteger(normalized.labCr)) {
-      errors.push('Credit hours must be whole numbers.');
-    }
-
-    if (
-      normalized.theoryCr > 0
-      && (normalized.theoryMarks < 0 || normalized.theoryMarks > MAX_PERCENTAGE)
-    ) {
-      errors.push('Theory marks must be between 0 and 100.');
-    }
-
-    if (
-      normalized.labCr > 0
-      && (normalized.labMarks < 0 || normalized.labMarks > MAX_PERCENTAGE)
-    ) {
-      errors.push('Lab marks must be between 0 and 100.');
-    }
-
-    if (normalized.theoryCr === 0 && normalized.theoryMarks > 0) {
-      warnings.push('Theory marks ignored because theory credits are 0.');
-    }
-
-    if (normalized.labCr === 0 && normalized.labMarks > 0) {
-      warnings.push('Lab marks ignored because lab credits are 0.');
-    }
-
-    return {
-      valid: errors.length === 0,
-      skipped: false,
-      errors,
-      warnings,
-      course: normalized
-    };
+  /**
+   * Returns a motivational/descriptive label for a given cumulative GPA.
+   * @param {number} gpa
+   * @returns {string}
+   */
+  function getPerformanceLabel(gpa) {
+    const g = toNum(gpa, 0);
+    if (g >= 3.67) return '🏆 Dean\'s List — Outstanding performance!';
+    if (g >= 3.33) return '🌟 Excellent — Keep pushing for that A!';
+    if (g >= 3.00) return '👍 Good standing — You\'re on track.';
+    if (g >= 2.67) return '📈 Average — A few stronger courses can lift your GPA.';
+    if (g >= 2.00) return '⚠️ Satisfactory — Improvement is recommended.';
+    if (g >  0)    return '🚨 At-risk — Focus on your weakest courses.';
+    return 'Add subjects to see your GPA.';
   }
 
-  function calculateCoursePercentage(course = {}) {
-    const normalized = normalizeCourseInput(course);
-    const theoryCr = Math.max(0, normalized.theoryCr);
-    const labCr = Math.max(0, normalized.labCr);
-    const totalCredits = theoryCr + labCr;
-
-    if (totalCredits === 0) return 0;
-
-    const weightedMarks = (theoryCr * normalized.theoryMarks) + (labCr * normalized.labMarks);
-    return roundTo(weightedMarks / totalCredits, 2);
-  }
-
-  function calculateCourseQualityPoints(course = {}) {
-    const validation = validateCourseInput(course);
-
-    if (!validation.valid || validation.skipped || validation.course.includeInGpa === false) {
-      return {
-        valid: validation.valid,
-        skipped: validation.skipped,
-        included: false,
-        errors: validation.errors,
-        warnings: validation.warnings,
-        name: validation.course.name,
-        credits: 0,
-        percentage: 0,
-        letter: '-',
-        gradePoint: 0,
-        qualityPoints: 0
-      };
-    }
-
-    const percentage = calculateCoursePercentage(validation.course);
-    const grade = getGradeInfo(percentage);
-    const credits = validation.course.theoryCr + validation.course.labCr;
-    const qualityPoints = roundTo(credits * grade.point, 2);
-
-    return {
-      valid: true,
-      skipped: false,
-      included: true,
-      errors: [],
-      warnings: validation.warnings,
-      name: validation.course.name,
-      credits,
-      percentage,
-      letter: grade.letter,
-      gradePoint: grade.point,
-      qualityPoints
-    };
-  }
-
-  function calculateSemesterGPA(courses = []) {
-    const courseResults = courses.map(calculateCourseQualityPoints);
-    const includedCourses = courseResults.filter((course) => course.valid && course.included);
-    const totalCredits = includedCourses.reduce((sum, course) => sum + course.credits, 0);
-    const totalQualityPoints = includedCourses.reduce(
-      (sum, course) => sum + course.qualityPoints,
-      0
-    );
-
-    const gpa = totalCredits > 0 ? roundTo(totalQualityPoints / totalCredits, 2) : 0;
-
-    return {
-      gpa,
-      totalCredits,
-      totalQualityPoints: roundTo(totalQualityPoints, 2),
-      courseResults,
-      valid: courseResults.every((course) => course.valid || course.skipped),
-      errors: courseResults.flatMap((course, index) => (
-        course.errors.map((message) => `Course ${index + 1}: ${message}`)
-      )),
-      warnings: courseResults.flatMap((course, index) => (
-        course.warnings.map((message) => `Course ${index + 1}: ${message}`)
-      ))
-    };
-  }
-
-  function calculateCGPA(previousCgpa, previousCredits, semesterGpaOrResult, semesterCreditsOverride) {
-    const prevCgpa = clamp(previousCgpa, MIN_GPA, MAX_GPA);
-    const prevCredits = Math.max(0, toNumber(previousCredits));
-
-    const currentGpa = typeof semesterGpaOrResult === 'object'
-      ? clamp(semesterGpaOrResult.gpa, MIN_GPA, MAX_GPA)
-      : clamp(semesterGpaOrResult, MIN_GPA, MAX_GPA);
-
-    const currentCredits = typeof semesterGpaOrResult === 'object'
-      ? Math.max(0, toNumber(semesterGpaOrResult.totalCredits))
-      : Math.max(0, toNumber(semesterCreditsOverride));
-
-    const previousQualityPoints = prevCgpa * prevCredits;
-    const currentQualityPoints = currentGpa * currentCredits;
-    const totalCredits = prevCredits + currentCredits;
-
-    const cgpa = totalCredits > 0
-      ? roundTo((previousQualityPoints + currentQualityPoints) / totalCredits, 2)
-      : 0;
-
-    return {
-      cgpa,
-      totalCredits,
-      previousQualityPoints: roundTo(previousQualityPoints, 2),
-      currentQualityPoints: roundTo(currentQualityPoints, 2),
-      totalQualityPoints: roundTo(previousQualityPoints + currentQualityPoints, 2)
-    };
-  }
-
-  function getPerformanceSummary(gpa) {
-    const value = toNumber(gpa);
-
-    if (value >= 3.67) return 'Excellent standing — keep targeting A/A- performance.';
-    if (value >= 3.00) return 'Good standing — a few stronger courses can lift your CGPA quickly.';
-    if (value >= 2.00) return 'Satisfactory, but improvement is recommended.';
-    if (value > 0) return 'At-risk range — focus on failed/low-credit courses and seek academic support.';
-
-    return 'Add valid courses to see your semester performance.';
-  }
-
+  /* ─────────────────────────────────────────────
+   * 6. PUBLIC API
+   * ───────────────────────────────────────────── */
   return {
     GRADING_SCALE,
     getGradeInfo,
-    getGradePoint,
-    getLetterGrade,
-    validateCourseInput,
-    calculateCoursePercentage,
-    calculateCourseQualityPoints,
-    calculateSemesterGPA,
-    calculateCGPA,
-    getPerformanceSummary,
-    roundTo
+    calcTheoryTotal,
+    calcLabTotal,
+    calcFinalPercentage,
+    getPerformanceLabel,
+    // Utility helpers exposed for UI layer
+    toNum,
+    round2,
   };
 });

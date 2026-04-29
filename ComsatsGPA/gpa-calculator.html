@@ -1,169 +1,302 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>COMSATS GPA Calculator | ComsatsPrepHub</title>
-  <meta name="description" content="Calculate COMSATS semester GPA and CGPA with theory/lab credit handling.">
+  <meta name="description" content="Calculate your COMSATS semester GPA using the official absolute grading scale with theory and lab components.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
   <link rel="stylesheet" href="../styles/tailwind-built.css">
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../auth-modal.css">
-  <link rel="stylesheet" href="styles/gpa-calculator.css">
 
   <script src="../js/dark-mode.js" defer></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* ── gradient hero ── */
+    .hero-gradient {
+      background: linear-gradient(135deg, #0f766e 0%, #0ea5e9 100%);
+    }
+
+    /* ── glassmorphism card ── */
+    .glass-card {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .dark .glass-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── input styling ── */
+    .gpa-input {
+      width: 100%;
+      border-radius: 0.5rem;
+      border-width: 1px;
+      border-color: #e2e8f0;
+      background-color: #ffffff;
+      color: #1e293b;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      transition: all 0.15s ease;
+    }
+    .dark .gpa-input {
+      border-color: #475569;
+      background-color: #1e293b;
+      color: #f8fafc;
+    }
+    .gpa-input::placeholder {
+      color: #94a3b8;
+    }
+    .dark .gpa-input::placeholder {
+      color: #64748b;
+    }
+    .gpa-input:focus {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 2px #14b8a6;
+    }
+
+    .gpa-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+    .dark .gpa-label {
+      color: #94a3b8;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #0d9488;
+      margin-bottom: 0.75rem;
+    }
+    .dark .section-title {
+      color: #2dd4bf;
+    }
+
+    /* ── slide-in animation ── */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-in { animation: slideIn 0.25s ease both; }
+
+    /* ── scale table rows ── */
+    .scale-row:nth-child(odd) {
+      background: rgba(15,118,110,0.04);
+    }
+    .dark .scale-row:nth-child(odd) {
+      background: rgba(20,184,166,0.06);
+    }
+
+    /* ── overall GPA panel ── */
+    .overall-panel {
+      background: linear-gradient(135deg, #0f766e, #0284c7);
+    }
+  </style>
 </head>
 
-<body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
+
   <div id="app-header"></div>
 
-  <main class="gpa-page page-transition">
-    <section class="gpa-hero-mini">
-      <div class="gpa-hero-copy-wrap">
-        <span class="gpa-kicker">COMSATS GPA Calculator</span>
-        <h1>Calculate your semester GPA and updated CGPA in minutes.</h1>
-        <p>
-          Add courses, theory/lab credits, and marks. The calculator instantly shows GPA,
-          CGPA, credit hours, quality points, and course-wise grades.
-        </p>
-      </div>
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════ -->
+  <header class="hero-gradient text-white py-12 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <span class="inline-flex items-center gap-2 bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+        <span class="material-symbols-outlined text-base">school</span>
+        COMSATS University Islamabad
+      </span>
+      <h1 class="text-3xl md:text-4xl font-extrabold leading-tight mb-3">GPA Calculator</h1>
+      <p class="text-white/80 text-sm md:text-base max-w-xl mx-auto">
+        Enter your marks for assignments, quizzes, midterm, and finals. We calculate your GPA using the official COMSATS absolute grading scale.
+      </p>
+    </div>
+  </header>
 
-      <div class="gpa-hero-card">
-        <span class="material-symbols-outlined">school</span>
-        <strong>Built for COMSATS students</strong>
-        <p>Simple, fast, mobile-friendly, and easy to update when grading rules change.</p>
-      </div>
-    </section>
+  <!-- ═══════════════════════════════════════════
+       MAIN TWO-COLUMN LAYOUT
+  ════════════════════════════════════════════ -->
+  <main class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
-    <section class="gpa-results-grid" aria-label="GPA results">
-      <article class="gpa-result-card is-primary">
-        <span>Semester GPA</span>
-        <strong id="semester-gpa">0.00</strong>
-        <small id="performance-summary">Add valid courses to see your performance.</small>
-      </article>
+    <!-- ── LEFT: DATA ENTRY FORM ─────────────── -->
+    <div class="glass-card rounded-3xl p-6 shadow-xl">
+      <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-teal-600 dark:text-teal-400">edit_note</span>
+        Subject Entry
+      </h2>
 
-      <article class="gpa-result-card">
-        <span>Updated CGPA</span>
-        <strong id="updated-cgpa">0.00</strong>
-        <small>Based on previous record plus this semester.</small>
-      </article>
+      <form id="subject-form" novalidate>
 
-      <article class="gpa-result-card">
-        <span>Current Credits</span>
-        <strong id="current-credits">0</strong>
-        <small>Credits counted in this semester.</small>
-      </article>
-
-      <article class="gpa-result-card">
-        <span>Total Credits</span>
-        <strong id="total-completed-credits">0</strong>
-        <small>Previous credits plus current credits.</small>
-      </article>
-    </section>
-
-    <section class="gpa-workspace" id="calculator">
-      <div class="gpa-main-panel">
-        <div class="gpa-section-header">
-          <div>
-            <span class="gpa-kicker">Calculator</span>
-            <h2>Course details</h2>
-            <p>
-              Enter marks as percentages. Course name is optional, but useful when saving history.
-            </p>
-          </div>
-
-          <button id="add-course-btn" type="button" class="gpa-btn gpa-btn-primary">
-            <span class="material-symbols-outlined">add</span>
-            Add Course
-          </button>
+        <!-- Subject Name -->
+        <div class="mb-5">
+          <label for="subject-name" class="gpa-label">Subject Name</label>
+          <input id="subject-name" type="text" class="gpa-input" placeholder="e.g. Data Structures">
         </div>
 
-        <div id="course-list" class="gpa-course-list" aria-live="polite"></div>
+        <!-- Has Lab toggle -->
+        <label class="flex items-center gap-3 cursor-pointer mb-6 group">
+          <div class="relative">
+            <input id="has-lab" type="checkbox" class="sr-only peer">
+            <div class="w-10 h-6 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-teal-500 transition-colors"></div>
+            <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+          </div>
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">This subject has a Lab component</span>
+        </label>
 
-        <div id="validation-summary" class="gpa-validation-box" aria-live="polite">
-          <p class="success-text">Add a course to start calculating.</p>
-        </div>
+        <!-- ── THEORY SECTION ── -->
+        <div class="mb-6">
+          <p class="section-title">Theory Component</p>
 
-        <div class="gpa-action-row">
-          <button id="save-semester-btn" type="button" class="gpa-btn gpa-btn-primary">
-            <span class="material-symbols-outlined">bookmark_add</span>
-            Save Calculation
-          </button>
-
-          <button id="reset-btn" type="button" class="gpa-btn gpa-btn-soft">
-            <span class="material-symbols-outlined">restart_alt</span>
-            Reset
-          </button>
-        </div>
-      </div>
-
-      <aside class="gpa-sidebar">
-        <section class="gpa-side-card">
-          <div class="gpa-side-icon blue">
-            <span class="material-symbols-outlined">functions</span>
+          <!-- Assignments -->
+          <p class="gpa-label mb-2">Assignments <span class="text-slate-400 font-normal">(max 12.5 each)</span></p>
+          <div class="grid grid-cols-4 gap-2 mb-4">
+            <div><label class="gpa-label text-center block">A1</label><input id="assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">A2</label><input id="assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">A3</label><input id="assignment-3" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">A4</label><input id="assignment-4" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
           </div>
 
-          <h3>Previous CGPA</h3>
-          <p>Add your previous CGPA and completed credits to calculate updated CGPA.</p>
-
-          <label for="previous-cgpa">Previous CGPA</label>
-          <input id="previous-cgpa" type="number" min="0" max="4" step="0.01" placeholder="e.g. 3.25">
-
-          <label for="previous-credits">Completed credit hours</label>
-          <input id="previous-credits" type="number" min="0" step="1" placeholder="e.g. 72">
-
-          <div class="gpa-quality-card">
-            <span>Current quality points</span>
-            <strong id="quality-points">0.00</strong>
+          <!-- Quizzes -->
+          <p class="gpa-label mb-2">Quizzes <span class="text-slate-400 font-normal">(max 10 each)</span></p>
+          <div class="grid grid-cols-4 gap-2 mb-4">
+            <div><label class="gpa-label text-center block">Q1</label><input id="quiz-1" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">Q2</label><input id="quiz-2" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">Q3</label><input id="quiz-3" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">Q4</label><input id="quiz-4" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0"></div>
           </div>
-        </section>
 
-        <section class="gpa-side-card">
-          <div class="gpa-side-card-head">
+          <!-- Mid & Final -->
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <div class="gpa-side-icon green">
-                <span class="material-symbols-outlined">history</span>
-              </div>
-              <h3>Saved history</h3>
+              <label for="theory-mid" class="gpa-label">Midterm <span class="text-slate-400 font-normal">(max 25)</span></label>
+              <input id="theory-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0">
             </div>
+            <div>
+              <label for="theory-final" class="gpa-label">Final <span class="text-slate-400 font-normal">(max 50)</span></label>
+              <input id="theory-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0">
+            </div>
+          </div>
+        </div>
 
-            <button id="clear-history-btn" type="button" class="gpa-link-btn">Clear</button>
+        <!-- ── LAB SECTION (conditional) ── -->
+        <div id="lab-section" class="hidden mb-6 border-t border-dashed border-slate-200 dark:border-slate-700 pt-5">
+          <p class="section-title">Lab Component <span class="text-slate-400 font-normal normal-case tracking-normal text-xs">(33% weight)</span></p>
+
+          <!-- Lab Assignments -->
+          <p class="gpa-label mb-2">Lab Assignments <span class="text-slate-400 font-normal">(max 12.5 each)</span></p>
+          <div class="grid grid-cols-4 gap-2 mb-4">
+            <div><label class="gpa-label text-center block">L1</label><input id="lab-assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">L2</label><input id="lab-assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">L3</label><input id="lab-assignment-3" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
+            <div><label class="gpa-label text-center block">L4</label><input id="lab-assignment-4" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0"></div>
           </div>
 
-          <div id="history-list" class="gpa-history-list">
-            <p class="muted-text">No saved GPA calculations yet.</p>
+          <!-- Lab Mid & Final -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="lab-mid" class="gpa-label">Lab Midterm <span class="text-slate-400 font-normal">(max 25)</span></label>
+              <input id="lab-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0">
+            </div>
+            <div>
+              <label for="lab-final" class="gpa-label">Lab Final <span class="text-slate-400 font-normal">(max 50)</span></label>
+              <input id="lab-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0">
+            </div>
           </div>
-        </section>
+        </div>
 
-        <section class="gpa-side-card">
-          <div class="gpa-side-icon purple">
-            <span class="material-symbols-outlined">grading</span>
+        <!-- Submit -->
+        <button type="submit"
+          class="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 active:scale-[0.98] text-white font-semibold rounded-xl py-3 px-6 text-sm transition-all shadow-md shadow-teal-500/20">
+          <span class="material-symbols-outlined text-lg">add_circle</span>
+          Calculate &amp; Add Subject
+        </button>
+      </form>
+
+      <!-- Grading Scale Reference -->
+      <details class="mt-6">
+        <summary class="cursor-pointer text-xs font-bold text-teal-700 dark:text-teal-400 flex items-center gap-1 select-none hover:underline">
+          <span class="material-symbols-outlined text-sm">grading</span>
+          COMSATS Official Grading Scale
+        </summary>
+        <div class="mt-3 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-700 text-xs">
+          <div class="grid grid-cols-3 bg-slate-100 dark:bg-slate-800 font-bold text-slate-600 dark:text-slate-400 px-3 py-2">
+            <span>Grade</span><span class="text-center">Range</span><span class="text-right">GPA</span>
           </div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-emerald-600">A</span><span class="text-center">85–100%</span><span class="text-right">4.00</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-emerald-600">A-</span><span class="text-center">80–84%</span><span class="text-right">3.67</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B+</span><span class="text-center">75–79%</span><span class="text-right">3.33</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B</span><span class="text-center">71–74%</span><span class="text-right">3.00</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B-</span><span class="text-center">68–70%</span><span class="text-right">2.67</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-amber-600">C+</span><span class="text-center">64–67%</span><span class="text-right">2.33</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-amber-600">C</span><span class="text-center">60–63%</span><span class="text-right">2.00</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-orange-600">C-</span><span class="text-center">57–59%</span><span class="text-right">1.67</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-red-600">D+</span><span class="text-center">53–56%</span><span class="text-right">1.33</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-red-600">D</span><span class="text-center">50–52%</span><span class="text-right">1.00</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-rose-600 dark:text-rose-400 font-semibold"><span>F</span><span class="text-center">0–49%</span><span class="text-right">0.00</span></div>
+        </div>
+      </details>
+    </div>
 
-          <h3>COMSATS grading scale</h3>
-          <p>Quick reference for grade ranges and grade points.</p>
+    <!-- ── RIGHT: RESULTS LIST ────────────────── -->
+    <div class="flex flex-col gap-4">
 
-          <div class="gpa-scale-mini">
-            <div><b>A</b><span>85–100</span><small>3.67–4.00</small></div>
-            <div><b>A-</b><span>80–84</span><small>3.34–3.66</small></div>
-            <div><b>B+</b><span>75–79</span><small>3.01–3.33</small></div>
-            <div><b>B</b><span>71–74</span><small>2.67–3.00</small></div>
-            <div><b>B-</b><span>68–70</span><small>2.34–2.66</small></div>
-            <div><b>C+</b><span>64–67</span><small>2.01–2.33</small></div>
-            <div><b>C</b><span>61–63</span><small>1.67–2.00</small></div>
-            <div><b>C-</b><span>58–60</span><small>1.31–1.66</small></div>
-            <div><b>D+</b><span>54–57</span><small>1.01–1.30</small></div>
-            <div><b>D</b><span>50–53</span><small>0.10–1.00</small></div>
-            <div class="danger"><b>F</b><span>&lt;50</span><small>0.00</small></div>
-          </div>
-        </section>
-      </aside>
-    </section>
+      <!-- Results header -->
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <span class="material-symbols-outlined text-teal-600 dark:text-teal-400">list_alt</span>
+          Added Subjects
+        </h2>
+        <button id="reset-all-btn"
+          class="hidden text-xs font-semibold text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">restart_alt</span>Reset
+        </button>
+      </div>
+
+      <!-- Subjects list -->
+      <div id="subjects-list" class="flex flex-col gap-3 min-h-[120px]">
+        <!-- Empty state -->
+        <div id="empty-state" class="glass-card rounded-2xl p-8 text-center shadow">
+          <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 block mb-2">inbox</span>
+          <p class="text-sm text-slate-400 dark:text-slate-500">No subjects added yet.<br>Fill in the form and click <strong class="text-teal-600">Calculate &amp; Add Subject</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Calculate Overall GPA button -->
+      <button id="calc-overall-btn"
+        class="hidden w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-sky-600 hover:from-teal-700 hover:to-sky-700 text-white font-bold rounded-2xl py-3.5 px-6 text-sm transition-all shadow-lg shadow-teal-500/30 active:scale-[0.98]">
+        <span class="material-symbols-outlined">functions</span>
+        Calculate Overall GPA
+      </button>
+
+      <!-- Overall GPA Result panel -->
+      <div id="overall-result" class="hidden overall-panel rounded-3xl p-6 text-white shadow-xl animate-slide-in">
+        <p class="text-white/70 text-xs font-semibold uppercase tracking-widest mb-1">Cumulative GPA</p>
+        <div class="flex items-end gap-3 mb-2">
+          <span id="overall-gpa" class="text-5xl font-extrabold tabular-nums">0.00</span>
+          <span id="overall-label" class="text-2xl font-bold text-white/70 mb-1">—</span>
+        </div>
+        <p id="overall-perf" class="text-white/80 text-sm"></p>
+      </div>
+    </div>
+
   </main>
 
   <div id="app-footer"></div>
