@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>COMSATS Islamabad Campus Map | COMSATSPrepHub</title>
+  <meta
+    name="description"
+    content="Explore COMSATS Islamabad campus map with important places, study spots, academic blocks, cafeteria, library, sports areas, and campus guide."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="../styles/tailwind-built.css">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../auth-modal.css">
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <script src="../js/dark-mode.js" defer></script>
+
+  <style>
+    :root {
+      --map-primary: #2563eb;
+      --map-primary-soft: rgba(37, 99, 235, 0.12);
+      --map-border: rgba(148, 163, 184, 0.25);
+      --map-card: rgba(255, 255, 255, 0.92);
+      --map-text: #0f172a;
+      --map-muted: #64748b;
+    }
+
+    .dark {
+      --map-card: rgba(15, 23, 42, 0.92);
+      --map-text: #f8fafc;
+      --map-muted: #94a3b8;
+      --map-border: rgba(255, 255, 255, 0.10);
+    }
+
+    .campus-map-shell {
+      min-height: 100vh;
+    }
+
+    #campusMap {
+      width: 100%;
+      height: 72vh;
+      min-height: 540px;
+      border-radius: 2rem;
+      overflow: hidden;
+      z-index: 1;
+      background: #e2e8f0;
+    }
+
+    .leaflet-container {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 10px;
+    }
+
+    .campus-marker-pin {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 2px solid var(--map-primary);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.22);
+      font-size: 19px;
+      transform: translateY(-2px);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .campus-marker-pin:hover {
+      transform: translateY(-6px) scale(1.05);
+      box-shadow: 0 18px 38px rgba(15, 23, 42, 0.28);
+    }
+
+    .campus-marker-selected {
+      border-color: #f97316;
+      animation: campusPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes campusPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.45), 0 14px 30px rgba(15, 23, 42, 0.22);
+      }
+      50% {
+        box-shadow: 0 0 0 12px rgba(249, 115, 22, 0), 0 14px 30px rgba(15, 23, 42, 0.22);
+      }
+    }
+
+    .campus-sidebar {
+      max-height: 72vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .campus-sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .campus-sidebar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.45);
+      border-radius: 999px;
+    }
+
+    .campus-filter-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
+    }
+
+    .dark .campus-filter-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #ffffff;
+    }
+
+    .campus-place-card.active {
+      border-color: #2563eb;
+      background: rgba(37, 99, 235, 0.08);
+    }
+
+    .dark .campus-place-card.active {
+      background: rgba(59, 130, 246, 0.12);
+    }
+
+    .campus-popup-title {
+      font-weight: 900;
+      color: #0f172a;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .campus-popup-type {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .campus-popup-desc {
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .campus-popup-tip {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      #campusMap {
+        height: 60vh;
+        min-height: 430px;
+        border-radius: 1.5rem;
+      }
+
+      .campus-sidebar {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #campusMap {
+        height: 58vh;
+        min-height: 380px;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300">
+  <div id="app-header"></div>
+
+  <main class="campus-map-shell px-5 md:px-10 pb-28">
+    <section class="max-w-7xl mx-auto pt-10 md:pt-14">
+      <div class="text-center max-w-4xl mx-auto mb-10">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-[0.18em] mb-5">
+          <span class="material-symbols-outlined text-base">map</span>
+          Campus Companion
+        </div>
+
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white mb-4">
+          COMSATS Islamabad Campus Map
+        </h1>
+
+        <p class="text-gray-500 dark:text-gray-400 text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+          Find important campus places, study zones, academic blocks, food points, sports areas, and services in one interactive map.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_390px] gap-6 items-start">
+        <section class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-[2rem] p-3 border border-gray-100 dark:border-white/10 shadow-sm">
+          <div id="campusMap" aria-label="Interactive COMSATS Islamabad campus map"></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+            <div class="rounded-2xl bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-white/10 px-4 py-3">
+              <p class="text-xs font-black uppercase tracking-widest text-gray-400">Places</p>
+              <p id="totalPlacesCount" class="text-xl font-black text-gray-900 dark:text-white">0</p>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-white/10 px-4 py-3">
+              <p class="text-xs font-black uppercase tracking-widest text-gray-400">Active Filter</p>
+              <p id="activeFilterLabel" class="text-xl font-black text-gray-900 dark:text-white">All</p>
+            </div>
+
+            <div class="rounded-2xl bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-white/10 px-4 py-3">
+              <p class="text-xs font-black uppercase tracking-widest text-gray-400">Selected Point</p>
+              <p id="selectedCoordinates" class="text-sm font-black text-gray-900 dark:text-white truncate">None</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="campus-sidebar bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-[2rem] p-6 border border-gray-100 dark:border-white/10 shadow-sm">
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <h2 class="text-2xl font-black text-gray-900 dark:text-white">Explore Campus</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Search, filter, and click any place to zoom.
+              </p>
+            </div>
+
+            <button
+              id="resetMapBtn"
+              type="button"
+              class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 transition-all"
+              title="Reset map"
+              aria-label="Reset map"
+            >
+              <span class="material-symbols-outlined">refresh</span>
+            </button>
+          </div>
+
+          <div class="relative mb-4">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input
+              id="placeSearchInput"
+              type="search"
+              placeholder="Search library, cafeteria, gate..."
+              class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-white/10 text-sm font-semibold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+            >
+          </div>
+
+          <div id="filterButtons" class="flex flex-wrap gap-2 mb-5"></div>
+
+          <div class="rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 p-4 mb-5">
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined text-blue-600 dark:text-blue-300">tips_and_updates</span>
+              <div>
+                <h3 class="text-sm font-black text-blue-900 dark:text-blue-100">Phase 1 Feature</h3>
+                <p class="text-xs leading-relaxed text-blue-700 dark:text-blue-200 mt-1">
+                  This version shows campus places only. In Phase 2, you will add anonymous memories and student study spot ratings.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-5">
+            <button
+              id="copyCoordinatesBtn"
+              type="button"
+              class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-sm hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              <span class="material-symbols-outlined text-lg">content_copy</span>
+              Copy Selected Coordinates
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-black text-gray-900 dark:text-white">Campus Places</h3>
+            <span id="visiblePlacesCount" class="text-xs font-black px-3 py-1 rounded-full bg-gray-100 dark:bg-slate-900 text-gray-500 dark:text-gray-400">
+              0 shown
+            </span>
+          </div>
+
+          <div id="placesList" class="space-y-3"></div>
+
+          <div id="emptyState" class="hidden text-center py-10">
+            <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-slate-900 mx-auto grid place-items-center mb-3">
+              <span class="material-symbols-outlined text-gray-400">travel_explore</span>
+            </div>
+            <h3 class="font-black text-gray-900 dark:text-white">No place found</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Try another search or filter.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer"></div>
+  <div id="app-mobile-nav"></div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="">
+  </script>
+
+  <script type="module" src="../js/layout.js"></script>
+  <script type="module" src="../js/campus-map.js"></script>
+</body>
+</html>
