@@ -36,6 +36,29 @@
   const liveBadge = document.getElementById('live-preview-badge');
   const liveGpaEl = document.getElementById('live-gpa');
 
+  const gradeInsight = document.getElementById('grade-insight');
+  const gradeInsightCurrent = document.getElementById('grade-insight-current');
+  const gradeInsightMessage = document.getElementById('grade-insight-message');
+  const gradeProgressFill = document.getElementById('grade-progress-fill');
+
+  const editModal = document.getElementById('edit-subject-modal');
+  const editNameInp = document.getElementById('edit-subject-name');
+  const editCreditsInp = document.getElementById('edit-credit-hours');
+  
+  const editQuizObt = document.getElementById('edit-quiz-obt');
+  const editQuizTot = document.getElementById('edit-quiz-tot');
+  const editAssignObt = document.getElementById('edit-assign-obt');
+  const editAssignTot = document.getElementById('edit-assign-tot');
+  const editMidObt = document.getElementById('edit-mid-obt');
+  const editMidTot = document.getElementById('edit-mid-tot');
+  const editFinalObt = document.getElementById('edit-final-obt');
+  const editFinalTot = document.getElementById('edit-final-tot');
+
+  const saveEditBtn = document.getElementById('save-changes-btn');
+  const cancelEditBtn = document.getElementById('cancel-changes-btn');
+
+  let subjectToEditId = null;
+
   function readMarkScheme() {
     return {
       theory: {
@@ -66,22 +89,69 @@
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    const rowTypes = {
+      assignment: {
+        obtainedClass: 'assignment-obtained',
+        totalClass: 'assignment-total',
+        defaultTotal: '12.5',
+        label: 'Assignment',
+      },
+      quiz: {
+        obtainedClass: 'quiz-obtained',
+        totalClass: 'quiz-total',
+        defaultTotal: '10',
+        label: 'Quiz',
+      },
+      lab: {
+        obtainedClass: 'lab-obtained',
+        totalClass: 'lab-total',
+        defaultTotal: '12.5',
+        label: 'Lab Item',
+      },
+    };
+
+    const config = rowTypes[type] || rowTypes.assignment;
+
     const row = document.createElement('div');
     row.className = 'dynamic-row';
-    
-    let defaultTotal = '10';
-    if (type === 'assignment' || type === 'lab-assignment') defaultTotal = '12.5';
 
     row.innerHTML = `
-      <div><input type="number" step="0.5" class="gpa-input ${type}-obtained" placeholder="Obt."></div>
-      <div><input type="number" step="0.5" class="gpa-input ${type}-total" value="${defaultTotal}"></div>
-      <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
+      <div>
+        <label class="text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase">
+          Obtained
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="0.5"
+          class="gpa-input ${config.obtainedClass}"
+          placeholder="0"
+          aria-label="${config.label} obtained marks"
+        >
+      </div>
+
+      <div>
+        <label class="text-[10px] font-bold text-slate-500 dark:text-slate-300 uppercase">
+          Total
+        </label>
+        <input
+          type="number"
+          min="0.5"
+          step="0.5"
+          class="gpa-input ${config.totalClass}"
+          value="${config.defaultTotal}"
+          aria-label="${config.label} total marks"
+        >
+      </div>
+
+      <button type="button" class="remove-row-btn" aria-label="Remove ${config.label}">
+        <span class="material-symbols-outlined text-lg" aria-hidden="true">delete</span>
+      </button>
     `;
 
     container.appendChild(row);
 
-    const inputs = row.querySelectorAll('input');
-    inputs.forEach(input => {
+    row.querySelectorAll('input').forEach(input => {
       input.addEventListener('input', () => {
         validateInput(input);
         updateLivePreview();
@@ -89,7 +159,16 @@
     });
 
     row.querySelector('.remove-row-btn').addEventListener('click', () => {
-      row.remove();
+      const remainingRows = container.querySelectorAll('.dynamic-row').length;
+
+      if (remainingRows <= 1) {
+        row.querySelectorAll('input').forEach(input => {
+          input.value = input.className.includes('total') ? config.defaultTotal : '';
+        });
+      } else {
+        row.remove();
+      }
+
       updateLivePreview();
     });
   }
@@ -132,29 +211,108 @@
     });
   }
 
+  function setFieldError(input, message) {
+    if (!input) return;
+
+    const wrapper = input.closest('div');
+    if (!wrapper) return;
+
+    const oldError = wrapper.querySelector('.field-error');
+    if (oldError) oldError.remove();
+
+    input.classList.remove('is-invalid', 'is-valid');
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+    input.setCustomValidity('');
+
+    if (!message) {
+      input.classList.add('is-valid');
+      return;
+    }
+
+    const errorId = `${input.id || Math.random().toString(36).slice(2)}-error`;
+    const error = document.createElement('span');
+    error.className = 'field-error';
+    error.id = errorId;
+    error.textContent = message;
+
+    wrapper.appendChild(error);
+
+    input.classList.add('is-invalid');
+    input.setAttribute('aria-invalid', 'true');
+    input.setAttribute('aria-describedby', errorId);
+    input.setCustomValidity(message);
+  }
+
   function validateInput(input) {
     const row = input.closest('.dynamic-row') || input.closest('.marks-grid-pair');
-    if (row) {
-      const obtInput = row.querySelector('[class*="-obtained"], [id$="-obtained"]');
-      const totInput = row.querySelector('[class*="-total"], [id$="-total"]');
-      
-      if (obtInput && totInput) {
-        const obtVal = parseFloat(obtInput.value);
-        const totVal = parseFloat(totInput.value);
-        
-        if (!isNaN(obtVal) && !isNaN(totVal)) {
-          const progress = (obtVal / totVal) * 100;
-          obtInput.style.setProperty('--progress', `${Math.min(progress, 100)}%`);
-          
-          if (obtVal > totVal) {
-            obtInput.classList.add('is-invalid');
-          } else {
-            obtInput.classList.remove('is-invalid');
-            obtInput.classList.add('is-valid');
-          }
-        }
-      }
+    if (!row) return true;
+
+    const obtInput = row.querySelector('[class*="-obtained"], [id$="-obtained"]');
+    const totInput = row.querySelector('[class*="-total"], [id$="-total"]');
+
+    if (!obtInput || !totInput) return true;
+
+    const obtained = parseFloat(obtInput.value);
+    const total = parseFloat(totInput.value);
+
+    setFieldError(obtInput, '');
+    setFieldError(totInput, '');
+
+    if (!Number.isFinite(total) || total <= 0) {
+      setFieldError(totInput, 'Total marks must be greater than 0.');
+      return false;
     }
+
+    if (Number.isFinite(obtained) && obtained < 0) {
+      setFieldError(obtInput, 'Obtained marks cannot be negative.');
+      return false;
+    }
+
+    if (Number.isFinite(obtained) && obtained > total) {
+      setFieldError(obtInput, 'Obtained marks cannot be greater than total marks.');
+      return false;
+    }
+
+    if (Number.isFinite(obtained)) {
+      const progress = Math.max(0, Math.min((obtained / total) * 100, 100));
+      obtInput.style.setProperty('--progress', `${progress}%`);
+    }
+
+    return true;
+  }
+
+  function updateGradeInsight(finalPct, gradeInfo) {
+    if (!gradeInsight || !gradeInsightCurrent || !gradeInsightMessage || !gradeProgressFill) return;
+
+    const pct = Logic.clamp(Math.round(Logic.toNum(finalPct, 0)), 0, 100);
+    const currentBand = Logic.GRADING_SCALE.find(item => pct >= item.percentMin && pct <= item.percentMax);
+
+    if (!currentBand) {
+      gradeInsight.classList.add('hidden');
+      return;
+    }
+
+    const betterBand = [...Logic.GRADING_SCALE]
+      .filter(item => item.percentMin > pct)
+      .sort((a, b) => a.percentMin - b.percentMin)[0];
+
+    gradeInsight.classList.remove('hidden');
+    gradeInsightCurrent.textContent = `${gradeInfo.letter} • ${gradeInfo.point.toFixed(2)} GPA`;
+
+    if (!betterBand) {
+      gradeInsightMessage.textContent = `You are already in the highest grade range. Current percentage: ${pct}%.`;
+      gradeProgressFill.style.width = '100%';
+      return;
+    }
+
+    const marksNeeded = betterBand.percentMin - pct;
+    gradeInsightMessage.textContent = `You need about ${marksNeeded}% more to reach ${betterBand.letter} grade. Current percentage: ${pct}%.`;
+
+    const bandSize = Math.max(currentBand.percentMax - currentBand.percentMin + 1, 1);
+    const progressInsideBand = ((pct - currentBand.percentMin + 1) / bandSize) * 100;
+
+    gradeProgressFill.style.width = `${Math.max(5, Math.min(progressInsideBand, 100))}%`;
   }
 
   function updateLivePreview() {
@@ -166,6 +324,8 @@
     const labTotal = hasLabCb.checked ? Logic.calcLabTotal(data.lab, scheme.lab) : 0;
     const finalPct = Logic.calcFinalPercentage(theoryTotal, labTotal, hasLabCb.checked, creditHours, 1);
     const gradeInfo = Logic.getGradeInfo(finalPct);
+
+    updateGradeInsight(finalPct, gradeInfo);
 
     liveGpaEl.textContent = gradeInfo.point.toFixed(2);
     liveBadge.classList.add('visible');
@@ -225,6 +385,15 @@
     const finalPct = Logic.calcFinalPercentage(theoryTotal, labTotal, hasLab, creditHours, 1);
     const gradeInfo = Logic.getGradeInfo(finalPct);
 
+    // Sum up categories for "Deep Edit" storage
+    const sum = (arr) => arr.reduce((acc, curr) => ({ obt: acc.obt + curr.obtained, tot: acc.tot + curr.total }), { obt: 0, tot: 0 });
+    const tStats = {
+      q: sum(data.theory.quizzes),
+      a: sum(data.theory.assignments),
+      m: data.theory.mid,
+      f: data.theory.final
+    };
+
     const newSubject = {
       id: nextSubjectId++,
       name: subjectName,
@@ -235,6 +404,7 @@
       hasLab,
       theoryTotal,
       labTotal,
+      raw: tStats // Store for editing
     };
 
     addedSubjects.push(newSubject);
@@ -250,6 +420,115 @@
     liveBadge.classList.remove('visible');
   }
 
+  function openEditModal(subject) {
+    subjectToEditId = subject.id;
+    editNameInp.value = subject.name;
+    editCreditsInp.value = subject.creditHours;
+    
+    // Populate raw marks
+    editQuizObt.value = subject.raw.q.obt;
+    editQuizTot.value = subject.raw.q.tot || 10;
+    editAssignObt.value = subject.raw.a.obt;
+    editAssignTot.value = subject.raw.a.tot || 12.5;
+    editMidObt.value = subject.raw.m.obtained;
+    editMidTot.value = subject.raw.m.total || 25;
+    editFinalObt.value = subject.raw.f.obtained;
+    editFinalTot.value = subject.raw.f.total || 50;
+
+    editModal.classList.remove('hidden');
+    editModal.classList.add('flex');
+    editNameInp.focus();
+  }
+
+  function closeEditModal() {
+    editModal.classList.add('hidden');
+    editModal.classList.remove('flex');
+    subjectToEditId = null;
+  }
+
+  saveEditBtn.addEventListener('click', () => {
+    if (!subjectToEditId) return;
+
+    const subject = addedSubjects.find(s => s.id === subjectToEditId);
+    if (!subject) return;
+
+    const newName = editNameInp.value.trim() || 'Unnamed Subject';
+    const newCredits = Math.max(parseFloat(editCreditsInp.value) || 3, 0.5);
+    
+    // Read edited marks
+    const r = {
+      q: { obtained: parseFloat(editQuizObt.value) || 0, total: parseFloat(editQuizTot.value) || 1 },
+      a: { obtained: parseFloat(editAssignObt.value) || 0, total: parseFloat(editAssignTot.value) || 1 },
+      m: { obtained: parseFloat(editMidObt.value) || 0, total: parseFloat(editMidTot.value) || 1 },
+      f: { obtained: parseFloat(editFinalObt.value) || 0, total: parseFloat(editFinalTot.value) || 1 }
+    };
+
+    // Recalculate using GpaLogic (with default scheme or scheme from settings)
+    const scheme = readMarkScheme();
+    const theoryData = {
+      quizzes: [{ obtained: r.q.obtained, total: r.q.total }],
+      assignments: [{ obtained: r.a.obtained, total: r.a.total }],
+      mid: r.m,
+      final: r.f
+    };
+
+    const theoryTotal = Logic.calcTheoryTotal(theoryData, scheme.theory);
+    const finalPct = Logic.calcFinalPercentage(theoryTotal, subject.labTotal, subject.hasLab, newCredits, 1);
+    const gradeInfo = Logic.getGradeInfo(finalPct);
+
+    // Update data object
+    subject.name = newName;
+    subject.creditHours = newCredits;
+    subject.percentage = finalPct;
+    subject.gpa = gradeInfo.point;
+    subject.letter = gradeInfo.letter;
+    subject.theoryTotal = theoryTotal;
+    subject.raw = {
+      q: { obt: r.q.obtained, tot: r.q.total },
+      a: { obt: r.a.obtained, tot: r.a.total },
+      m: r.m,
+      f: r.f
+    };
+
+    // Refresh UI
+    const card = document.getElementById(`subject-card-${subject.id}`);
+    if (card) {
+      const nameEl = card.querySelector('.subject-name-text');
+      const infoEl = card.querySelector('.subject-info-text');
+      const gradeBadge = card.querySelector('.grade-badge');
+      const gpaText = card.querySelector('.gpa-text');
+
+      if (nameEl) nameEl.textContent = subject.name;
+      if (infoEl) {
+        infoEl.innerHTML = `
+          <span>Credits: <strong class="text-slate-700 dark:text-slate-200">${subject.creditHours.toFixed(1)}</strong></span>
+          <span>Theory: <strong class="text-slate-700 dark:text-slate-200">${subject.theoryTotal.toFixed(1)}%</strong></span>
+          ${subject.hasLab ? `<span>Lab: <strong class="text-slate-700 dark:text-slate-200">${subject.labTotal.toFixed(1)}%</strong></span>` : ''}
+          <span>Final: <strong class="text-slate-700 dark:text-slate-200">${subject.percentage.toFixed(2)}%</strong></span>
+        `;
+      }
+      if (gradeBadge) {
+        gradeBadge.textContent = subject.letter;
+        gradeBadge.className = `grade-badge inline-flex items-center justify-center w-10 h-10 rounded-xl text-sm font-bold ${getGradeBadgeColor(subject.letter)}`;
+      }
+      if (gpaText) gpaText.textContent = `${subject.gpa.toFixed(2)} GPA`;
+    }
+
+    closeEditModal();
+    
+    if (!overallResult.classList.contains('hidden')) {
+      calcGpaBtn.click();
+    } else {
+      calcGpaBtn.classList.add('is-pulsing');
+    }
+  });
+
+  cancelEditBtn.addEventListener('click', closeEditModal);
+
+  editModal.addEventListener('click', (e) => {
+    if (e.target === editModal) closeEditModal();
+  });
+
   function renderSubjectCard(subject, orderIndex) {
     emptyState.classList.add('hidden');
     const card = document.createElement('li');
@@ -257,37 +536,62 @@
     const delayClass = `slide-delay-${Math.min(orderIndex, 5)}`;
     const badgeColor = getGradeBadgeColor(subject.letter);
 
-    card.className = `subject-card flex items-start justify-between gap-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-5 shadow-sm animate-slide-in ${delayClass} group/card hover:-translate-y-0.5 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-800 transition-all`;
+    card.className = `subject-card cursor-pointer flex items-start justify-between gap-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-5 shadow-sm animate-slide-in ${delayClass} group/card hover:-translate-y-0.5 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-800 transition-all`;
+    const gpaColorClass = getGpaTextColor(subject.gpa);
 
     card.innerHTML = `
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <p class="font-semibold text-slate-800 dark:text-slate-100 truncate text-sm" title="${escHtml(subject.name)}">
+      <div class="flex-1 min-w-0 pr-4 pointer-events-none">
+        <div class="flex items-center gap-2 mb-2">
+          <p class="subject-name-text font-extrabold text-slate-800 dark:text-slate-100 truncate text-base" title="${escHtml(subject.name)}">
             ${escHtml(subject.name)}
           </p>
-          <button type="button" class="delete-btn opacity-0 group-hover/card:opacity-100 transition-opacity text-slate-400 hover:text-rose-500 focus:opacity-100 p-1" data-id="${subject.id}" aria-label="Delete ${escHtml(subject.name)}">
-            <span class="material-symbols-outlined text-sm">close</span>
-          </button>
         </div>
-        <div class="mt-1.5 flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
-          <span>Credits: <strong class="text-slate-700 dark:text-slate-200">${subject.creditHours.toFixed(1)}</strong></span>
-          <span>Theory: <strong class="text-slate-700 dark:text-slate-200">${subject.theoryTotal.toFixed(1)}%</strong></span>
-          ${subject.hasLab ? `<span>Lab: <strong class="text-slate-700 dark:text-slate-200">${subject.labTotal.toFixed(1)}%</strong></span>` : ''}
-          <span>Final: <strong class="text-slate-700 dark:text-slate-200">${subject.percentage.toFixed(2)}%</strong></span>
+        <div class="subject-info-text flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <span class="flex items-center gap-1.5">
+            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Credits</span> 
+            <strong class="text-slate-700 dark:text-slate-200">${subject.creditHours.toFixed(1)}</strong>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Theory</span> 
+            <strong class="text-slate-700 dark:text-slate-200">${subject.theoryTotal.toFixed(1)}%</strong>
+          </span>
+          ${subject.hasLab ? `
+          <span class="flex items-center gap-1.5">
+            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Lab</span> 
+            <strong class="text-slate-700 dark:text-slate-200">${subject.labTotal.toFixed(1)}%</strong>
+          </span>` : ''}
+          <span class="flex items-center gap-1.5">
+            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Final</span> 
+            <strong class="text-teal-600 dark:text-teal-400 font-bold">${subject.percentage.toFixed(2)}%</strong>
+          </span>
         </div>
       </div>
-      <div class="flex flex-col items-end gap-1 shrink-0">
-        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-sm font-bold ${badgeColor}">
+      <div class="flex flex-col items-end gap-1 shrink-0 pointer-events-none pr-8">
+        <span class="grade-badge inline-flex items-center justify-center w-12 h-12 rounded-2xl text-lg font-black ${badgeColor}">
           ${escHtml(subject.letter)}
         </span>
-        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+        <span class="gpa-text text-[13px] font-black ${gpaColorClass}">
           ${subject.gpa.toFixed(2)} GPA
         </span>
       </div>
+      <button type="button" class="delete-btn absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 focus:opacity-100 shadow-sm border border-rose-200 dark:border-rose-900/50" data-id="${subject.id}" aria-label="Delete ${escHtml(subject.name)}">
+        <span class="material-symbols-outlined !text-[14px] text-rose-500 font-bold">close</span>
+      </button>
     `;
 
     subjectsList.appendChild(card);
-    card.querySelector('.delete-btn').addEventListener('click', () => handleDeleteSubject(subject.id));
+    
+    // Card click opens edit modal (unless delete was clicked)
+    card.addEventListener('click', (e) => {
+      if (!e.target.closest('.delete-btn')) {
+        openEditModal(subject);
+      }
+    });
+
+    card.querySelector('.delete-btn').addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent modal from opening
+      handleDeleteSubject(subject.id);
+    });
   }
 
   function handleDeleteSubject(id) {
@@ -312,19 +616,25 @@
 
   function getGradeBadgeColor(letter) {
     const map = {
-      A: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
-      'A-': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
-      'B+': 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300',
-      B: 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300',
-      'B-': 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300',
-      'C+': 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300',
-      C: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300',
-      'C-': 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
-      'D+': 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300',
-      D: 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300',
-      F: 'bg-rose-200 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300',
+      'A': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+      'A-': 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400',
+      'B+': 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400',
+      'B': 'bg-sky-50 text-sky-600 dark:bg-sky-900/20 dark:text-sky-400',
+      'B-': 'bg-sky-50/50 text-sky-500 dark:bg-sky-900/10 dark:text-sky-400',
+      'C+': 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+      'C': 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400',
+      'C-': 'bg-amber-50/50 text-amber-500 dark:bg-amber-900/10 dark:text-amber-400',
+      'D+': 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400',
+      'D': 'bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400',
+      'F': 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400'
     };
-    return map[letter] || 'bg-slate-100 text-slate-600';
+    return map[letter] || 'bg-slate-100 text-slate-700';
+  }
+
+  function getGpaTextColor(gpa) {
+    if (gpa === 0) return 'text-rose-600 dark:text-rose-400';
+    if (gpa < 2.0) return 'text-orange-500 dark:text-orange-400';
+    return 'text-emerald-600 dark:text-emerald-400';
   }
 
   calcGpaBtn.addEventListener('click', () => {
@@ -433,18 +743,59 @@
 
   function validateForm() {
     const errors = [];
+
     form.querySelectorAll('input[type="number"]').forEach(input => {
       if (input.closest('.hidden')) return;
-      if (input.classList.contains('is-invalid')) {
-        errors.push("One or more fields have invalid marks (Obtained > Total).");
+
+      const isValid = validateInput(input);
+
+      if (!isValid) {
+        errors.push('Some marks are invalid. Check fields highlighted in red.');
       }
     });
-    return [...new Set(errors)]; 
+
+    const creditHours = Logic.toNum(courseCreditHoursEl?.value, 3);
+
+    if (creditHours < 0.5 || creditHours > 6) {
+      errors.push('Credit hours must be between 0.5 and 6.');
+    }
+
+    const theoryWeightTotal =
+      readNumberInput('assignment-weight') +
+      readNumberInput('quiz-weight') +
+      readNumberInput('theory-mid-weight') +
+      readNumberInput('theory-final-weight');
+
+    if (theoryWeightTotal <= 0) {
+      errors.push('Theory weight total must be greater than 0.');
+    }
+
+    if (hasLabCb.checked) {
+      const labWeightTotal =
+        readNumberInput('lab-assignment-weight') +
+        readNumberInput('lab-mid-weight') +
+        readNumberInput('lab-final-weight');
+
+      if (labWeightTotal <= 0) {
+        errors.push('Lab weight total must be greater than 0.');
+      }
+    }
+
+    return [...new Set(errors)];
   }
 
   hasLabCb.addEventListener('change', syncLabMode);
   clearFormBtn.addEventListener('click', resetFormCompletely);
   setupRowListeners();
+
+  document.addEventListener('keydown', event => {
+    if (editModal.classList.contains('hidden')) return;
+
+    if (event.key === 'Escape') {
+      closeEditModal();
+    }
+  });
+
   setTimeout(syncLabMode, 0);
 
 })();

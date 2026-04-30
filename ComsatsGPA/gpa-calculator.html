@@ -20,6 +20,7 @@
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
+  <a class="skip-link" href="#main-content">Skip to calculator</a>
 
   <div id="app-header"></div>
 
@@ -42,7 +43,7 @@
   <!-- ═══════════════════════════════════════════
        MAIN TWO-COLUMN LAYOUT
   ════════════════════════════════════════════ -->
-  <main class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+  <main id="main-content" tabindex="-1" class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
     <!-- ── LEFT: DATA ENTRY FORM ─────────────── -->
     <section aria-labelledby="form-section-title" class="glass-card rounded-3xl p-6 shadow-xl">
@@ -83,62 +84,58 @@
 
         <!-- Dynamic Total Marks Settings -->
         <details id="marks-settings" class="marks-settings mb-5 rounded-2xl border border-teal-100 dark:border-teal-900/40 bg-teal-50/50 dark:bg-teal-950/20 p-4">
-          <summary class="flex items-center justify-between gap-3 cursor-pointer select-none">
+          <summary class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 cursor-pointer select-none min-h-[44px]">
             <span class="text-sm font-bold text-teal-700 dark:text-teal-300">
               Customize Total Marks
             </span>
-            <span class="text-xs text-slate-500 dark:text-slate-400">
-              Change totals if your teacher uses a different scheme
+            <span class="text-xs text-slate-600 dark:text-slate-300">
+              Change weights only if your teacher uses a different scheme.
             </span>
           </summary>
 
           <div class="mt-4 space-y-5">
-            <div>
-              <p class="section-title mb-3">Theory Marks Scheme</p>
+            <fieldset class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <legend class="section-title mb-3 col-span-full">Theory Marks Scheme</legend>
 
-                <div>
-                  <label for="assignment-weight" class="gpa-label">Assignment Weight</label>
-                  <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="quiz-weight" class="gpa-label">Quiz Weight</label>
-                  <input id="quiz-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="theory-mid-weight" class="gpa-label">Midterm Weight</label>
-                  <input id="theory-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="theory-final-weight" class="gpa-label">Final Weight</label>
-                  <input id="theory-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
-                </div>
+              <div>
+                <label for="assignment-weight" class="gpa-label">Assignment Weight</label>
+                <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
               </div>
-            </div>
-            </div>
 
-            <div id="lab-marks-settings" class="hidden border-t border-dashed border-teal-200 dark:border-teal-800 pt-4">
-              <p class="section-title mb-3">Lab Marks Scheme</p>
-
-                <div>
-                  <label for="lab-assignment-weight" class="gpa-label">Lab Assignment Weight</label>
-                  <input id="lab-assignment-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="lab-mid-weight" class="gpa-label">Lab Midterm Weight</label>
-                  <input id="lab-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="lab-final-weight" class="gpa-label">Lab Final Weight</label>
-                  <input id="lab-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
-                </div>
+              <div>
+                <label for="quiz-weight" class="gpa-label">Quiz Weight</label>
+                <input id="quiz-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
               </div>
-            </div>
-            </div>
+
+              <div>
+                <label for="theory-mid-weight" class="gpa-label">Midterm Weight</label>
+                <input id="theory-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+              </div>
+
+              <div>
+                <label for="theory-final-weight" class="gpa-label">Final Weight</label>
+                <input id="theory-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
+              </div>
+            </fieldset>
+
+            <fieldset id="lab-marks-settings" class="hidden border-t border-dashed border-teal-200 dark:border-teal-800 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <legend class="section-title mb-3 col-span-full">Lab Marks Scheme</legend>
+
+              <div>
+                <label for="lab-assignment-weight" class="gpa-label">Lab Assignment Weight</label>
+                <input id="lab-assignment-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+              </div>
+
+              <div>
+                <label for="lab-mid-weight" class="gpa-label">Lab Midterm Weight</label>
+                <input id="lab-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+              </div>
+
+              <div>
+                <label for="lab-final-weight" class="gpa-label">Lab Final Weight</label>
+                <input id="lab-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
+              </div>
+            </fieldset>
           </div>
         </details>
 
@@ -219,7 +216,7 @@
           <div class="mb-5">
             <div class="flex items-center justify-between mb-2">
               <label class="gpa-label !mb-0">Lab Assignments</label>
-              <button type="button" class="add-row-btn" data-container="lab-assignments-list" data-type="lab-assignment">
+              <button type="button" class="add-row-btn" data-container="lab-assignments-list" data-type="lab">
                 <span class="material-symbols-outlined !text-xs">add</span> Add Lab Item
               </button>
             </div>
@@ -254,6 +251,21 @@
 
         <div id="form-errors" role="alert" aria-live="polite" class="mb-4 text-sm text-rose-600 dark:text-rose-400 hidden"></div>
 
+        <div id="grade-insight" class="grade-insight hidden" aria-live="polite">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
+              Grade Insight
+            </p>
+            <span id="grade-insight-current" class="text-xs font-black text-teal-700 dark:text-teal-300"></span>
+          </div>
+
+          <p id="grade-insight-message" class="text-xs text-slate-600 dark:text-slate-300 mb-2"></p>
+
+          <div class="grade-progress">
+            <span id="grade-progress-fill"></span>
+          </div>
+        </div>
+
         <!-- Submit & Clear -->
         <div class="flex gap-3 flex-col sm:flex-row">
           <button type="submit"
@@ -283,10 +295,10 @@
             <span>Grade</span><span class="text-center">Range</span><span class="text-right">GPA</span>
           </div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-emerald-600">A</span><span class="text-center">85–100%</span><span class="text-right">4.00</span></div>
-          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-emerald-600">A-</span><span class="text-center">80–84%</span><span class="text-right">3.67</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-emerald-600">A-</span><span class="text-center">80–84%</span><span class="text-right">3.66</span></div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B+</span><span class="text-center">75–79%</span><span class="text-right">3.33</span></div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B</span><span class="text-center">71–74%</span><span class="text-right">3.00</span></div>
-          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B-</span><span class="text-center">68–70%</span><span class="text-right">2.67</span></div>
+          <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-sky-600">B-</span><span class="text-center">68–70%</span><span class="text-right">2.66</span></div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-amber-600">C+</span><span class="text-center">64–67%</span><span class="text-right">2.33</span></div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-amber-600">C</span><span class="text-center">60–63%</span><span class="text-right">2.00</span></div>
           <div class="scale-row grid grid-cols-3 px-3 py-1.5 text-slate-700 dark:text-slate-300"><span class="font-semibold text-orange-600">C-</span><span class="text-center">57–59%</span><span class="text-right">1.67</span></div>
@@ -349,6 +361,79 @@
 
   <div id="app-footer"></div>
   <div id="app-mobile-nav"></div>
+
+  <!-- ── EDIT SUBJECT MODAL ── -->
+  <div id="edit-subject-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 w-full max-w-xl shadow-2xl animate-slide-in overflow-y-auto max-h-[90vh]">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+          <span class="material-symbols-outlined">edit_square</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">Deep Edit Subject</h2>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Basic Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="edit-subject-name" class="gpa-label">Subject Name</label>
+            <input id="edit-subject-name" type="text" class="gpa-input" placeholder="e.g. Data Structures">
+          </div>
+          <div>
+            <label for="edit-credit-hours" class="gpa-label">Credit Hours</label>
+            <input id="edit-credit-hours" type="number" step="0.5" min="0.5" max="6" class="gpa-input">
+          </div>
+        </div>
+
+        <div class="h-px bg-slate-100 dark:bg-slate-700"></div>
+
+        <!-- Marks Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+          <!-- Quizzes -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Quizzes</span>
+            <div class="flex gap-2">
+              <input id="edit-quiz-obt" type="number" step="0.1" class="gpa-input text-center" placeholder="Obt.">
+              <input id="edit-quiz-tot" type="number" step="0.1" class="gpa-input text-center" placeholder="Tot.">
+            </div>
+          </div>
+          <!-- Assignments -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Assignments</span>
+            <div class="flex gap-2">
+              <input id="edit-assign-obt" type="number" step="0.1" class="gpa-input text-center" placeholder="Obt.">
+              <input id="edit-assign-tot" type="number" step="0.1" class="gpa-input text-center" placeholder="Tot.">
+            </div>
+          </div>
+          <!-- Midterm -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Midterm</span>
+            <div class="flex gap-2">
+              <input id="edit-mid-obt" type="number" step="0.1" class="gpa-input text-center" placeholder="Obt.">
+              <input id="edit-mid-tot" type="number" step="0.1" class="gpa-input text-center" placeholder="Tot.">
+            </div>
+          </div>
+          <!-- Final -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Final Exam</span>
+            <div class="flex gap-2">
+              <input id="edit-final-obt" type="number" step="0.1" class="gpa-input text-center" placeholder="Obt.">
+              <input id="edit-final-tot" type="number" step="0.1" class="gpa-input text-center" placeholder="Tot.">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-6">
+          <button id="save-changes-btn" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl py-3 text-sm transition-all shadow-lg shadow-teal-500/20 active:scale-[0.98]">
+            Save Changes
+          </button>
+          <button id="cancel-changes-btn" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl py-3 text-sm transition-all active:scale-[0.98]">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="../js/layout.js"></script>
   <script src="js/gpa-logic.js"></script>

@@ -179,15 +179,58 @@ select.gpa-input {
 .subject-card {
   position: relative;
   overflow: hidden;
+  border-radius: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .subject-card::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
-  width: 4px;
+  width: 6px;
   background: linear-gradient(180deg, var(--site-accent), var(--site-secondary));
-  opacity: 0.85;
+  opacity: 1;
+}
+
+.grade-badge {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.subject-card:hover .grade-badge {
+  transform: scale(1.1) rotate(2deg);
+}
+
+.delete-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(241, 245, 249, 0.8);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.dark .delete-btn {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+  color: #ef4444 !important;
+  transform: rotate(90deg);
+}
+
+.dark .delete-btn:hover {
+  background: #450a0a;
 }
 
 .overall-panel {
@@ -302,8 +345,41 @@ details[open] .chevron-icon {
   }
 }
 
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#edit-subject-modal.flex {
+  display: flex;
+}
+
+#edit-subject-modal .glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dark #edit-subject-modal .glass-card {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+}
+
+#edit-subject-modal .gpa-input {
+  background-color: #f8fafc;
+}
+
+.dark #edit-subject-modal .gpa-input {
+  background-color: #0f172a;
 }
 
 .field-error {
@@ -484,4 +560,131 @@ details[open] .chevron-icon {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+}
+
+/* Accessibility: skip link */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 1rem;
+  z-index: 9999;
+  background: #0f766e;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+}
+
+.skip-link:focus {
+  left: 1rem;
+}
+
+/* Stronger focus visibility */
+button:focus-visible,
+summary:focus-visible,
+.gpa-input:focus-visible,
+[role="switch"]:focus-visible + div {
+  outline: 3px solid #14b8a6;
+  outline-offset: 3px;
+}
+
+/* Better mobile touch targets */
+button,
+.add-row-btn,
+.remove-row-btn,
+#empty-state-cta,
+summary {
+  min-height: 44px;
+}
+
+.remove-row-btn {
+  min-width: 44px;
+}
+
+/* Better inline validation */
+.gpa-input.is-invalid {
+  border-color: #dc2626;
+  background-color: #fff1f2;
+}
+
+.dark .gpa-input.is-invalid {
+  background-color: rgba(127, 29, 29, 0.25);
+}
+
+.field-error {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.1rem;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.dark .field-error {
+  color: #fca5a5;
+}
+
+/* Grade insight panel */
+.grade-insight {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  background: rgba(240, 253, 250, 0.75);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.dark .grade-insight {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: rgba(45, 212, 191, 0.22);
+}
+
+.grade-progress {
+  width: 100%;
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+}
+
+.grade-progress span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0f766e, #0ea5e9);
+  transition: width 0.25s ease;
+}
+
+/* Better small-screen layout */
+@media (max-width: 420px) {
+  .glass-card {
+    border-radius: 1.25rem;
+  }
+
+  .dynamic-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-row-btn {
+    width: 100%;
+    border: 1px dashed rgba(239, 68, 68, 0.35);
+  }
+
+  #live-preview-badge {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.55rem;
+  }
+}
+
+/* Respect users who dislike animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
