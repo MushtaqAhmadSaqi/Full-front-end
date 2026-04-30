@@ -327,15 +327,25 @@
 
     updateGradeInsight(finalPct, gradeInfo);
 
-    liveGpaEl.textContent = gradeInfo.point.toFixed(2);
+    if (liveGpaEl) {
+      liveGpaEl.innerHTML = `
+        <span class="text-xl font-black">${gradeInfo.point.toFixed(2)}</span>
+        <span class="text-[10px] opacity-70 uppercase ml-1">GPA</span>
+        <span class="mx-2 opacity-30">|</span>
+        <span class="text-lg font-bold text-teal-600 dark:text-teal-400">${gradeInfo.letter}</span>
+      `;
+    }
+    
     liveBadge.classList.add('visible');
     
+    // Update badge color based on GPA standing
+    const baseClasses = 'visible p-3 rounded-2xl flex items-center gap-3 transition-all duration-300 shadow-sm border';
     if (gradeInfo.point >= 3.5) {
-      liveBadge.className = 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800 visible p-2 rounded-lg flex items-center gap-2';
+      liveBadge.className = `${baseClasses} bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-800/50`;
     } else if (gradeInfo.point >= 2.0) {
-      liveBadge.className = 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border border-teal-100 dark:border-teal-800 visible p-2 rounded-lg flex items-center gap-2';
+      liveBadge.className = `${baseClasses} bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-100 dark:border-teal-800/50`;
     } else {
-      liveBadge.className = 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-800 visible p-2 rounded-lg flex items-center gap-2';
+      liveBadge.className = `${baseClasses} bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-800/50`;
     }
   }
 
@@ -546,7 +556,7 @@
             ${escHtml(subject.name)}
           </p>
         </div>
-        <div class="subject-info-text flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+        <div class="subject-info-text flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-500 dark:text-slate-400">
           <span class="flex items-center gap-1.5">
             <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Credits</span> 
             <strong class="text-slate-700 dark:text-slate-200">${subject.creditHours.toFixed(1)}</strong>
@@ -560,22 +570,27 @@
             <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Lab</span> 
             <strong class="text-slate-700 dark:text-slate-200">${subject.labTotal.toFixed(1)}%</strong>
           </span>` : ''}
-          <span class="flex items-center gap-1.5">
-            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Final</span> 
+          <span class="flex items-center gap-1.5 border-l border-slate-200 dark:border-slate-700 pl-4 ml-1">
+            <span class="text-slate-400 uppercase font-black text-[9px] tracking-widest">Aggregate</span> 
             <strong class="text-teal-600 dark:text-teal-400 font-bold">${subject.percentage.toFixed(2)}%</strong>
           </span>
         </div>
       </div>
-      <div class="flex flex-col items-end gap-1 shrink-0 pointer-events-none pr-8">
-        <span class="grade-badge inline-flex items-center justify-center w-12 h-12 rounded-2xl text-lg font-black ${badgeColor}">
-          ${escHtml(subject.letter)}
-        </span>
-        <span class="gpa-text text-[13px] font-black ${gpaColorClass}">
-          ${subject.gpa.toFixed(2)} GPA
-        </span>
+      
+      <div class="flex flex-col items-end gap-1.5 shrink-0 pointer-events-none pr-8">
+        <div class="flex items-center gap-2">
+          <span class="gpa-text text-lg font-black ${gpaColorClass}">
+            ${subject.gpa.toFixed(2)}
+          </span>
+          <span class="grade-badge inline-flex items-center justify-center w-9 h-9 rounded-xl text-xs font-black ${badgeColor}">
+            ${escHtml(subject.letter)}
+          </span>
+        </div>
+        <span class="text-[10px] font-bold uppercase tracking-tighter text-slate-400 dark:text-slate-500">Subject GPA</span>
       </div>
-      <button type="button" class="delete-btn absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 focus:opacity-100 shadow-sm border border-rose-200 dark:border-rose-900/50" data-id="${subject.id}" aria-label="Delete ${escHtml(subject.name)}">
-        <span class="material-symbols-outlined !text-[14px] text-rose-500 font-bold">close</span>
+
+      <button type="button" class="delete-btn shadow-sm dark:border-rose-900/50" data-id="${subject.id}" aria-label="Delete ${escHtml(subject.name)}">
+        <span class="material-symbols-outlined !text-[16px] font-bold">close</span>
       </button>
     `;
 
