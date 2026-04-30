@@ -374,3 +374,114 @@ details[open] .chevron-icon {
 }
 
 
+/* Dynamic Row Styles */
+.dynamic-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dynamic-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: end;
+  animation: slideInRow 0.3s ease-out;
+}
+
+.dynamic-row .gpa-input {
+  margin-right: 0;
+}
+
+.remove-row-btn {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+
+.remove-row-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.dark .remove-row-btn:hover {
+  background-color: #450a0a;
+  color: #f87171;
+}
+
+.add-row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--site-primary);
+  background: var(--site-accent-soft);
+  border: 1px dashed var(--site-accent);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.add-row-btn:hover {
+  background: var(--site-accent);
+  color: white;
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+.dark .add-row-btn {
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.05);
+}
+
+.dark .add-row-btn:hover {
+  background: #14b8a6;
+  color: white;
+}
+
+/* Live Preview Badge */
+#live-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+#live-preview-badge.visible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+@keyframes slideInRow {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mid/Final Pairs */
+.marks-grid-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}

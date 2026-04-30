@@ -119,30 +119,41 @@
     return (safeObtained / max) * safeWeight;
   }
 
+  /**
+   * Helper to sum up obtained and total from an array of objects { obtained, total }
+   */
+  function sumMarks(items = []) {
+    return items.reduce(
+      (acc, item) => {
+        const itemTotal = positive(item?.total, 0);
+        const itemObtained = clamp(toNum(item?.obtained, 0), 0, itemTotal);
+        acc.obtained += itemObtained;
+        acc.total += itemTotal;
+        return acc;
+      },
+      { obtained: 0, total: 0 }
+    );
+  }
+
   function calcTheoryTotal(fields = {}, schemeInput = {}) {
     const scheme = normalizeScheme({ theory: schemeInput }).theory;
 
-    const assignments = fields.assignments || [];
-    const quizzes = fields.quizzes || [];
+    // fields.assignments and fields.quizzes are now arrays of { obtained, total }
+    const assignmentStats = sumMarks(fields.assignments);
+    const quizStats = sumMarks(fields.quizzes);
 
-    const assignmentObtained = assignments.reduce(
-      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.assignmentMax),
-      0
-    );
+    // Mid and Final are now objects { obtained, total }
+    const midObtained = toNum(fields.mid?.obtained, 0);
+    const midTotal = positive(fields.mid?.total, scheme.midMax);
 
-    const quizObtained = quizzes.reduce(
-      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.quizMax),
-      0
-    );
-
-    const assignmentMaxTotal = scheme.assignmentMax * Math.max(assignments.length, 1);
-    const quizMaxTotal = scheme.quizMax * Math.max(quizzes.length, 1);
+    const finalObtained = toNum(fields.final?.obtained, 0);
+    const finalTotal = positive(fields.final?.total, scheme.finalMax);
 
     const parts = [
-      weightedPart(assignmentObtained, assignmentMaxTotal, scheme.assignmentWeight),
-      weightedPart(quizObtained, quizMaxTotal, scheme.quizWeight),
-      weightedPart(fields.mid, scheme.midMax, scheme.midWeight),
-      weightedPart(fields.final, scheme.finalMax, scheme.finalWeight),
+      weightedPart(assignmentStats.obtained, assignmentStats.total || 1, scheme.assignmentWeight),
+      weightedPart(quizStats.obtained, quizStats.total || 1, scheme.quizWeight),
+      weightedPart(midObtained, midTotal, scheme.midWeight),
+      weightedPart(finalObtained, finalTotal, scheme.finalWeight),
     ];
 
     const totalWeight =
@@ -153,25 +164,25 @@
 
     if (totalWeight <= 0) return 0;
 
-    return round2(clamp((parts.reduce((sum, value) => sum + value, 0) / totalWeight) * 100, 0, 100));
+    const weightedSum = parts.reduce((sum, value) => sum + value, 0);
+    return round2(clamp((weightedSum / totalWeight) * 100, 0, 100));
   }
 
   function calcLabTotal(fields = {}, schemeInput = {}) {
     const scheme = normalizeScheme({ lab: schemeInput }).lab;
 
-    const labAssignments = fields.labAssignments || [];
+    const labAssignmentStats = sumMarks(fields.labAssignments);
 
-    const labAssignmentObtained = labAssignments.reduce(
-      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.assignmentMax),
-      0
-    );
+    const midObtained = toNum(fields.labMid?.obtained, 0);
+    const midTotal = positive(fields.labMid?.total, scheme.midMax);
 
-    const labAssignmentMaxTotal = scheme.assignmentMax * Math.max(labAssignments.length, 1);
+    const finalObtained = toNum(fields.labFinal?.obtained, 0);
+    const finalTotal = positive(fields.labFinal?.total, scheme.finalMax);
 
     const parts = [
-      weightedPart(labAssignmentObtained, labAssignmentMaxTotal, scheme.assignmentWeight),
-      weightedPart(fields.labMid, scheme.midMax, scheme.midWeight),
-      weightedPart(fields.labFinal, scheme.finalMax, scheme.finalWeight),
+      weightedPart(labAssignmentStats.obtained, labAssignmentStats.total || 1, scheme.assignmentWeight),
+      weightedPart(midObtained, midTotal, scheme.midWeight),
+      weightedPart(finalObtained, finalTotal, scheme.finalWeight),
     ];
 
     const totalWeight =
@@ -181,7 +192,8 @@
 
     if (totalWeight <= 0) return 0;
 
-    return round2(clamp((parts.reduce((sum, value) => sum + value, 0) / totalWeight) * 100, 0, 100));
+    const weightedSum = parts.reduce((sum, value) => sum + value, 0);
+    return round2(clamp((weightedSum / totalWeight) * 100, 0, 100));
   }
 
   function calcFinalPercentage(theoryTotal, labTotal, hasLab, creditHours = 3, labCreditHours = 1) {

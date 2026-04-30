@@ -46,10 +46,16 @@
 
     <!-- ── LEFT: DATA ENTRY FORM ─────────────── -->
     <section aria-labelledby="form-section-title" class="glass-card rounded-3xl p-6 shadow-xl">
-      <h2 id="form-section-title" class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-5 flex items-center gap-2">
-        <span class="material-symbols-outlined text-teal-600 dark:text-teal-400">edit_note</span>
-        Subject Entry
-      </h2>
+      <div class="flex items-center justify-between mb-5">
+        <h2 id="form-section-title" class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <span class="material-symbols-outlined text-teal-600 dark:text-teal-400">edit_note</span>
+          Subject Entry
+        </h2>
+        <div id="live-preview-badge" class="bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border border-teal-100 dark:border-teal-800">
+          <span class="material-symbols-outlined text-sm">analytics</span>
+          <span id="live-gpa">0.00</span> GPA
+        </div>
+      </div>
 
       <form id="subject-form" novalidate>
 
@@ -90,20 +96,9 @@
             <div>
               <p class="section-title mb-3">Theory Marks Scheme</p>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label for="assignment-max" class="gpa-label">Assignment Max Each</label>
-                  <input id="assignment-max" type="number" min="0.1" max="100" step="0.1" value="12.5" class="gpa-input">
-                </div>
-
                 <div>
                   <label for="assignment-weight" class="gpa-label">Assignment Weight</label>
                   <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="quiz-max" class="gpa-label">Quiz Max Each</label>
-                  <input id="quiz-max" type="number" min="0.1" max="100" step="0.1" value="10" class="gpa-input">
                 </div>
 
                 <div>
@@ -112,18 +107,8 @@
                 </div>
 
                 <div>
-                  <label for="theory-mid-max" class="gpa-label">Midterm Max</label>
-                  <input id="theory-mid-max" type="number" min="0.1" max="200" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
                   <label for="theory-mid-weight" class="gpa-label">Midterm Weight</label>
                   <input id="theory-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="theory-final-max" class="gpa-label">Final Max</label>
-                  <input id="theory-final-max" type="number" min="0.1" max="200" step="0.1" value="50" class="gpa-input">
                 </div>
 
                 <div>
@@ -132,24 +117,14 @@
                 </div>
               </div>
             </div>
+            </div>
 
             <div id="lab-marks-settings" class="hidden border-t border-dashed border-teal-200 dark:border-teal-800 pt-4">
               <p class="section-title mb-3">Lab Marks Scheme</p>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label for="lab-assignment-max" class="gpa-label">Lab Assignment Max Each</label>
-                  <input id="lab-assignment-max" type="number" min="0.1" max="100" step="0.1" value="12.5" class="gpa-input">
-                </div>
-
                 <div>
                   <label for="lab-assignment-weight" class="gpa-label">Lab Assignment Weight</label>
                   <input id="lab-assignment-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
-                </div>
-
-                <div>
-                  <label for="lab-mid-max" class="gpa-label">Lab Midterm Max</label>
-                  <input id="lab-mid-max" type="number" min="0.1" max="200" step="0.1" value="25" class="gpa-input">
                 </div>
 
                 <div>
@@ -158,15 +133,11 @@
                 </div>
 
                 <div>
-                  <label for="lab-final-max" class="gpa-label">Lab Final Max</label>
-                  <input id="lab-final-max" type="number" min="0.1" max="200" step="0.1" value="50" class="gpa-input">
-                </div>
-
-                <div>
                   <label for="lab-final-weight" class="gpa-label">Lab Final Weight</label>
                   <input id="lab-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </details>
@@ -185,64 +156,98 @@
         <div class="mb-6">
           <p class="section-title">Theory Component</p>
 
-          <!-- Assignments -->
-          <p class="gpa-label mb-2" id="hint-assignment">Assignments <span id="assignment-max-label" class="text-slate-400 font-normal">(max 12.5 each)</span></p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-            <div><label class="gpa-label text-center block" for="assignment-1">A1</label><input id="assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
-            <div><label class="gpa-label text-center block" for="assignment-2">A2</label><input id="assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
-            <div><label class="gpa-label text-center block" for="assignment-3">A3</label><input id="assignment-3" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
-            <div><label class="gpa-label text-center block" for="assignment-4">A4</label><input id="assignment-4" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
+          <!-- Dynamic Assignments -->
+          <div class="mb-5">
+            <div class="flex items-center justify-between mb-2">
+              <label class="gpa-label !mb-0">Assignments</label>
+              <button type="button" class="add-row-btn" data-container="theory-assignments-list" data-type="assignment">
+                <span class="material-symbols-outlined !text-xs">add</span> Add Assignment
+              </button>
+            </div>
+            <div id="theory-assignments-list" class="dynamic-rows-container">
+              <!-- Initial row -->
+              <div class="dynamic-row">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Obtained</label><input type="number" step="0.5" class="gpa-input assignment-obtained" placeholder="0"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input assignment-total" value="12.5"></div>
+                <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
+              </div>
+            </div>
           </div>
 
-          <!-- Quizzes -->
-          <p class="gpa-label mb-2" id="hint-quiz">Quizzes <span id="quiz-max-label" class="text-slate-400 font-normal">(max 10 each)</span></p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-            <div><label class="gpa-label text-center block" for="quiz-1">Q1</label><input id="quiz-1" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
-            <div><label class="gpa-label text-center block" for="quiz-2">Q2</label><input id="quiz-2" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
-            <div><label class="gpa-label text-center block" for="quiz-3">Q3</label><input id="quiz-3" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
-            <div><label class="gpa-label text-center block" for="quiz-4">Q4</label><input id="quiz-4" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
+          <!-- Dynamic Quizzes -->
+          <div class="mb-5">
+            <div class="flex items-center justify-between mb-2">
+              <label class="gpa-label !mb-0">Quizzes</label>
+              <button type="button" class="add-row-btn" data-container="theory-quizzes-list" data-type="quiz">
+                <span class="material-symbols-outlined !text-xs">add</span> Add Quiz
+              </button>
+            </div>
+            <div id="theory-quizzes-list" class="dynamic-rows-container">
+              <!-- Initial row -->
+              <div class="dynamic-row">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Obtained</label><input type="number" step="0.5" class="gpa-input quiz-obtained" placeholder="0"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input quiz-total" value="10"></div>
+                <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
+              </div>
+            </div>
           </div>
 
           <!-- Mid & Final -->
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label for="theory-mid" class="gpa-label" id="hint-theory-mid">Midterm <span id="theory-mid-max-label" class="text-slate-400 font-normal">(max 25)</span></label>
-              <input id="theory-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-theory-mid">
+              <label class="gpa-label">Midterm Marks</label>
+              <div class="marks-grid-pair">
+                <input id="theory-mid-obtained" type="number" step="0.5" class="gpa-input" placeholder="Obt.">
+                <input id="theory-mid-total" type="number" step="0.5" class="gpa-input" value="25" title="Total Midterm Marks">
+              </div>
             </div>
             <div>
-              <label for="theory-final" class="gpa-label" id="hint-theory-final">Final <span id="theory-final-max-label" class="text-slate-400 font-normal">(max 50)</span></label>
-              <input id="theory-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-theory-final">
+              <label class="gpa-label">Final Marks</label>
+              <div class="marks-grid-pair">
+                <input id="theory-final-obtained" type="number" step="0.5" class="gpa-input" placeholder="Obt.">
+                <input id="theory-final-total" type="number" step="0.5" class="gpa-input" value="50" title="Total Final Marks">
+              </div>
             </div>
           </div>
         </div>
 
         <!-- ── LAB SECTION (conditional) ── -->
         <div id="lab-section" class="hidden mb-6 border-t border-dashed border-slate-200 dark:border-slate-700 pt-5">
-          <p class="section-title">
-            Lab Component
-            <span class="text-slate-400 font-normal normal-case tracking-normal text-xs">
-              (credit-hour weighted)
-            </span>
-          </p>
+          <p class="section-title">Lab Component</p>
 
-          <!-- Lab Assignments -->
-          <p class="gpa-label mb-2" id="hint-lab-assignment">Lab Assignments <span id="lab-assignment-max-label" class="text-slate-400 font-normal">(max 12.5 each)</span></p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-            <div><label class="gpa-label text-center block" for="lab-assignment-1">L1</label><input id="lab-assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
-            <div><label class="gpa-label text-center block" for="lab-assignment-2">L2</label><input id="lab-assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
-            <div><label class="gpa-label text-center block" for="lab-assignment-3">L3</label><input id="lab-assignment-3" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
-            <div><label class="gpa-label text-center block" for="lab-assignment-4">L4</label><input id="lab-assignment-4" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
+          <!-- Dynamic Lab Assignments -->
+          <div class="mb-5">
+            <div class="flex items-center justify-between mb-2">
+              <label class="gpa-label !mb-0">Lab Assignments</label>
+              <button type="button" class="add-row-btn" data-container="lab-assignments-list" data-type="lab-assignment">
+                <span class="material-symbols-outlined !text-xs">add</span> Add Lab Item
+              </button>
+            </div>
+            <div id="lab-assignments-list" class="dynamic-rows-container">
+              <!-- Initial row -->
+              <div class="dynamic-row">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Obtained</label><input type="number" step="0.5" class="gpa-input lab-obtained" placeholder="0"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input lab-total" value="12.5"></div>
+                <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
+              </div>
+            </div>
           </div>
 
           <!-- Lab Mid & Final -->
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label for="lab-mid" class="gpa-label" id="hint-lab-mid">Lab Midterm <span id="lab-mid-max-label" class="text-slate-400 font-normal">(max 25)</span></label>
-              <input id="lab-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-lab-mid">
+              <label class="gpa-label">Lab Midterm</label>
+              <div class="marks-grid-pair">
+                <input id="lab-mid-obtained" type="number" step="0.5" class="gpa-input" placeholder="Obt.">
+                <input id="lab-mid-total" type="number" step="0.5" class="gpa-input" value="25">
+              </div>
             </div>
             <div>
-              <label for="lab-final" class="gpa-label" id="hint-lab-final">Lab Final <span id="lab-final-max-label" class="text-slate-400 font-normal">(max 50)</span></label>
-              <input id="lab-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-lab-final">
+              <label class="gpa-label">Lab Final</label>
+              <div class="marks-grid-pair">
+                <input id="lab-final-obtained" type="number" step="0.5" class="gpa-input" placeholder="Obt.">
+                <input id="lab-final-total" type="number" step="0.5" class="gpa-input" value="50">
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 /**
  * gpa-calculator.js — COMSATS PLUS GPA Calculator UI Controller
  *
- * DOM layer and overall aggregator logic.
+ * DOM layer and overall aggregator logic with dynamic rows and live preview.
  */
 (function initCalculatorUI() {
   'use strict';
@@ -30,268 +30,198 @@
   const clearFormBtn = document.getElementById('clear-form-btn');
   const formErrors = document.getElementById('form-errors');
   const emptyStateCta = document.getElementById('empty-state-cta');
-
   const courseCreditHoursEl = document.getElementById('course-credit-hours');
   const labMarksSettings = document.getElementById('lab-marks-settings');
 
-  const dynamicMarksInputs = [
-    'assignment-max',
-    'assignment-weight',
-    'quiz-max',
-    'quiz-weight',
-    'theory-mid-max',
-    'theory-mid-weight',
-    'theory-final-max',
-    'theory-final-weight',
-    'lab-assignment-max',
-    'lab-assignment-weight',
-    'lab-mid-max',
-    'lab-mid-weight',
-    'lab-final-max',
-    'lab-final-weight',
-  ]
-    .map(id => document.getElementById(id))
-    .filter(Boolean);
+  const liveBadge = document.getElementById('live-preview-badge');
+  const liveGpaEl = document.getElementById('live-gpa');
 
   function readMarkScheme() {
     return {
       theory: {
-        assignmentMax: readNumberInput('assignment-max') || 12.5,
         assignmentWeight: readNumberInput('assignment-weight') || 12.5,
-        quizMax: readNumberInput('quiz-max') || 10,
         quizWeight: readNumberInput('quiz-weight') || 12.5,
-        midMax: readNumberInput('theory-mid-max') || 25,
         midWeight: readNumberInput('theory-mid-weight') || 25,
-        finalMax: readNumberInput('theory-final-max') || 50,
         finalWeight: readNumberInput('theory-final-weight') || 50,
       },
       lab: {
-        assignmentMax: readNumberInput('lab-assignment-max') || 12.5,
         assignmentWeight: readNumberInput('lab-assignment-weight') || 25,
-        midMax: readNumberInput('lab-mid-max') || 25,
         midWeight: readNumberInput('lab-mid-weight') || 25,
-        finalMax: readNumberInput('lab-final-max') || 50,
         finalWeight: readNumberInput('lab-final-weight') || 50,
       },
     };
   }
 
-  function setInputMax(inputId, maxValue) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-
-    input.max = String(maxValue);
-    input.step = '0.1';
-
-    const currentValue = Logic.toNum(input.value, 0);
-
-    if (input.value !== '' && currentValue > maxValue) {
-      input.classList.add('is-invalid');
-    }
-  }
-
-  function setText(id, text) {
-    const element = document.getElementById(id);
-    if (element) element.textContent = text;
-  }
-
-  function syncDynamicMarksUI() {
-    const scheme = readMarkScheme();
-
-    for (let i = 1; i <= 4; i += 1) {
-      setInputMax(`assignment-${i}`, scheme.theory.assignmentMax);
-      setInputMax(`quiz-${i}`, scheme.theory.quizMax);
-      setInputMax(`lab-assignment-${i}`, scheme.lab.assignmentMax);
-    }
-
-    setInputMax('theory-mid', scheme.theory.midMax);
-    setInputMax('theory-final', scheme.theory.finalMax);
-    setInputMax('lab-mid', scheme.lab.midMax);
-    setInputMax('lab-final', scheme.lab.finalMax);
-
-    setText('assignment-max-label', `(max ${scheme.theory.assignmentMax} each, weight ${scheme.theory.assignmentWeight})`);
-    setText('quiz-max-label', `(max ${scheme.theory.quizMax} each, weight ${scheme.theory.quizWeight})`);
-    setText('theory-mid-max-label', `(max ${scheme.theory.midMax}, weight ${scheme.theory.midWeight})`);
-    setText('theory-final-max-label', `(max ${scheme.theory.finalMax}, weight ${scheme.theory.finalWeight})`);
-
-    setText('lab-assignment-max-label', `(max ${scheme.lab.assignmentMax} each, weight ${scheme.lab.assignmentWeight})`);
-    setText('lab-mid-max-label', `(max ${scheme.lab.midMax}, weight ${scheme.lab.midWeight})`);
-    setText('lab-final-max-label', `(max ${scheme.lab.finalMax}, weight ${scheme.lab.finalWeight})`);
-  }
-
   function syncLabMode() {
     const isChecked = hasLabCb.checked;
-
     hasLabCb.setAttribute('aria-checked', isChecked.toString());
     labSection.classList.toggle('hidden', !isChecked);
+    if (labMarksSettings) labMarksSettings.classList.toggle('hidden', !isChecked);
+    updateLivePreview();
+  }
 
-    if (labMarksSettings) {
-      labMarksSettings.classList.toggle('hidden', !isChecked);
+  // --- Dynamic Row Management ---
+
+  function addDynamicRow(containerId, type) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'dynamic-row';
+    
+    let defaultTotal = '10';
+    if (type === 'assignment' || type === 'lab-assignment') defaultTotal = '12.5';
+
+    row.innerHTML = `
+      <div><input type="number" step="0.5" class="gpa-input ${type}-obtained" placeholder="Obt."></div>
+      <div><input type="number" step="0.5" class="gpa-input ${type}-total" value="${defaultTotal}"></div>
+      <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
+    `;
+
+    container.appendChild(row);
+
+    const inputs = row.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        validateInput(input);
+        updateLivePreview();
+      });
+    });
+
+    row.querySelector('.remove-row-btn').addEventListener('click', () => {
+      row.remove();
+      updateLivePreview();
+    });
+  }
+
+  document.querySelectorAll('.add-row-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const containerId = btn.getAttribute('data-container');
+      const type = btn.getAttribute('data-type');
+      addDynamicRow(containerId, type);
+    });
+  });
+
+  function setupRowListeners() {
+    form.querySelectorAll('.dynamic-row').forEach(row => {
+      row.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+          validateInput(input);
+          updateLivePreview();
+        });
+      });
+      row.querySelector('.remove-row-btn')?.addEventListener('click', () => {
+        row.remove();
+        updateLivePreview();
+      });
+    });
+
+    ['theory-mid', 'theory-final', 'lab-mid', 'lab-final'].forEach(prefix => {
+      const obt = document.getElementById(`${prefix}-obtained`);
+      const tot = document.getElementById(`${prefix}-total`);
+      [obt, tot].forEach(el => {
+        if (el) el.addEventListener('input', () => {
+          validateInput(el);
+          updateLivePreview();
+        });
+      });
+    });
+
+    [courseCreditHoursEl, ...document.querySelectorAll('#marks-settings input')].forEach(el => {
+      if (el) el.addEventListener('input', updateLivePreview);
+    });
+  }
+
+  function validateInput(input) {
+    const row = input.closest('.dynamic-row') || input.closest('.marks-grid-pair');
+    if (row) {
+      const obtInput = row.querySelector('[class*="-obtained"], [id$="-obtained"]');
+      const totInput = row.querySelector('[class*="-total"], [id$="-total"]');
+      
+      if (obtInput && totInput) {
+        const obtVal = parseFloat(obtInput.value);
+        const totVal = parseFloat(totInput.value);
+        
+        if (!isNaN(obtVal) && !isNaN(totVal)) {
+          const progress = (obtVal / totVal) * 100;
+          obtInput.style.setProperty('--progress', `${Math.min(progress, 100)}%`);
+          
+          if (obtVal > totVal) {
+            obtInput.classList.add('is-invalid');
+          } else {
+            obtInput.classList.remove('is-invalid');
+            obtInput.classList.add('is-valid');
+          }
+        }
+      }
     }
-
-    syncDynamicMarksUI();
   }
 
-  hasLabCb.addEventListener('change', syncLabMode);
+  function updateLivePreview() {
+    const data = gatherFormData();
+    const scheme = readMarkScheme();
+    const creditHours = Math.max(Logic.toNum(courseCreditHoursEl?.value, 3), 0.5);
 
-  dynamicMarksInputs.forEach(input => {
-    input.addEventListener('input', syncDynamicMarksUI);
-  });
+    const theoryTotal = Logic.calcTheoryTotal(data.theory, scheme.theory);
+    const labTotal = hasLabCb.checked ? Logic.calcLabTotal(data.lab, scheme.lab) : 0;
+    const finalPct = Logic.calcFinalPercentage(theoryTotal, labTotal, hasLabCb.checked, creditHours, 1);
+    const gradeInfo = Logic.getGradeInfo(finalPct);
 
-  setTimeout(syncLabMode, 0);
-
-  if (!form || !hasLabCb || !subjectsList) {
-    console.error('[GPA Calculator] Required elements are missing.');
-    return;
-  }
-
-  function escHtml(str) {
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
-  const labLabel = document.querySelector('label[for="has-lab"]');
-  if (labLabel) {
-    labLabel.setAttribute('tabindex', '0');
-    labLabel.addEventListener('keydown', event => {
-      if (event.key === ' ' || event.key === 'Enter') {
-        event.preventDefault();
-        hasLabCb.checked = !hasLabCb.checked;
-        hasLabCb.dispatchEvent(new Event('change'));
-      }
-    });
-  }
-
-  const gradingDetails = document.getElementById('grading-scale-details');
-  const gradingSummary = document.getElementById('grading-scale-summary');
-  if (gradingDetails && gradingSummary) {
-    gradingDetails.addEventListener('toggle', () => {
-      gradingSummary.setAttribute('aria-expanded', String(gradingDetails.open));
-    });
-  }
-
-  if (emptyStateCta) {
-    emptyStateCta.addEventListener('click', () => {
-      document.getElementById('subject-name')?.focus();
-    });
-  }
-
-  if (clearFormBtn) {
-    clearFormBtn.addEventListener('click', resetFormCompletely);
-  }
-
-  const allInputs = form.querySelectorAll('input[type="number"]');
-  allInputs.forEach(input => {
-    input.addEventListener('input', event => {
-      const el = event.target;
-      const value = parseFloat(el.value);
-      const max = parseFloat(el.max || '100');
-      const min = parseFloat(el.min || '0');
-
-      const inlineError = el.parentElement.querySelector('.field-error');
-      if (inlineError) inlineError.remove();
-
-      if (!Number.isNaN(value) && value >= min && value <= max) {
-        const progress = (value / max) * 100;
-        el.style.setProperty('--progress', `${progress}%`);
-        el.classList.remove('is-invalid');
-        el.classList.add('is-valid');
-      } else if (el.value === '') {
-        el.style.setProperty('--progress', '0%');
-        el.classList.remove('is-invalid', 'is-valid');
-      } else {
-        el.style.setProperty('--progress', '0%');
-        el.classList.add('is-invalid');
-        el.classList.remove('is-valid');
-      }
-    });
-  });
-
-  function validateForm() {
-    const errors = [];
-    document.querySelectorAll('.field-error').forEach(el => el.remove());
-
-    allInputs.forEach(input => {
-      if (input.closest('.hidden')) return;
-
-      const value = parseFloat(input.value);
-      const max = parseFloat(input.max || '100');
-      const min = parseFloat(input.min || '0');
-      const label = input.previousElementSibling?.textContent?.trim() || input.id;
-
-      if (input.value !== '' && (Number.isNaN(value) || value < min || value > max)) {
-        errors.push(`${label} must be between ${min} and ${max}.`);
-        input.classList.add('is-invalid');
-
-        const errorEl = document.createElement('p');
-        errorEl.className = 'field-error';
-        errorEl.textContent = `Must be ${min}-${max}`;
-        input.parentElement.appendChild(errorEl);
-      }
-    });
-
-    return errors;
-  }
-
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-
-    formErrors.classList.add('hidden');
-    formErrors.innerHTML = '';
-
-    const errors = validateForm();
-
-    if (errors.length > 0) {
-      formErrors.innerHTML =
-        `<strong>Please fix the following errors:</strong><ul class="list-disc pl-5 mt-1">` +
-        errors.map(error => `<li>${escHtml(error)}</li>`).join('') +
-        `</ul>`;
-
-      formErrors.classList.remove('hidden');
-      return;
+    liveGpaEl.textContent = gradeInfo.point.toFixed(2);
+    liveBadge.classList.add('visible');
+    
+    if (gradeInfo.point >= 3.5) {
+      liveBadge.className = 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800 visible p-2 rounded-lg flex items-center gap-2';
+    } else if (gradeInfo.point >= 2.0) {
+      liveBadge.className = 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border border-teal-100 dark:border-teal-800 visible p-2 rounded-lg flex items-center gap-2';
+    } else {
+      liveBadge.className = 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-800 visible p-2 rounded-lg flex items-center gap-2';
     }
-
-    handleAddSubject();
-  });
-
-  function readNumberInput(id) {
-    const el = document.getElementById(id);
-    return el ? Logic.toNum(el.value, 0) : 0;
   }
 
-  function readArrayInputs(prefix, count) {
-    return Array.from({ length: count }, (_, index) => readNumberInput(`${prefix}-${index + 1}`));
+  function gatherFormData() {
+    const readRows = (containerId, obtClass, totClass) => {
+      const container = document.getElementById(containerId);
+      if (!container) return [];
+      return Array.from(container.querySelectorAll('.dynamic-row')).map(row => ({
+        obtained: Logic.toNum(row.querySelector(`.${obtClass}`).value, 0),
+        total: Logic.toNum(row.querySelector(`.${totClass}`).value, 1)
+      }));
+    };
+
+    const readPair = (prefix) => ({
+      obtained: readNumberInput(`${prefix}-obtained`),
+      total: readNumberInput(`${prefix}-total`) || 1
+    });
+
+    return {
+      theory: {
+        assignments: readRows('theory-assignments-list', 'assignment-obtained', 'assignment-total'),
+        quizzes: readRows('theory-quizzes-list', 'quiz-obtained', 'quiz-total'),
+        mid: readPair('theory-mid'),
+        final: readPair('theory-final')
+      },
+      lab: {
+        labAssignments: readRows('lab-assignments-list', 'lab-obtained', 'lab-total'),
+        labMid: readPair('lab-mid'),
+        labFinal: readPair('lab-final')
+      }
+    };
   }
+
+  // --- Core Handlers ---
 
   function handleAddSubject() {
     const subjectNameInput = document.getElementById('subject-name');
     const subjectName = subjectNameInput?.value.trim() || 'Unnamed Subject';
     const hasLab = hasLabCb.checked;
-
     const creditHours = Math.max(Logic.toNum(courseCreditHoursEl?.value, 3), 0.5);
-    const markScheme = readMarkScheme();
+    
+    const data = gatherFormData();
+    const scheme = readMarkScheme();
 
-    const theoryFields = {
-      assignments: readArrayInputs('assignment', 4),
-      quizzes: readArrayInputs('quiz', 4),
-      mid: readNumberInput('theory-mid'),
-      final: readNumberInput('theory-final'),
-    };
-
-    const labFields = hasLab
-      ? {
-          labAssignments: readArrayInputs('lab-assignment', 4),
-          labMid: readNumberInput('lab-mid'),
-          labFinal: readNumberInput('lab-final'),
-        }
-      : null;
-
-    const theoryTotal = Logic.calcTheoryTotal(theoryFields, markScheme.theory);
-    const labTotal = hasLab ? Logic.calcLabTotal(labFields, markScheme.lab) : 0;
+    const theoryTotal = Logic.calcTheoryTotal(data.theory, scheme.theory);
+    const labTotal = hasLab ? Logic.calcLabTotal(data.lab, scheme.lab) : 0;
     const finalPct = Logic.calcFinalPercentage(theoryTotal, labTotal, hasLab, creditHours, 1);
     const gradeInfo = Logic.getGradeInfo(finalPct);
 
@@ -308,37 +238,26 @@
     };
 
     addedSubjects.push(newSubject);
-
     renderSubjectCard(newSubject, addedSubjects.length);
     resetFormKeepName();
 
-    calcGpaBtn.classList.remove('hidden');
+    calcGpaBtn.classList.remove('hidden', 'is-pulsing');
+    void calcGpaBtn.offsetWidth; 
     calcGpaBtn.classList.add('is-pulsing');
+    
     resetBtn.classList.remove('hidden');
     overallResult.classList.add('hidden');
-
-    subjectsList.setAttribute('aria-label', `Added ${subjectName} with ${creditHours} credit hours and GPA ${gradeInfo.point}`);
+    liveBadge.classList.remove('visible');
   }
 
   function renderSubjectCard(subject, orderIndex) {
     emptyState.classList.add('hidden');
-
     const card = document.createElement('li');
     card.id = `subject-card-${subject.id}`;
-
     const delayClass = `slide-delay-${Math.min(orderIndex, 5)}`;
     const badgeColor = getGradeBadgeColor(subject.letter);
 
-    card.className = [
-      'subject-card',
-      'flex items-start justify-between gap-4',
-      'bg-white dark:bg-slate-800',
-      'border border-slate-100 dark:border-slate-700',
-      'rounded-2xl p-5 shadow-sm',
-      'animate-slide-in',
-      delayClass,
-      'group/card hover:-translate-y-0.5 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-800 transition-all',
-    ].join(' ');
+    card.className = `subject-card flex items-start justify-between gap-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-5 shadow-sm animate-slide-in ${delayClass} group/card hover:-translate-y-0.5 hover:shadow-md hover:border-teal-200 dark:hover:border-teal-800 transition-all`;
 
     card.innerHTML = `
       <div class="flex-1 min-w-0">
@@ -350,7 +269,6 @@
             <span class="material-symbols-outlined text-sm">close</span>
           </button>
         </div>
-
         <div class="mt-1.5 flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
           <span>Credits: <strong class="text-slate-700 dark:text-slate-200">${subject.creditHours.toFixed(1)}</strong></span>
           <span>Theory: <strong class="text-slate-700 dark:text-slate-200">${subject.theoryTotal.toFixed(1)}%</strong></span>
@@ -358,7 +276,6 @@
           <span>Final: <strong class="text-slate-700 dark:text-slate-200">${subject.percentage.toFixed(2)}%</strong></span>
         </div>
       </div>
-
       <div class="flex flex-col items-end gap-1 shrink-0">
         <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-sm font-bold ${badgeColor}">
           ${escHtml(subject.letter)}
@@ -370,37 +287,27 @@
     `;
 
     subjectsList.appendChild(card);
-
-    const deleteBtn = card.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', () => handleDeleteSubject(subject.id));
+    card.querySelector('.delete-btn').addEventListener('click', () => handleDeleteSubject(subject.id));
   }
 
   function handleDeleteSubject(id) {
-    const index = addedSubjects.findIndex(subject => subject.id === id);
+    const index = addedSubjects.findIndex(s => s.id === id);
     if (index === -1) return;
-
     addedSubjects.splice(index, 1);
-
     const card = document.getElementById(`subject-card-${id}`);
-    if (!card) return;
-
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(-10px)';
-    card.style.pointerEvents = 'none';
-
-    window.setTimeout(() => {
-      card.remove();
-
-      if (addedSubjects.length === 0) {
-        emptyState.classList.remove('hidden');
-        calcGpaBtn.classList.add('hidden');
-        resetBtn.classList.add('hidden');
-        overallResult.classList.add('hidden');
-      } else {
-        calcGpaBtn.classList.add('is-pulsing');
-        overallResult.classList.add('hidden');
-      }
-    }, 200);
+    if (card) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        card.remove();
+        if (addedSubjects.length === 0) {
+          emptyState.classList.remove('hidden');
+          calcGpaBtn.classList.add('hidden');
+          resetBtn.classList.add('hidden');
+          overallResult.classList.add('hidden');
+        }
+      }, 200);
+    }
   }
 
   function getGradeBadgeColor(letter) {
@@ -417,13 +324,11 @@
       D: 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300',
       F: 'bg-rose-200 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300',
     };
-
     return map[letter] || 'bg-slate-100 text-slate-600';
   }
 
   calcGpaBtn.addEventListener('click', () => {
     if (!addedSubjects.length) return;
-
     const avg = Logic.calcOverallGpa(addedSubjects);
     const weightedPercentage = Logic.calcOverallPercentage(addedSubjects);
     const totalCredits = Logic.calcTotalCredits(addedSubjects);
@@ -431,24 +336,19 @@
 
     overallGpaEl.textContent = avg.toFixed(2);
     overallLblEl.textContent = Logic.getGradeInfo(weightedPercentage).letter;
-    overallPerfEl.textContent =
-      `${Logic.getPerformanceLabel(avg)} Total Credits: ${totalCredits.toFixed(1)} | Honor Points: ${honorPoints.toFixed(2)}`;
+    overallPerfEl.textContent = `${Logic.getPerformanceLabel(avg)} Total Credits: ${totalCredits.toFixed(1)} | Honor Points: ${honorPoints.toFixed(2)}`;
 
     overallResult.classList.remove('hidden');
     calcGpaBtn.classList.remove('is-pulsing');
-    overallResult.setAttribute('aria-live', 'assertive');
     overallResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 
   resetBtn.addEventListener('click', () => {
     if (!window.confirm('Clear all added subjects and start over?')) return;
-
     addedSubjects.length = 0;
-
     Array.from(subjectsList.children).forEach(child => {
       if (child.id !== 'empty-state') child.remove();
     });
-
     emptyState.classList.remove('hidden');
     overallResult.classList.add('hidden');
     calcGpaBtn.classList.add('hidden');
@@ -459,38 +359,92 @@
   function resetFormKeepName() {
     const subjectNameInput = document.getElementById('subject-name');
     const name = subjectNameInput?.value || '';
-
     form.reset();
-
     if (subjectNameInput) subjectNameInput.value = name;
+    
+    // Clear dynamic lists
+    document.getElementById('theory-assignments-list').innerHTML = '';
+    addDynamicRow('theory-assignments-list', 'assignment');
+    document.getElementById('theory-quizzes-list').innerHTML = '';
+    addDynamicRow('theory-quizzes-list', 'quiz');
+    const labContainer = document.getElementById('lab-assignments-list');
+    if (labContainer) {
+      labContainer.innerHTML = '';
+      addDynamicRow('lab-assignments-list', 'lab');
+    }
 
     hasLabCb.checked = false;
     syncLabMode();
-    syncDynamicMarksUI();
     formErrors.classList.add('hidden');
-
     clearValidationStates();
+    liveBadge.classList.remove('visible');
   }
 
   function resetFormCompletely() {
     form.reset();
+    document.getElementById('theory-assignments-list').innerHTML = '';
+    addDynamicRow('theory-assignments-list', 'assignment');
+    document.getElementById('theory-quizzes-list').innerHTML = '';
+    addDynamicRow('theory-quizzes-list', 'quiz');
+    const labContainer = document.getElementById('lab-assignments-list');
+    if (labContainer) {
+      labContainer.innerHTML = '';
+      addDynamicRow('lab-assignments-list', 'lab');
+    }
 
     hasLabCb.checked = false;
     syncLabMode();
-    syncDynamicMarksUI();
     formErrors.classList.add('hidden');
-
     clearValidationStates();
-
+    liveBadge.classList.remove('visible');
     document.getElementById('subject-name')?.focus();
   }
 
   function clearValidationStates() {
-    allInputs.forEach(input => {
+    form.querySelectorAll('input[type="number"]').forEach(input => {
       input.classList.remove('is-valid', 'is-invalid');
       input.style.setProperty('--progress', '0%');
     });
-
     document.querySelectorAll('.field-error').forEach(el => el.remove());
   }
+
+  // --- Logic Helpers ---
+
+  function readNumberInput(id) {
+    const el = document.getElementById(id);
+    return el ? Logic.toNum(el.value, 0) : 0;
+  }
+
+  function escHtml(str) {
+    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    formErrors.classList.add('hidden');
+    const errors = validateForm();
+    if (errors.length > 0) {
+      formErrors.innerHTML = `<strong>Fix errors:</strong><ul class="list-disc pl-5 mt-1">` + errors.map(e => `<li>${escHtml(e)}</li>`).join('') + `</ul>`;
+      formErrors.classList.remove('hidden');
+      return;
+    }
+    handleAddSubject();
+  });
+
+  function validateForm() {
+    const errors = [];
+    form.querySelectorAll('input[type="number"]').forEach(input => {
+      if (input.closest('.hidden')) return;
+      if (input.classList.contains('is-invalid')) {
+        errors.push("One or more fields have invalid marks (Obtained > Total).");
+      }
+    });
+    return [...new Set(errors)]; 
+  }
+
+  hasLabCb.addEventListener('change', syncLabMode);
+  clearFormBtn.addEventListener('click', resetFormCompletely);
+  setupRowListeners();
+  setTimeout(syncLabMode, 0);
+
 })();
