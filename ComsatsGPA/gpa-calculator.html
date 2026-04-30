@@ -34,7 +34,7 @@
       </span>
       <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-3">GPA Calculator</h1>
       <p class="text-white/80 text-sm md:text-base max-w-xl mx-auto">
-        Enter your marks for assignments, quizzes, midterm, and finals. We calculate your GPA using the official COMSATS absolute grading scale.
+        Enter your marks for assignments, quizzes, midterm, and finals. We calculate your GPA using the COMSATSPrepHub grading scale and credit-hour weighted semester GPA.
       </p>
     </div>
   </header>
@@ -59,6 +59,118 @@
           <input id="subject-name" type="text" class="gpa-input" placeholder="e.g. Data Structures">
         </div>
 
+        <!-- Course Credit Hours -->
+        <div class="mb-5">
+          <label for="course-credit-hours" class="gpa-label">Credit Hours</label>
+          <input
+            id="course-credit-hours"
+            type="number"
+            min="0.5"
+            max="6"
+            step="0.5"
+            value="3"
+            class="gpa-input"
+            placeholder="3"
+          >
+          <p class="gpa-helper">Used for credit-hour weighted GPA, like COMSATS PLUS course calculation.</p>
+        </div>
+
+        <!-- Dynamic Total Marks Settings -->
+        <details id="marks-settings" class="marks-settings mb-5 rounded-2xl border border-teal-100 dark:border-teal-900/40 bg-teal-50/50 dark:bg-teal-950/20 p-4">
+          <summary class="flex items-center justify-between gap-3 cursor-pointer select-none">
+            <span class="text-sm font-bold text-teal-700 dark:text-teal-300">
+              Customize Total Marks
+            </span>
+            <span class="text-xs text-slate-500 dark:text-slate-400">
+              Change totals if your teacher uses a different scheme
+            </span>
+          </summary>
+
+          <div class="mt-4 space-y-5">
+            <div>
+              <p class="section-title mb-3">Theory Marks Scheme</p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="assignment-max" class="gpa-label">Assignment Max Each</label>
+                  <input id="assignment-max" type="number" min="0.1" max="100" step="0.1" value="12.5" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="assignment-weight" class="gpa-label">Assignment Weight</label>
+                  <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="quiz-max" class="gpa-label">Quiz Max Each</label>
+                  <input id="quiz-max" type="number" min="0.1" max="100" step="0.1" value="10" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="quiz-weight" class="gpa-label">Quiz Weight</label>
+                  <input id="quiz-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="theory-mid-max" class="gpa-label">Midterm Max</label>
+                  <input id="theory-mid-max" type="number" min="0.1" max="200" step="0.1" value="25" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="theory-mid-weight" class="gpa-label">Midterm Weight</label>
+                  <input id="theory-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="theory-final-max" class="gpa-label">Final Max</label>
+                  <input id="theory-final-max" type="number" min="0.1" max="200" step="0.1" value="50" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="theory-final-weight" class="gpa-label">Final Weight</label>
+                  <input id="theory-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
+                </div>
+              </div>
+            </div>
+
+            <div id="lab-marks-settings" class="hidden border-t border-dashed border-teal-200 dark:border-teal-800 pt-4">
+              <p class="section-title mb-3">Lab Marks Scheme</p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="lab-assignment-max" class="gpa-label">Lab Assignment Max Each</label>
+                  <input id="lab-assignment-max" type="number" min="0.1" max="100" step="0.1" value="12.5" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="lab-assignment-weight" class="gpa-label">Lab Assignment Weight</label>
+                  <input id="lab-assignment-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="lab-mid-max" class="gpa-label">Lab Midterm Max</label>
+                  <input id="lab-mid-max" type="number" min="0.1" max="200" step="0.1" value="25" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="lab-mid-weight" class="gpa-label">Lab Midterm Weight</label>
+                  <input id="lab-mid-weight" type="number" min="0" max="100" step="0.1" value="25" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="lab-final-max" class="gpa-label">Lab Final Max</label>
+                  <input id="lab-final-max" type="number" min="0.1" max="200" step="0.1" value="50" class="gpa-input">
+                </div>
+
+                <div>
+                  <label for="lab-final-weight" class="gpa-label">Lab Final Weight</label>
+                  <input id="lab-final-weight" type="number" min="0" max="100" step="0.1" value="50" class="gpa-input">
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
         <!-- Has Lab toggle -->
         <label class="flex items-center gap-3 cursor-pointer mb-6 group min-h-[44px]" for="has-lab">
           <div class="relative flex items-center">
@@ -74,7 +186,7 @@
           <p class="section-title">Theory Component</p>
 
           <!-- Assignments -->
-          <p class="gpa-label mb-2" id="hint-assignment">Assignments <span class="text-slate-400 font-normal">(max 12.5 each)</span></p>
+          <p class="gpa-label mb-2" id="hint-assignment">Assignments <span id="assignment-max-label" class="text-slate-400 font-normal">(max 12.5 each)</span></p>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             <div><label class="gpa-label text-center block" for="assignment-1">A1</label><input id="assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
             <div><label class="gpa-label text-center block" for="assignment-2">A2</label><input id="assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-assignment"></div>
@@ -83,7 +195,7 @@
           </div>
 
           <!-- Quizzes -->
-          <p class="gpa-label mb-2" id="hint-quiz">Quizzes <span class="text-slate-400 font-normal">(max 10 each)</span></p>
+          <p class="gpa-label mb-2" id="hint-quiz">Quizzes <span id="quiz-max-label" class="text-slate-400 font-normal">(max 10 each)</span></p>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             <div><label class="gpa-label text-center block" for="quiz-1">Q1</label><input id="quiz-1" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
             <div><label class="gpa-label text-center block" for="quiz-2">Q2</label><input id="quiz-2" type="number" min="0" max="10" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-quiz"></div>
@@ -94,11 +206,11 @@
           <!-- Mid & Final -->
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="theory-mid" class="gpa-label" id="hint-theory-mid">Midterm <span class="text-slate-400 font-normal">(max 25)</span></label>
+              <label for="theory-mid" class="gpa-label" id="hint-theory-mid">Midterm <span id="theory-mid-max-label" class="text-slate-400 font-normal">(max 25)</span></label>
               <input id="theory-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-theory-mid">
             </div>
             <div>
-              <label for="theory-final" class="gpa-label" id="hint-theory-final">Final <span class="text-slate-400 font-normal">(max 50)</span></label>
+              <label for="theory-final" class="gpa-label" id="hint-theory-final">Final <span id="theory-final-max-label" class="text-slate-400 font-normal">(max 50)</span></label>
               <input id="theory-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-theory-final">
             </div>
           </div>
@@ -106,10 +218,15 @@
 
         <!-- ── LAB SECTION (conditional) ── -->
         <div id="lab-section" class="hidden mb-6 border-t border-dashed border-slate-200 dark:border-slate-700 pt-5">
-          <p class="section-title">Lab Component <span class="text-slate-400 font-normal normal-case tracking-normal text-xs">(33% weight)</span></p>
+          <p class="section-title">
+            Lab Component
+            <span class="text-slate-400 font-normal normal-case tracking-normal text-xs">
+              (credit-hour weighted)
+            </span>
+          </p>
 
           <!-- Lab Assignments -->
-          <p class="gpa-label mb-2" id="hint-lab-assignment">Lab Assignments <span class="text-slate-400 font-normal">(max 12.5 each)</span></p>
+          <p class="gpa-label mb-2" id="hint-lab-assignment">Lab Assignments <span id="lab-assignment-max-label" class="text-slate-400 font-normal">(max 12.5 each)</span></p>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             <div><label class="gpa-label text-center block" for="lab-assignment-1">L1</label><input id="lab-assignment-1" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
             <div><label class="gpa-label text-center block" for="lab-assignment-2">L2</label><input id="lab-assignment-2" type="number" min="0" max="12.5" step="0.5" class="gpa-input text-center" placeholder="0" aria-describedby="hint-lab-assignment"></div>
@@ -120,11 +237,11 @@
           <!-- Lab Mid & Final -->
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label for="lab-mid" class="gpa-label" id="hint-lab-mid">Lab Midterm <span class="text-slate-400 font-normal">(max 25)</span></label>
+              <label for="lab-mid" class="gpa-label" id="hint-lab-mid">Lab Midterm <span id="lab-mid-max-label" class="text-slate-400 font-normal">(max 25)</span></label>
               <input id="lab-mid" type="number" min="0" max="25" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-lab-mid">
             </div>
             <div>
-              <label for="lab-final" class="gpa-label" id="hint-lab-final">Lab Final <span class="text-slate-400 font-normal">(max 50)</span></label>
+              <label for="lab-final" class="gpa-label" id="hint-lab-final">Lab Final <span id="lab-final-max-label" class="text-slate-400 font-normal">(max 50)</span></label>
               <input id="lab-final" type="number" min="0" max="50" step="0.5" class="gpa-input" placeholder="0" aria-describedby="hint-lab-final">
             </div>
           </div>

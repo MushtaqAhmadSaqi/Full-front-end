@@ -1,30 +1,16 @@
 /**
- * gpa-logic.js — COMSATS GPA Calculation Engine
+ * gpa-logic.js — COMSATS Internal Marks + GPA Engine
  *
- * Official COMSATS University Islamabad absolute grading scale.
- * Grade points are fixed (not interpolated) per the university handbook.
- *
- * Theory Component (out of 100):
- *   4 Assignments + 4 Quizzes + Midterm (25 marks) + Final (50 marks)
- *   Proportional marks from assignments/quizzes fill the remaining 25 marks.
- *   Assignments total = 12.5 marks, Quizzes total = 12.5 marks (each group contributes 12.5/100)
- *
- * Lab Component (optional, out of 100):
- *   4 Lab Assignments + Lab Midterm (25 marks) + Lab Final (50 marks)
- *   Lab Assignments total = 25 marks
- *
- * Weighting:
- *   Theory only  → Final % = Theory Total
- *   With Lab     → Final % = (Theory Total × 0.67) + (Lab Total × 0.33)
- *
- * Exposed API (window.GpaLogic):
- *   GRADING_SCALE  — the raw scale array
- *   getGradeInfo(percentage) → { letter, point, percentage }
- *   calcTheoryTotal(fields)  → number 0–100
- *   calcLabTotal(fields)     → number 0–100
- *   calcFinalPercentage(theoryTotal, labTotal, hasLab) → number
- *   getPerformanceLabel(gpa) → string
+ * This logic follows the COMSATS PLUS-style flow:
+ * - Add course
+ * - Subject name
+ * - Credit hours
+ * - Optional lab
+ * - Dynamic max marks
+ * - Weighted internal marks
+ * - Credit-hour weighted GPA
  */
+
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory();
@@ -34,167 +20,267 @@
 })(typeof globalThis !== 'undefined' ? globalThis : window, function () {
   'use strict';
 
-  /* ─────────────────────────────────────────────
-   * 1. OFFICIAL COMSATS GRADING SCALE
-   * Fixed (absolute) grade points — no interpolation.
-   * ───────────────────────────────────────────── */
   const GRADING_SCALE = Object.freeze([
-    { letter: 'A',  percentMin: 85, percentMax: 100, point: 4.00 },
-    { letter: 'A-', percentMin: 80, percentMax: 84,  point: 3.67 },
-    { letter: 'B+', percentMin: 75, percentMax: 79,  point: 3.33 },
-    { letter: 'B',  percentMin: 71, percentMax: 74,  point: 3.00 },
-    { letter: 'B-', percentMin: 68, percentMax: 70,  point: 2.67 },
-    { letter: 'C+', percentMin: 64, percentMax: 67,  point: 2.33 },
-    { letter: 'C',  percentMin: 60, percentMax: 63,  point: 2.00 },
-    { letter: 'C-', percentMin: 57, percentMax: 59,  point: 1.67 },
-    { letter: 'D+', percentMin: 53, percentMax: 56,  point: 1.33 },
-    { letter: 'D',  percentMin: 50, percentMax: 52,  point: 1.00 },
-    { letter: 'F',  percentMin: 0,  percentMax: 49,  point: 0.00 },
+    { letter: 'A', percentMin: 85, percentMax: 100, point: 4.00 },
+    { letter: 'A-', percentMin: 80, percentMax: 84, point: 3.66 },
+    { letter: 'B+', percentMin: 75, percentMax: 79, point: 3.33 },
+    { letter: 'B', percentMin: 71, percentMax: 74, point: 3.00 },
+    { letter: 'B-', percentMin: 68, percentMax: 70, point: 2.66 },
+    { letter: 'C+', percentMin: 64, percentMax: 67, point: 2.33 },
+    { letter: 'C', percentMin: 60, percentMax: 63, point: 2.00 },
+    { letter: 'C-', percentMin: 57, percentMax: 59, point: 1.67 },
+    { letter: 'D+', percentMin: 53, percentMax: 56, point: 1.33 },
+    { letter: 'D', percentMin: 50, percentMax: 52, point: 1.00 },
+    { letter: 'F', percentMin: 0, percentMax: 49, point: 0.00 },
   ]);
 
-  /* ─────────────────────────────────────────────
-   * 2. HELPERS
-   * ───────────────────────────────────────────── */
+  const DEFAULT_SCHEME = Object.freeze({
+    theory: {
+      assignmentMax: 12.5,
+      assignmentWeight: 12.5,
+      quizMax: 10,
+      quizWeight: 12.5,
+      midMax: 25,
+      midWeight: 25,
+      finalMax: 50,
+      finalWeight: 50,
+    },
+    lab: {
+      assignmentMax: 12.5,
+      assignmentWeight: 25,
+      midMax: 25,
+      midWeight: 25,
+      finalMax: 50,
+      finalWeight: 50,
+    },
+  });
 
-  /** Safely parse a value to a finite number, defaulting to `fallback`. */
   function toNum(value, fallback = 0) {
     if (value === '' || value == null) return fallback;
-    const n = Number(value);
-    return Number.isFinite(n) ? n : fallback;
+    const numberValue = Number(value);
+    return Number.isFinite(numberValue) ? numberValue : fallback;
   }
 
-  /** Round to 2 decimal places. */
   function round2(value) {
     return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
-  /** Clamp a number between min and max. */
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
   }
 
-  /* ─────────────────────────────────────────────
-   * 3. GRADE LOOKUP
-   * ───────────────────────────────────────────── */
+  function positive(value, fallback) {
+    const numberValue = toNum(value, fallback);
+    return numberValue > 0 ? numberValue : fallback;
+  }
 
-  /**
-   * Look up grade info for a given percentage.
-   * @param {number} percentage — 0 to 100
-   * @returns {{ letter: string, point: number, percentage: number }}
-   */
   function getGradeInfo(percentage) {
     const pct = clamp(Math.round(toNum(percentage, 0)), 0, 100);
-    const band = GRADING_SCALE.find(b => pct >= b.percentMin && pct <= b.percentMax)
-              || GRADING_SCALE[GRADING_SCALE.length - 1]; // fallback to F
-    return { letter: band.letter, point: band.point, percentage: pct };
+
+    const band =
+      GRADING_SCALE.find(item => pct >= item.percentMin && pct <= item.percentMax) ||
+      GRADING_SCALE[GRADING_SCALE.length - 1];
+
+    return {
+      letter: band.letter,
+      point: band.point,
+      percentage: pct,
+    };
   }
 
-  /* ─────────────────────────────────────────────
-   * 4. MARKS CALCULATION
-   *
-   * Theory breakdown (total = 100 marks):
-   *   ┌─────────────────────────────────────────┐
-   *   │ 4 Assignments  → max 12.5 each = 50 raw │
-   *   │   Contribution: (sum / 50) × 12.5        │
-   *   │ 4 Quizzes      → max 10 each  = 40 raw  │
-   *   │   Contribution: (sum / 40) × 12.5        │
-   *   │ Midterm        → max 25                  │
-   *   │ Final          → max 50                  │
-   *   └─────────────────────────────────────────┘
-   *
-   * Lab breakdown (total = 100 marks):
-   *   ┌─────────────────────────────────────────┐
-   *   │ 4 Lab Assignments → max 12.5 each = 50  │
-   *   │   Contribution: (sum / 50) × 25          │
-   *   │ Lab Midterm    → max 25                  │
-   *   │ Lab Final      → max 50                  │
-   *   └─────────────────────────────────────────┘
-   * ───────────────────────────────────────────── */
-
-  /**
-   * Calculate Theory Total (0–100) from raw marks fields.
-   * @param {{ assignments: number[], quizzes: number[], mid: number, final: number }} fields
-   * @returns {number} 0–100
-   */
-  function calcTheoryTotal(fields) {
-    const assignMax  = 50;   // 4 × 12.5
-    const quizMax    = 40;   // 4 × 10
-    const assignContrib = 12.5;
-    const quizContrib   = 12.5;
-
-    const assignSum = (fields.assignments || []).reduce((s, v) => s + clamp(toNum(v), 0, 12.5), 0);
-    const quizSum   = (fields.quizzes    || []).reduce((s, v) => s + clamp(toNum(v), 0, 10),   0);
-    const mid       = clamp(toNum(fields.mid),   0, 25);
-    const final     = clamp(toNum(fields.final), 0, 50);
-
-    const assignScore = assignMax > 0 ? (assignSum / assignMax) * assignContrib : 0;
-    const quizScore   = quizMax   > 0 ? (quizSum   / quizMax)  * quizContrib   : 0;
-
-    return round2(clamp(assignScore + quizScore + mid + final, 0, 100));
+  function normalizeScheme(scheme = {}) {
+    return {
+      theory: {
+        assignmentMax: positive(scheme.theory?.assignmentMax, DEFAULT_SCHEME.theory.assignmentMax),
+        assignmentWeight: clamp(toNum(scheme.theory?.assignmentWeight, DEFAULT_SCHEME.theory.assignmentWeight), 0, 100),
+        quizMax: positive(scheme.theory?.quizMax, DEFAULT_SCHEME.theory.quizMax),
+        quizWeight: clamp(toNum(scheme.theory?.quizWeight, DEFAULT_SCHEME.theory.quizWeight), 0, 100),
+        midMax: positive(scheme.theory?.midMax, DEFAULT_SCHEME.theory.midMax),
+        midWeight: clamp(toNum(scheme.theory?.midWeight, DEFAULT_SCHEME.theory.midWeight), 0, 100),
+        finalMax: positive(scheme.theory?.finalMax, DEFAULT_SCHEME.theory.finalMax),
+        finalWeight: clamp(toNum(scheme.theory?.finalWeight, DEFAULT_SCHEME.theory.finalWeight), 0, 100),
+      },
+      lab: {
+        assignmentMax: positive(scheme.lab?.assignmentMax, DEFAULT_SCHEME.lab.assignmentMax),
+        assignmentWeight: clamp(toNum(scheme.lab?.assignmentWeight, DEFAULT_SCHEME.lab.assignmentWeight), 0, 100),
+        midMax: positive(scheme.lab?.midMax, DEFAULT_SCHEME.lab.midMax),
+        midWeight: clamp(toNum(scheme.lab?.midWeight, DEFAULT_SCHEME.lab.midWeight), 0, 100),
+        finalMax: positive(scheme.lab?.finalMax, DEFAULT_SCHEME.lab.finalMax),
+        finalWeight: clamp(toNum(scheme.lab?.finalWeight, DEFAULT_SCHEME.lab.finalWeight), 0, 100),
+      },
+    };
   }
 
-  /**
-   * Calculate Lab Total (0–100) from raw marks fields.
-   * @param {{ labAssignments: number[], labMid: number, labFinal: number }} fields
-   * @returns {number} 0–100
-   */
-  function calcLabTotal(fields) {
-    const labAssignMax     = 50;  // 4 × 12.5
-    const labAssignContrib = 25;
+  function weightedPart(obtained, maxMarks, weight) {
+    const max = positive(maxMarks, 1);
+    const safeObtained = clamp(toNum(obtained, 0), 0, max);
+    const safeWeight = clamp(toNum(weight, 0), 0, 100);
 
-    const labAssignSum = (fields.labAssignments || []).reduce((s, v) => s + clamp(toNum(v), 0, 12.5), 0);
-    const labMid       = clamp(toNum(fields.labMid),   0, 25);
-    const labFinal     = clamp(toNum(fields.labFinal), 0, 50);
-
-    const labAssignScore = labAssignMax > 0 ? (labAssignSum / labAssignMax) * labAssignContrib : 0;
-
-    return round2(clamp(labAssignScore + labMid + labFinal, 0, 100));
+    return (safeObtained / max) * safeWeight;
   }
 
-  /**
-   * Calculate final weighted percentage.
-   * @param {number} theoryTotal 0–100
-   * @param {number} labTotal    0–100
-   * @param {boolean} hasLab
-   * @returns {number} 0–100
-   */
-  function calcFinalPercentage(theoryTotal, labTotal, hasLab) {
-    if (!hasLab) return round2(clamp(theoryTotal, 0, 100));
-    return round2(clamp(theoryTotal * 0.67 + labTotal * 0.33, 0, 100));
+  function calcTheoryTotal(fields = {}, schemeInput = {}) {
+    const scheme = normalizeScheme({ theory: schemeInput }).theory;
+
+    const assignments = fields.assignments || [];
+    const quizzes = fields.quizzes || [];
+
+    const assignmentObtained = assignments.reduce(
+      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.assignmentMax),
+      0
+    );
+
+    const quizObtained = quizzes.reduce(
+      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.quizMax),
+      0
+    );
+
+    const assignmentMaxTotal = scheme.assignmentMax * Math.max(assignments.length, 1);
+    const quizMaxTotal = scheme.quizMax * Math.max(quizzes.length, 1);
+
+    const parts = [
+      weightedPart(assignmentObtained, assignmentMaxTotal, scheme.assignmentWeight),
+      weightedPart(quizObtained, quizMaxTotal, scheme.quizWeight),
+      weightedPart(fields.mid, scheme.midMax, scheme.midWeight),
+      weightedPart(fields.final, scheme.finalMax, scheme.finalWeight),
+    ];
+
+    const totalWeight =
+      scheme.assignmentWeight +
+      scheme.quizWeight +
+      scheme.midWeight +
+      scheme.finalWeight;
+
+    if (totalWeight <= 0) return 0;
+
+    return round2(clamp((parts.reduce((sum, value) => sum + value, 0) / totalWeight) * 100, 0, 100));
   }
 
-  /* ─────────────────────────────────────────────
-   * 5. PERFORMANCE LABEL
-   * ───────────────────────────────────────────── */
+  function calcLabTotal(fields = {}, schemeInput = {}) {
+    const scheme = normalizeScheme({ lab: schemeInput }).lab;
 
-  /**
-   * Returns a motivational/descriptive label for a given cumulative GPA.
-   * @param {number} gpa
-   * @returns {string}
-   */
+    const labAssignments = fields.labAssignments || [];
+
+    const labAssignmentObtained = labAssignments.reduce(
+      (sum, value) => sum + clamp(toNum(value, 0), 0, scheme.assignmentMax),
+      0
+    );
+
+    const labAssignmentMaxTotal = scheme.assignmentMax * Math.max(labAssignments.length, 1);
+
+    const parts = [
+      weightedPart(labAssignmentObtained, labAssignmentMaxTotal, scheme.assignmentWeight),
+      weightedPart(fields.labMid, scheme.midMax, scheme.midWeight),
+      weightedPart(fields.labFinal, scheme.finalMax, scheme.finalWeight),
+    ];
+
+    const totalWeight =
+      scheme.assignmentWeight +
+      scheme.midWeight +
+      scheme.finalWeight;
+
+    if (totalWeight <= 0) return 0;
+
+    return round2(clamp((parts.reduce((sum, value) => sum + value, 0) / totalWeight) * 100, 0, 100));
+  }
+
+  function calcFinalPercentage(theoryTotal, labTotal, hasLab, creditHours = 3, labCreditHours = 1) {
+    const theory = clamp(toNum(theoryTotal, 0), 0, 100);
+    const lab = clamp(toNum(labTotal, 0), 0, 100);
+    const totalCredits = positive(creditHours, 3);
+
+    if (!hasLab) return round2(theory);
+
+    const safeLabCredits = clamp(positive(labCreditHours, 1), 0, totalCredits);
+    const theoryCredits = Math.max(totalCredits - safeLabCredits, 1);
+    const combinedCredits = theoryCredits + safeLabCredits;
+
+    return round2(((theory * theoryCredits) + (lab * safeLabCredits)) / combinedCredits);
+  }
+
+  function calcSubjectCredits(subject = {}) {
+    return round2(positive(subject.creditHours, 3));
+  }
+
+  function calcOverallGpa(subjects = []) {
+    let totalQualityPoints = 0;
+    let totalCredits = 0;
+
+    subjects.forEach(subject => {
+      const credits = calcSubjectCredits(subject);
+      const gpa = clamp(toNum(subject.gpa, 0), 0, 4);
+
+      if (credits <= 0) return;
+
+      totalCredits += credits;
+      totalQualityPoints += gpa * credits;
+    });
+
+    return totalCredits > 0 ? round2(totalQualityPoints / totalCredits) : 0;
+  }
+
+  function calcOverallPercentage(subjects = []) {
+    let totalWeightedPercentage = 0;
+    let totalCredits = 0;
+
+    subjects.forEach(subject => {
+      const credits = calcSubjectCredits(subject);
+      const percentage = clamp(toNum(subject.percentage, 0), 0, 100);
+
+      if (credits <= 0) return;
+
+      totalCredits += credits;
+      totalWeightedPercentage += percentage * credits;
+    });
+
+    return totalCredits > 0 ? round2(totalWeightedPercentage / totalCredits) : 0;
+  }
+
+  function calcHonorPoints(subjects = []) {
+    return round2(
+      subjects.reduce((sum, subject) => {
+        const credits = calcSubjectCredits(subject);
+        const gpa = clamp(toNum(subject.gpa, 0), 0, 4);
+        return sum + credits * gpa;
+      }, 0)
+    );
+  }
+
+  function calcTotalCredits(subjects = []) {
+    return round2(
+      subjects.reduce((sum, subject) => sum + calcSubjectCredits(subject), 0)
+    );
+  }
+
   function getPerformanceLabel(gpa) {
-    const g = toNum(gpa, 0);
-    if (g >= 3.67) return '🏆 Dean\'s List — Outstanding performance!';
-    if (g >= 3.33) return '🌟 Excellent — Keep pushing for that A!';
-    if (g >= 3.00) return '👍 Good standing — You\'re on track.';
-    if (g >= 2.67) return '📈 Average — A few stronger courses can lift your GPA.';
-    if (g >= 2.00) return '⚠️ Satisfactory — Improvement is recommended.';
-    if (g >  0)    return '🚨 At-risk — Focus on your weakest courses.';
-    return 'Add subjects to see your GPA.';
+    const value = toNum(gpa, 0);
+
+    if (value >= 3.67) return '🏆 Excellent performance.';
+    if (value >= 3.33) return '🌟 Very good. Keep improving.';
+    if (value >= 3.00) return '👍 Good standing.';
+    if (value >= 2.67) return '📈 Average. Improve weak courses.';
+    if (value >= 2.00) return '⚠️ Satisfactory, but needs work.';
+    if (value > 0) return '🚨 At risk. Focus seriously.';
+
+    return 'Add courses to calculate GPA.';
   }
 
-  /* ─────────────────────────────────────────────
-   * 6. PUBLIC API
-   * ───────────────────────────────────────────── */
   return {
     GRADING_SCALE,
+    DEFAULT_SCHEME,
+    toNum,
+    round2,
+    clamp,
+    normalizeScheme,
     getGradeInfo,
     calcTheoryTotal,
     calcLabTotal,
     calcFinalPercentage,
+    calcSubjectCredits,
+    calcOverallGpa,
+    calcOverallPercentage,
+    calcHonorPoints,
+    calcTotalCredits,
     getPerformanceLabel,
-    // Utility helpers exposed for UI layer
-    toNum,
-    round2,
   };
 });
