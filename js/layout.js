@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   _hydrateLayout(currentPage, session, userName);
   initAuthModal();
 
+  _initAOS();
+  _initImagePreview();
   runIdle(() => {
-    _initAOS();
     _initVanillaTilt();
     _initSwipeNav(currentPage);
     _initScrollHideNav();
@@ -71,20 +72,105 @@ function _loadScript(src, { id, defer = true } = {}) {
 
 function _initAOS() {
   if (!document.querySelector('[data-aos]')) return;
-  if (prefersReducedMotion() || shouldSaveData() || isSlowConnection()) return;
+  
+  const disableAnimations = prefersReducedMotion() || shouldSaveData() || isSlowConnection();
+  
   if (typeof window.AOS !== 'undefined') {
-    window.AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 42, disable: false });
+    window.AOS.init({ 
+      duration: 700, 
+      easing: 'ease-out-cubic', 
+      once: true, 
+      offset: 42, 
+      disable: disableAnimations 
+    });
     return;
   }
-  runIdle(async () => {
-    try {
-      await _loadScript('https://unpkg.com/aos@next/dist/aos.js', { id: 'aos-script' });
+
+  // Load AOS if not present
+  _loadScript('https://unpkg.com/aos@next/dist/aos.js', { id: 'aos-script' })
+    .then(() => {
       if (typeof window.AOS !== 'undefined') {
-        window.AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 42, disable: false });
+        window.AOS.init({ 
+          duration: 700, 
+          easing: 'ease-out-cubic', 
+          once: true, 
+          offset: 42, 
+          disable: disableAnimations 
+        });
       }
-    } catch (error) {
-      console.warn('AOS failed to load.', error);
-    }
+    })
+    .catch(error => {
+      console.warn('AOS failed to load. Forcing visibility.', error);
+      document.documentElement.classList.add('aos-failed');
+    });
+}
+
+function _initImagePreview() {
+  const images = document.querySelectorAll('.ghost-card img, .founder-card-tw img, .contributor-card img');
+  if (images.length === 0) return;
+
+  // Create overlay if not exists
+  let overlay = document.getElementById('image-preview-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'image-preview-overlay';
+    overlay.className = 'image-preview-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = `
+      <div class="image-preview-content">
+        <button class="image-preview-close" aria-label="Close preview">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <img src="" alt="" class="image-preview-img">
+        <div class="image-preview-caption"></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const closeBtn = overlay.querySelector('.image-preview-close');
+    const closeHandler = () => {
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay || e.target.closest('.image-preview-close')) {
+        closeHandler();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeHandler();
+      }
+    });
+  }
+
+  const previewImg = overlay.querySelector('.image-preview-img');
+  const caption = overlay.querySelector('.image-preview-caption');
+
+  images.forEach(img => {
+    // Add visual cue
+    img.style.cursor = 'zoom-in';
+    img.title = 'Click to view full image';
+    
+    img.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      previewImg.src = img.src;
+      previewImg.alt = img.alt;
+      
+      // Try to find the person's name for the caption
+      const parentCard = img.closest('.ghost-card, .founder-card-tw, .contributor-card');
+      const nameElement = parentCard?.querySelector('p.font-bold, h3');
+      caption.textContent = nameElement ? nameElement.textContent : img.alt;
+
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
   });
 }
 

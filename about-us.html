@@ -21,6 +21,7 @@
     <!-- Use built CSS instead -->
     <link rel="stylesheet" href="styles/tailwind-built.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="js/dark-mode.js" defer></script>
 
     <style>
@@ -66,10 +67,10 @@
 
 <body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
     <div id="app-header"></div>
-    <main class="flex-1" style="padding-bottom: 80px;">
+    <main class="flex-1 page-transition" style="padding-bottom: 80px;">
 
         <!-- ═══ HERO ═══ -->
-        <section class="relative overflow-hidden flex flex-col items-center justify-center text-center min-h-[40vh] px-6 py-20 md:px-16"
+        <section class="relative isolate z-10 overflow-hidden flex flex-col items-center justify-center text-center min-h-[60vh] px-6 py-24 md:px-16"
             style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #0f766e 100%);"
             data-aos="fade-in">
             <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;3&quot; cy=&quot;3&quot; r=&quot;2&quot; fill=&quot;white&quot; fill-opacity=&quot;0.5&quot;/%3E%3C/svg%3E'); background-size: 60px 60px;"></div>
@@ -160,14 +161,14 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
 
-                    <!-- Ghost slot 1 -->
-                    <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[22px]">person_add</span>
+                    <!-- Contributor: Moeed Ali Syed -->
+                    <div class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
+                        <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
+                            <img src="Moeed.png" alt="Moeed Ali Syed" class="w-full h-full object-cover scale-110">
                         </div>
                         <div>
-                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
-                            <p class="text-xs text-[#6b7280] dark:text-gray-400 mt-0.5">Active Contributor</p>
+                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Moeed Ali Syed</p>
+                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor</p>
                         </div>
                     </div>
 
@@ -183,8 +184,8 @@
 
                     <!-- Ghost slot 3 -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[22px]">person_add</span>
+                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
@@ -194,8 +195,8 @@
 
                     <!-- Ghost slot 4 -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[22px]">person_add</span>
+                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
@@ -205,8 +206,8 @@
 
                     <!-- Ghost slot 5 -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[22px]">person_add</span>
+                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
@@ -215,8 +216,8 @@
                     </div>
 
                     <div class="ghost-card bg-white dark:bg-slate-800/40 border-primary/30 hover:border-primary dark:border-primary/20 dark:hover:border-primary/50 cursor-pointer group transition-colors" onclick="document.getElementById('contribute-section').scrollIntoView({behavior:'smooth'})">
-                        <div class="w-12 h-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
-                            <span class="material-symbols-outlined text-primary text-[22px]">add_circle</span>
+                        <div class="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+                            <span class="material-symbols-outlined text-primary text-[26px]">add_circle</span>
                         </div>
                         <div>
                             <p class="font-bold text-sm text-primary">Could Be You!</p>
