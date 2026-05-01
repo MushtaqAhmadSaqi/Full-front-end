@@ -143,13 +143,7 @@
             margin-top: 0.5rem;           /* space when marked emits <br> */
         }
 
-        .question-prose h1,
-        .question-prose h2,
-        .question-prose h3,
-        .question-prose strong {
-            display: inline-block;
-            margin-top: 0.4rem;
-        }
+
 
         /* Display equations get their own breathing room */
         .question-prose mjx-container[display="true"] {
@@ -176,6 +170,206 @@
             margin: 1.25rem 0;
         }
         .dark .solution-prose hr { border-top-color: #334155; }
+
+        /* Better readable paper content */
+        .question-prose {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #334155;
+        }
+
+        .dark .question-prose {
+            color: #cbd5e1;
+        }
+
+        .question-prose > *:first-child {
+            margin-top: 0;
+        }
+
+        .question-prose > *:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-prose p {
+            margin: 0.75rem 0;
+        }
+
+        .question-prose strong {
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .dark .question-prose strong {
+            color: #f8fafc;
+        }
+
+        .question-prose em {
+            font-style: italic;
+            color: #475569;
+        }
+
+        .dark .question-prose em {
+            color: #cbd5e1;
+        }
+
+        .question-prose h1,
+        .question-prose h2,
+        .question-prose h3 {
+            margin: 1.4rem 0 0.65rem;
+            line-height: 1.25;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+
+        .dark .question-prose h1,
+        .dark .question-prose h2,
+        .dark .question-prose h3 {
+            color: #ffffff;
+        }
+
+        .question-prose h1 {
+            font-size: 1.5rem;
+        }
+
+        .question-prose h2 {
+            font-size: 1.25rem;
+        }
+
+        .question-prose h3 {
+            font-size: 1.1rem;
+        }
+
+        .question-prose ul,
+        .question-prose ol {
+            margin: 0.9rem 0 0.9rem 1.3rem;
+            padding-left: 1.2rem;
+        }
+
+        .question-prose li {
+            margin: 0.45rem 0;
+            padding-left: 0.15rem;
+        }
+
+        .question-prose blockquote {
+            margin: 1rem 0;
+            padding: 0.9rem 1rem;
+            border-left: 4px solid #2563eb;
+            background: #eff6ff;
+            border-radius: 0 14px 14px 0;
+            color: #1e3a8a;
+        }
+
+        .dark .question-prose blockquote {
+            background: rgba(37, 99, 235, 0.12);
+            color: #bfdbfe;
+        }
+
+        .question-prose code {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.9em;
+            padding: 0.15rem 0.35rem;
+            border-radius: 0.45rem;
+            background: #f1f5f9;
+            color: #be123c;
+        }
+
+        .dark .question-prose code {
+            background: #1e293b;
+            color: #fda4af;
+        }
+
+        .question-prose pre {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .question-prose pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* Table wrapper */
+        .paper-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+
+        .dark .paper-table-wrap {
+            border-color: #334155;
+            background: #0f172a;
+        }
+
+        .question-prose table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .question-prose thead {
+            background: #f8fafc;
+        }
+
+        .dark .question-prose thead {
+            background: #1e293b;
+        }
+
+        .question-prose th,
+        .question-prose td {
+            padding: 0.8rem 0.95rem;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .dark .question-prose th,
+        .dark .question-prose td {
+            border-bottom-color: #334155;
+        }
+
+        .question-prose th {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 900;
+            color: #475569;
+        }
+
+        .dark .question-prose th {
+            color: #cbd5e1;
+        }
+
+        .question-prose tr:last-child td {
+            border-bottom: 0;
+        }
+
+        /* Solution box */
+        .solution-prose {
+            font-size: 16px;
+            line-height: 1.85;
+        }
+
+        .solution-prose hr {
+            border: 0;
+            border-top: 1px dashed #cbd5e1;
+            margin: 1.3rem 0;
+        }
+
+        .dark .solution-prose hr {
+            border-top-color: #475569;
+        }
+
     </style>
 
 </head>
@@ -197,6 +391,15 @@
                     prompt and send to ChatGPT</div>
                 <code id="promptText"
                     class="block bg-black/30 rounded-lg p-4 md:p-5 text-[13px] font-mono whitespace-pre-wrap break-words text-blue-50 leading-relaxed shadow-inner max-h-[400px] overflow-y-auto">Convert the following past paper into the exact JSON structure provided below. Output ONLY the raw, valid JSON. Do not include markdown code blocks or any explanations.
+
+FORMATTING RULES:
+- Use Markdown headings for steps: ### Step 1: Title
+- Use **bold** only for important labels like **Formula:**, **Answer:**, **Conclusion:**
+- Use *italic* only for short notes or hints, not full paragraphs.
+- Use Markdown tables for comparisons, definitions, truth tables, or data.
+- Keep one blank line before and after every table.
+- Do not put blank lines between table rows.
+- Use bullet points when listing definitions or features.
 
 CRITICAL INSTRUCTIONS FOR UI RENDERING:
 - JSON ESCAPING: EVERY LaTeX backslash MUST be double-escaped as \\ (e.g. \\frac{1}{2}, \\tan, \\sec^2, \\frac{du}{dx}). Never use single backslash.
@@ -600,25 +803,55 @@ JSON FORMAT:
 
         function formatMarkdown(text) {
             if (!text || typeof text !== 'string') return '';
-            
-            // 🔸 Split step headers onto their own paragraph
-            let processed = text
-                .replace(/\n(?!\n)/g, '\n\n')                                // single \n → \n\n
-                .replace(/(Step\s*\d+[:.])/gi, '\n\n---\n\n**$1**\n\n')       // Add separator + bold Step
-                .replace(/(Left-hand derivative:|Right-hand derivative:|Conclusion:|Claim:|Counter-Example:)/gi, '\n\n**$1**\n\n');
 
-            processed = processed.includes('Letu') || processed.includes('Differentiatebothsides') ? normalizeModelAnswer(processed) : processed;
+            let processed = text
+                .replace(/\\n/g, '\n')
+                .replace(/\r\n/g, '\n')
+                .trim();
+
+            processed = processed
+                .replace(/(^|\n)(Step\s*\d+[:.])/gi, '\n\n---\n\n### $2\n\n')
+                .replace(/(^|\n)(Left-hand derivative:|Right-hand derivative:|Conclusion:|Claim:|Counter-Example:|Formula:|Answer:)/gi, '\n\n**$2**\n\n');
+
+            processed = processed.includes('Letu') || processed.includes('Differentiatebothsides')
+                ? normalizeModelAnswer(processed)
+                : processed;
+
             const mathBlocks = [];
             let counter = 0;
-            processed = processed.replace(/\$\$([\s\S]*?)\$\$/g, m => { mathBlocks.push(m); return `%%MATH_BLOCK_${counter++}%%`; });
-            processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, m => { mathBlocks.push('$$' + m.slice(2, -2) + '$$'); return `%%MATH_BLOCK_${counter++}%%`; });
-            processed = processed.replace(/\$(.+?)\$/g, m => { mathBlocks.push(m); return `%%MATH_BLOCK_${counter++}%%`; });
-            processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, m => { mathBlocks.push('$' + m.slice(2, -2) + '$'); return `%%MATH_BLOCK_${counter++}%%`; });
-            const html = marked.parse(processed, { breaks: false, gfm: true });
-            let result = html;
-            for (let i = 0; i < mathBlocks.length; i++) result = result.replace(`%%MATH_BLOCK_${i}%%`, mathBlocks[i]);
-            return sanitizeHtml(result);
+
+            processed = processed.replace(/\$\$([\s\S]*?)\$\$/g, match => {
+                mathBlocks.push(match);
+                return `%%MATH_BLOCK_${counter++}%%`;
+            });
+
+            processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, match => {
+                mathBlocks.push('$$' + match.slice(2, -2) + '$$');
+                return `%%MATH_BLOCK_${counter++}%%`;
+            });
+
+            processed = processed.replace(/\$(.+?)\$/g, match => {
+                mathBlocks.push(match);
+                return `%%MATH_BLOCK_${counter++}%%`;
+            });
+
+            processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, match => {
+                mathBlocks.push('$' + match.slice(2, -2) + '$');
+                return `%%MATH_BLOCK_${counter++}%%`;
+            });
+
+            let html = marked.parse(processed, {
+                breaks: true,
+                gfm: true
+            });
+
+            for (let i = 0; i < mathBlocks.length; i++) {
+                html = html.replace(`%%MATH_BLOCK_${i}%%`, mathBlocks[i]);
+            }
+
+            return sanitizeHtml(html);
         }
+
 
 
         function renderGraph(graphData, containerId) {

@@ -255,10 +255,14 @@
               </div>
 
               <div class="mb-5 min-w-0">
-                <h3 class="font-bold text-[17px] sm:text-xl text-slate-900 dark:text-white mb-2 leading-snug break-words">
-                  ${escHtml(instructor)}
+                <h3 class="font-black text-[17px] sm:text-xl text-slate-900 dark:text-white mb-2 leading-snug break-words">
+                  ${escHtml(examType)} ${escHtml(String(year))} Paper
                 </h3>
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+
+                <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                  Instructor: ${escHtml(instructor)}
+                </p>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <span>${escHtml(subjectCode || subjectName || 'Subject')}</span>
                   <span>•</span>
                   <span>${escHtml(String(totalMarks))} marks</span>
