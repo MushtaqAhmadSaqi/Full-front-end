@@ -69,9 +69,16 @@ function _loadScript(src, { id, defer = true } = {}) {
   });
 }
 
+function _revealAosElements() {
+  document.querySelectorAll('[data-aos]').forEach(el => el.classList.add('aos-animate'));
+}
+
 function _initAOS() {
   if (!document.querySelector('[data-aos]')) return;
-  if (prefersReducedMotion() || shouldSaveData() || isSlowConnection()) return;
+  if (prefersReducedMotion() || shouldSaveData() || isSlowConnection()) {
+    _revealAosElements();
+    return;
+  }
   if (typeof window.AOS !== 'undefined') {
     window.AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 42, disable: false });
     return;
@@ -81,9 +88,12 @@ function _initAOS() {
       await _loadScript('https://unpkg.com/aos@next/dist/aos.js', { id: 'aos-script' });
       if (typeof window.AOS !== 'undefined') {
         window.AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true, offset: 42, disable: false });
+      } else {
+        _revealAosElements();
       }
     } catch (error) {
       console.warn('AOS failed to load.', error);
+      _revealAosElements();
     }
   });
 }
