@@ -118,7 +118,7 @@ function _injectHeader(currentPage, session, userName) {
   const isQuizActive = currentPage === 'quiz.html';
   const isDashboardActive = currentPage === 'dashboard.html';
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/') || window.location.pathname.includes('/campus-map/');
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
   const base = inSubDir ? '../' : '';
 
   const html = `
@@ -135,7 +135,7 @@ function _injectHeader(currentPage, session, userName) {
             <a href="${base}index.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'index.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Home</a>
             <a href="${base}subjects.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isSubjectsActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Subjects</a>
             <a href="${base}quiz.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'quiz.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Quiz</a>
-            <a href="${base}campus-map/campus-map.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'campus-map.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Map</a>
+
             <a href="${base}dashboard.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isDashboardActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Dashboard</a>
           </nav>
 
@@ -202,7 +202,7 @@ function _injectMobileNav(currentPage) {
   const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
   const isDashboardActive = currentPage === 'dashboard.html';
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/') || window.location.pathname.includes('/campus-map/');
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
   const base = inSubDir ? '../' : '';
 
   const html = `
@@ -223,10 +223,7 @@ function _injectMobileNav(currentPage) {
           <span class="label">Quiz</span>
         </a>
 
-        <a href="${base}campus-map/campus-map.html" class="mobile-nav-item ${currentPage === 'campus-map.html' ? 'active' : ''}">
-          <span class="material-symbols-outlined">map</span>
-          <span class="label">Map</span>
-        </a>
+
 
         <a href="${base}about-us.html" class="mobile-nav-item ${currentPage === 'about-us.html' ? 'active' : ''}">
           <span class="material-symbols-outlined">group</span>
@@ -330,7 +327,7 @@ function _injectFooter() {
   const container = document.getElementById('app-footer');
   if (!container && document.querySelector('footer')) return;
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/') || window.location.pathname.includes('/campus-map/');
+  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
   const base = inSubDir ? '../' : '';
 
   const html = `
@@ -406,7 +403,7 @@ function _wireNavButton(session) {
 }
 
 function _getSwipeRoutes() {
-  return ['index.html', 'subjects.html', 'quiz.html', 'campus-map/campus-map.html', 'dashboard.html'];
+  return ['index.html', 'subjects.html', 'quiz.html', 'dashboard.html'];
 }
 
 function _isTouchDevice() {

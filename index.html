@@ -218,96 +218,7 @@
       }
     }
 
-    /* Campus Preview Card */
-    .campus-preview-section {
-      padding: 32px 0;
-    }
 
-    .campus-preview-card {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      border: 1px solid #e2e8f0;
-      border-radius: 28px;
-      background: white;
-      padding: 28px;
-      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
-      transition: transform 0.3s ease;
-    }
-
-    .dark .campus-preview-card {
-      background: #0f172a;
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .campus-preview-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .campus-preview-kicker {
-      margin: 0 0 8px;
-      color: #059669;
-      font-size: 0.82rem;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .campus-preview-card h2 {
-      margin: 0;
-      color: #0f172a;
-      font-size: clamp(1.7rem, 4vw, 2.7rem);
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-    }
-
-    .dark .campus-preview-card h2 {
-      color: white;
-    }
-
-    .campus-preview-card p:not(.campus-preview-kicker) {
-      max-width: 620px;
-      margin: 12px 0 0;
-      color: #64748b;
-      line-height: 1.7;
-      font-weight: 600;
-    }
-
-    .dark .campus-preview-card p {
-      color: #94a3b8;
-    }
-
-    .campus-preview-btn {
-      flex: 0 0 auto;
-      border-radius: 999px;
-      background: #059669;
-      color: white;
-      padding: 13px 24px;
-      text-decoration: none;
-      font-weight: 950;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s ease;
-    }
-
-    .campus-preview-btn:hover {
-      background: #047857;
-    }
-
-    @media (max-width: 720px) {
-      .campus-preview-card {
-        align-items: stretch;
-        flex-direction: column;
-        padding: 24px;
-      }
-
-      .campus-preview-btn {
-        text-align: center;
-      }
-    }
   </style>
 </head>
 
@@ -364,11 +275,7 @@
             <span class="material-symbols-outlined text-[18px]">quiz</span>
             Start Quiz
           </a>
-          <a href="campus-map/campus-map.html"
-            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-emerald-600 text-white font-semibold text-[15px] shadow-md hover:bg-emerald-700 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 no-underline">
-            <span class="material-symbols-outlined text-[18px]">map</span>
-            Explore Campus Map
-          </a>
+
         </div>
 
         <!-- Micro social proof -->
@@ -487,24 +394,7 @@
           </p>
         </div>
 
-        <section class="campus-preview-section animate-slide-up">
-          <div class="campus-preview-card">
-            <div>
-              <p class="campus-preview-kicker">Campus Tool</p>
 
-              <h2>COMSATS Islamabad Campus Map</h2>
-
-              <p>
-                Find library, academic blocks, cafes, hostels, gates, services,
-                study spots, and important student places faster.
-              </p>
-            </div>
-
-            <a href="./campus-map/campus-map.html" class="campus-preview-btn">
-              Open Campus Map
-            </a>
-          </div>
-        </section>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           <a href="ComsatsGPA/gpa-calculator.html"
