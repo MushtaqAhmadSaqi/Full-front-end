@@ -852,6 +852,21 @@ JSON FORMAT:
             return sanitizeHtml(html);
         }
 
+        function enhancePaperContent(root = document) {
+            root.querySelectorAll('.question-prose table:not(.paper-table)').forEach(table => {
+                table.classList.add('paper-table');
+
+                if (!table.parentElement.classList.contains('paper-table-wrap')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'paper-table-wrap';
+
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+        }
+
+
 
 
         function renderGraph(graphData, containerId) {
@@ -885,8 +900,9 @@ JSON FORMAT:
         function renderPreview(d) {
             document.getElementById('questionCount').textContent = `${d.questions.length} Questions · ${d.total_marks} Marks`;
             document.getElementById('metaGrid').innerHTML = [
-                ['📚', 'Subject', d.subject_code], ['👨🏫', 'Instructor', d.instructor_name], ['📅', 'Year', d.year], ['📝', 'Exam', d.exam_type]
+                ['📚', 'Subject', d.subject_code], ['👨🏫', 'Instructor', d.instructor_name], ['📅', 'Year', d.year], ['📝', 'Exam', d.exam_type], ['🏫', 'Semester', d.semester]
             ].map(([icon, k, v]) => `<div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700"><div class="text-[10px] text-slate-500 uppercase font-bold">${icon} ${k}</div><strong class="block text-sm mt-1 dark:text-gray-200">${v}</strong></div>`).join('');
+
             
             let cIdx = 0;
             document.getElementById('qList').innerHTML = d.questions.map((q, i) => {
@@ -905,16 +921,21 @@ JSON FORMAT:
                         ${q.sub_parts?.length ? `<div class="mt-4 pl-4 border-l-2 border-blue-500 space-y-3 font-medium">${q.sub_parts.map(sp => `<div class="question-prose">${formatMarkdown(sp)}</div>`).join('')}</div>` : ''}
                         ${qGraphHtml}
                         ${(q.model_answer || q.answer_graph) ? `
-                        <details class="mt-4">
+                        <details class="mt-4" open>
                             <summary class="cursor-pointer text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-2 rounded-lg">View Solution</summary>
                             <div class="solution-prose question-prose mt-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg text-[14px] leading-loose space-y-3">
                                 ${q.model_answer ? formatMarkdown(q.model_answer) : ''}
                                 ${aGraphHtml}
                             </div>
                         </details>` : ''}
+
                     </div>
                 </div>`;
             }).join('');
+
+            const qList = document.getElementById('qList');
+            enhancePaperContent(qList);
+
 
             document.getElementById('preview').classList.remove('hidden');
             uploadBtn.classList.remove('hidden');
