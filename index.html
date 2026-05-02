@@ -15,20 +15,33 @@
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0f172a" />
 
-  <!-- Fonts -->
+  <!-- Fonts: preconnect first, then load non-blocking -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional" rel="stylesheet" />
 
-  <!-- Use built CSS instead -->
+  <!-- Critical CSS -->
   <link rel="preload" href="styles/tailwind-built.css" as="style">
   <link rel="stylesheet" href="styles/tailwind-built.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="auth-modal.css">
 
+  <!-- AOS: inline minimal styles so elements are never invisible on slow connections -->
+  <style>
+    [data-aos]{pointer-events:none}[data-aos].aos-animate{pointer-events:auto}
+    [data-aos][data-aos][data-aos-duration='700']{transition-duration:.7s}
+    [data-aos='fade-up']{transform:translateY(20px);opacity:0;transition-property:transform,opacity}
+    [data-aos='fade-up'].aos-animate,[data-aos='fade-in'].aos-animate,[data-aos='zoom-in'].aos-animate{transform:none;opacity:1}
+    [data-aos='fade-in']{opacity:0;transition-property:opacity}
+    [data-aos='zoom-in']{transform:scale(0.97);opacity:0;transition-property:transform,opacity}
+    /* Safety net: after page fully loads, reveal any still-hidden AOS elements */
+    .aos-fallback-active [data-aos]:not(.aos-animate){opacity:1!important;transform:none!important}
+  </style>
+
+  <!-- Dark mode must run as early as possible to avoid flash -->
   <script src="js/dark-mode.js" defer></script>
-  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
   <style>
     /* Page-level tweaks that need to override Tailwind or add specifics */

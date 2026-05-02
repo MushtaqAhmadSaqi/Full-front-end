@@ -6,22 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | COMSATSPrepHub</title>
     <meta name="description" content="Learn about the team and mission behind COMSATSPrepHub — a student-built platform for COMSATS academic excellence.">
-    <!-- Fonts -->
+    <!-- Fonts: single non-blocking load -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- LCP Optimizations -->
-    <link rel="preload" as="image" href="My-image.webp" type="image/webp" fetchpriority="high">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-        rel="stylesheet">
-    <!-- Use built CSS instead -->
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="styles/tailwind-built.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <!-- AOS: inline so elements are never stuck invisible on slow connections -->
+    <style>
+      [data-aos]{pointer-events:none}[data-aos].aos-animate{pointer-events:auto}
+      [data-aos='fade-up']{transform:translateY(20px);opacity:0;transition-property:transform,opacity;transition-duration:.7s}
+      [data-aos='fade-in']{opacity:0;transition-property:opacity;transition-duration:.7s}
+      [data-aos='zoom-in']{transform:scale(0.97);opacity:0;transition-property:transform,opacity;transition-duration:.7s}
+      [data-aos='fade-up'].aos-animate,[data-aos='fade-in'].aos-animate,[data-aos='zoom-in'].aos-animate{transform:none;opacity:1}
+      .aos-fallback-active [data-aos]:not(.aos-animate){opacity:1!important;transform:none!important}
+    </style>
+
     <script src="js/dark-mode.js" defer></script>
 
     <style>

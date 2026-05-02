@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,-50..200,20..48');
+/* NOTE: Fonts are loaded via <link> in HTML head to avoid render-blocking @import */
+/* See: https://web.dev/defer-non-critical-css/ */
 
 :root {
   --bg-main: #f0f2f5;
@@ -42,7 +42,31 @@ html.dark {
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
+  font-family: var(--font-family);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── FOUC Prevention ──────────────────────────────────────────────────────
+   Reserve header height so page doesn't jump when JS injects the header.
+   The header is ~72px tall (py-4 + inner pill). We give it a min-height
+   so content below doesn't reflow after injection.
+──────────────────────────────────────────────────────────────────────────── */
+#app-header {
+  min-height: 72px;
+}
+
+/* AOS safe fallback — if AOS script never loads (slow/offline), elements
+   must still be visible. layout.js also calls _revealAosElements() on
+   slow connections, but this CSS is the last safety net. */
+[data-aos] {
+  transition-duration: 0.7s !important;
+}
+/* After 3 seconds, force all AOS elements visible regardless */
+@keyframes aos-reveal-fallback {
+  to { opacity: 1 !important; transform: none !important; }
+}
+.aos-fallback-active [data-aos]:not(.aos-animate) {
+  animation: aos-reveal-fallback 0.3s forwards;
 }
 
 * {

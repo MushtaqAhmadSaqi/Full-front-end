@@ -52,6 +52,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   _initAOS();
   _initImagePreview();
 
+  // Safety net: if AOS.js never loads (slow/offline), force all elements
+  // visible after 3 seconds so the page never looks broken.
+  setTimeout(() => {
+    if (typeof window.AOS === 'undefined') {
+      document.body.classList.add('aos-fallback-active');
+    }
+  }, 3000);
+
   runIdle(() => {
     _initVanillaTilt();
     _initSwipeNav(currentPage);
