@@ -18,14 +18,8 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Preload Critical Fonts -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap">
-  <link rel="preload" as="style"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
 
   <!-- Use built CSS instead -->
   <link rel="preload" href="styles/tailwind-built.css" as="style">
@@ -250,7 +244,7 @@
           <div
             class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-50/50 dark:bg-brand-500/5 border border-brand-100 dark:border-brand-500/10 backdrop-blur-md">
             <a href="index.html" class="logo-box">
-              <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 80px;">
+              <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 80px;" loading="lazy">
             </a>
             <span class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Trusted
               by Students</span>

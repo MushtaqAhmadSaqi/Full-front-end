@@ -15,7 +15,7 @@
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         rel="stylesheet">
     <!-- Use built CSS instead -->
@@ -105,9 +105,8 @@
                                 <img src="My-image.png" 
                                      srcset="My-image.png 1x" 
                                      sizes="(max-width: 640px) 160px, 192px"
-                                     loading="eager" 
+                                     loading="lazy" 
                                      decoding="async" 
-                                     fetchpriority="high" 
                                      alt="Mushtaq Ahmad Saqi" 
                                      class="w-full h-full object-cover" 
                                      onerror="this.style.display='none'; this.closest('picture').nextElementSibling.style.display='flex';">
@@ -164,7 +163,7 @@
                     <!-- Contributor: Moeed Ali Syed -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
                         <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
-                            <img src="Moeed.png" alt="Moeed Ali Syed" class="w-full h-full object-cover scale-110">
+                            <img src="Moeed.png" alt="Moeed Ali Syed" class="w-full h-full object-cover scale-110" loading="lazy">
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Moeed Ali Syed</p>
@@ -185,7 +184,7 @@
                     <!-- Contributor: M Umar Shafiq Somro -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
                         <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
-                            <img src="Umar.png" alt="M Umar Shafiq Somro" class="w-full h-full object-cover scale-110">
+                            <img src="Umar.png" alt="M Umar Shafiq Somro" class="w-full h-full object-cover scale-110" loading="lazy">
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">M Umar Shafiq Somro</p>
