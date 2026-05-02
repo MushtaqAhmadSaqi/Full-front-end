@@ -1,156 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMSATSPrepHub — Student Dashboard</title>
-    <!-- Use built CSS instead -->
-    <link rel="stylesheet" href="styles/tailwind-built.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="auth-modal.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COMSATSPrepHub — Student Dashboard</title>
 
-    <script src="js/dark-mode.js" defer></script>
+  <link rel="stylesheet" href="styles/tailwind-built.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="auth-modal.css" />
+
+  <script src="js/dark-mode.js" defer></script>
 </head>
-<body class="bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen flex flex-col">
-    <div id="app-header"></div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full flex-1 relative z-10">
-      <!-- HERO -->
-      <section class="mb-12">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-8 sm:p-10 shadow-sm">
-          <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
-            <div class="space-y-6">
-              <p class="inline-flex w-fit items-center gap-2 rounded-full bg-brand-50 dark:bg-brand-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-400">
-                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                <span id="currentDate">Loading date...</span>
-              </p>
-      
-              <div class="flex items-start gap-5">
-                <div class="hero-brand-logo flex-shrink-0" aria-hidden="true">C</div>
-                <div class="flex-1">
-                  <p class="text-xs font-bold uppercase tracking-widest text-brand-600 dark:text-brand-400 mb-3">
-                    Student Dashboard
-                  </p>
-              <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight mb-4">
-                    Welcome back, <span id="userFirstName" class="bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">Student</span>
-                  </h1>
-                </div>
-              </div>
-      
-              <p id="welcomeSubtext" class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-                Track your study progress, quiz performance, and subject mastery in one clean dashboard.
-              </p>
+<body class="dashboard-page antialiased min-h-screen flex flex-col">
+  <div id="app-header"></div>
+
+  <main id="main-content" class="dashboard-shell">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
+      <div class="dashboard-side-brand">
+        <div class="dashboard-side-logo" aria-hidden="true">C</div>
+        <div>
+          <p class="dashboard-side-name">COMSATSPrepHub</p>
+          <p class="dashboard-side-role">Student workspace</p>
+        </div>
+      </div>
+
+      <nav class="dashboard-nav" aria-label="Dashboard links">
+        <a href="dashboard.html" class="dashboard-nav-link active" aria-current="page">
+          <span class="material-symbols-outlined" aria-hidden="true">space_dashboard</span>
+          Overview
+        </a>
+
+        <a href="quiz.html" class="dashboard-nav-link">
+          <span class="material-symbols-outlined" aria-hidden="true">quiz</span>
+          Practice Quiz
+        </a>
+
+        <a href="subjects.html" class="dashboard-nav-link">
+          <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
+          Subjects
+        </a>
+
+        <a href="about-us.html" class="dashboard-nav-link">
+          <span class="material-symbols-outlined" aria-hidden="true">groups</span>
+          Team
+        </a>
+      </nav>
+
+      <div class="dashboard-side-note">
+        <div class="dashboard-side-note-icon" aria-hidden="true">
+          <span class="material-symbols-outlined">tips_and_updates</span>
+        </div>
+
+        <p class="dashboard-side-note-title">Boss note</p>
+        <p class="dashboard-side-note-text">
+          Do quizzes first. Then fix weak topics. Random study is not strategy.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main dashboard -->
+    <section class="dashboard-main" aria-label="Student dashboard overview">
+      <!-- Top bar -->
+      <header class="dashboard-topbar">
+        <div>
+          <p class="dashboard-topbar-label">Dashboard</p>
+          <h1 class="dashboard-topbar-title">Study performance</h1>
+        </div>
+
+        <div class="dashboard-topbar-actions">
+          <p class="dashboard-date-chip">
+            <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+            <span id="currentDate">Loading date...</span>
+          </p>
+
+          <a href="quiz.html" class="dash-btn dash-btn-primary dash-btn-small">
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            Start Quiz
+          </a>
+        </div>
+      </header>
+
+      <!-- Mobile tabs -->
+      <nav class="dashboard-mobile-tabs" aria-label="Dashboard quick links">
+        <a href="dashboard.html" class="dashboard-mobile-tab active" aria-current="page">
+          <span class="material-symbols-outlined" aria-hidden="true">space_dashboard</span>
+          Overview
+        </a>
+
+        <a href="quiz.html" class="dashboard-mobile-tab">
+          <span class="material-symbols-outlined" aria-hidden="true">quiz</span>
+          Quiz
+        </a>
+
+        <a href="subjects.html" class="dashboard-mobile-tab">
+          <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
+          Subjects
+        </a>
+
+        <a href="about-us.html" class="dashboard-mobile-tab">
+          <span class="material-symbols-outlined" aria-hidden="true">groups</span>
+          Team
+        </a>
+      </nav>
+
+      <!-- Hero -->
+      <section class="dashboard-hero" aria-labelledby="dashboardTitle">
+        <div class="dashboard-hero-grid">
+          <div class="dashboard-hero-copy">
+            <p class="dashboard-kicker">
+              <span class="material-symbols-outlined" aria-hidden="true">school</span>
+              Student Dashboard
+            </p>
+
+            <div class="dashboard-title-wrap">
+              <div class="dashboard-hero-logo" aria-hidden="true">C</div>
+
+              <h2 id="dashboardTitle" class="dashboard-hero-title">
+                Welcome back,
+                <span id="userFirstName" class="dashboard-gradient-text">Student</span>
+              </h2>
             </div>
-      
-            <div class="flex flex-wrap gap-3 lg:justify-end">
-              <a href="quiz.html"
-                 class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
-                <span class="material-symbols-outlined text-[18px] mr-2">play_arrow</span>
+
+            <p id="welcomeSubtext" class="dashboard-hero-text">
+              Track your study progress, quiz performance, weak topics, and subject mastery in one clean dashboard.
+            </p>
+
+            <div class="dashboard-actions" aria-label="Primary actions">
+              <a href="quiz.html" class="dash-btn dash-btn-primary">
+                <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
                 Resume Practice
               </a>
-      
-              <a href="subjects.html"
-                 class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold transition-all duration-200 whitespace-nowrap">
-                <span class="material-symbols-outlined text-[18px] mr-2">menu_book</span>
+
+              <a href="subjects.html" class="dash-btn dash-btn-secondary">
+                <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
                 Browse Subjects
               </a>
             </div>
           </div>
-        </div>
-      </section>
-    
-      <!-- KPI ROW -->
-      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Quizzes Completed</p>
-          <h3 id="statQuizCount" class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">0</h3>
-        </div>
-    
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Average Score</p>
-          <h3 id="statAverageScore" class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">0%</h3>
-        </div>
-    
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Subjects Studied</p>
-          <h3 id="statSubjectsStudied" class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">0</h3>
-        </div>
-    
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Study Sessions</p>
-          <h3 id="statStudySessions" class="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white">0</h3>
-        </div>
-      </section>
-    
-      <!-- CONTENT GRID -->
-      <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- LEFT -->
-        <div class="xl:col-span-2 space-y-6">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
-            <div class="mb-6">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white">Learning Progress</h2>
-              <p class="text-sm text-slate-500 dark:text-slate-400">Your recent quiz performance trend</p>
-            </div>
-    
-            <div class="h-[280px] relative">
-              <canvas id="learningChart" aria-label="Recent quiz score trend" role="img"></canvas>
-            
-              <div id="learningChartEmpty"
-                   class="hidden absolute inset-0 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-slate-800/30 flex items-center justify-center text-center px-6">
-                <div>
-                  <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-300 flex items-center justify-center">
-                    <span class="material-symbols-outlined">insights</span>
-                  </div>
-                  <p class="font-semibold text-slate-900 dark:text-white">No score trend yet</p>
-                  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Complete a few quizzes and your recent performance will appear here.
-                  </p>
-                </div>
+
+          <!-- Pulse card -->
+          <aside class="study-pulse-card" aria-label="Study pulse summary">
+            <div class="pulse-card-header">
+              <div>
+                <p class="pulse-label">Average Score</p>
+                <p id="pulseAverageScore" class="pulse-score">0%</p>
+              </div>
+
+              <div class="pulse-ring" aria-hidden="true">
+                <span class="material-symbols-outlined">monitoring</span>
               </div>
             </div>
-          </div>
-    
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-black text-slate-900 dark:text-white">Weak Topics</h2>
-              <a href="subjects.html" class="text-sm font-semibold text-brand-600 dark:text-brand-400">Review</a>
+
+            <div class="pulse-grid">
+              <div class="pulse-mini-card">
+                <p class="pulse-mini-label">Quizzes</p>
+                <p id="pulseQuizCount" class="pulse-mini-value">0</p>
+              </div>
+
+              <div class="pulse-mini-card">
+                <p class="pulse-mini-label">Subjects</p>
+                <p id="pulseSubjectsStudied" class="pulse-mini-value">0</p>
+              </div>
             </div>
-    
-            <div id="weakTopicsList" class="space-y-3">
-              <p class="text-sm text-slate-500 dark:text-slate-400">No weak topics yet.</p>
-            </div>
-          </div>
-        </div>
-    
-        <!-- RIGHT -->
-        <div class="space-y-6">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
-            <h2 class="text-xl font-black text-slate-900 dark:text-white mb-4">Recent Activity</h2>
-            <div id="recentActivityList" class="space-y-3">
-              <p class="text-sm text-slate-500 dark:text-slate-400">No activity recorded yet.</p>
-            </div>
-          </div>
-    
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-sm">
-            <h2 class="text-xl font-black text-slate-900 dark:text-white mb-4">Subject Mastery</h2>
-            <div id="subjectMasteryList" class="space-y-4">
-              <p class="text-sm text-slate-500 dark:text-slate-400">No subject progress yet.</p>
-            </div>
-          </div>
+
+            <p class="pulse-status">
+              <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
+              <span id="averageScoreStatus">No score yet</span>
+            </p>
+          </aside>
         </div>
       </section>
-    </main>
 
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <div class="hidden md:block absolute top-[-10%] left-[-5%] w-[360px] h-[360px] rounded-full bg-brand-300/20 dark:bg-brand-900/10 blur-[110px] motion-safe:animate-pulse-slow"></div>
-        <div class="hidden md:block absolute bottom-[-10%] right-[-5%] w-[420px] h-[420px] rounded-full bg-indigo-300/15 dark:bg-indigo-900/10 blur-[110px]"></div>
-    </div>
+      <!-- KPI row -->
+      <section class="kpi-grid" aria-label="Dashboard statistics">
+        <article class="kpi-card">
+          <div class="kpi-topline">
+            <span class="kpi-icon" aria-hidden="true">
+              <span class="material-symbols-outlined">task_alt</span>
+            </span>
+            <span class="kpi-chip">Total</span>
+          </div>
+
+          <p class="kpi-label">Quizzes Completed</p>
+          <h3 id="statQuizCount" class="kpi-value">0</h3>
+          <p class="kpi-meta">Completed attempts from your account.</p>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-topline">
+            <span class="kpi-icon" aria-hidden="true">
+              <span class="material-symbols-outlined">percent</span>
+            </span>
+            <span class="kpi-chip">Avg</span>
+          </div>
+
+          <p class="kpi-label">Average Score</p>
+          <h3 id="statAverageScore" class="kpi-value">0%</h3>
+          <p class="kpi-meta">Mean score across quizzes.</p>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-topline">
+            <span class="kpi-icon" aria-hidden="true">
+              <span class="material-symbols-outlined">auto_stories</span>
+            </span>
+            <span class="kpi-chip">Scope</span>
+          </div>
+
+          <p class="kpi-label">Subjects Studied</p>
+          <h3 id="statSubjectsStudied" class="kpi-value">0</h3>
+          <p class="kpi-meta">Unique subjects with progress.</p>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-topline">
+            <span class="kpi-icon" aria-hidden="true">
+              <span class="material-symbols-outlined">timer</span>
+            </span>
+            <span class="kpi-chip">Work</span>
+          </div>
+
+          <p class="kpi-label">Study Sessions</p>
+          <h3 id="statStudySessions" class="kpi-value">0</h3>
+          <p class="kpi-meta">Tracked study sessions.</p>
+        </article>
+      </section>
+
+      <!-- Main content -->
+      <section class="dashboard-content-grid" aria-label="Dashboard details">
+        <div class="dashboard-stack">
+          <article class="dashboard-panel dashboard-panel-chart">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Performance Trend</p>
+                <h2 class="panel-title">Learning Progress</h2>
+                <p class="panel-subtitle">Recent quiz score trend from your latest attempts.</p>
+              </div>
+
+              <a href="quiz.html" class="panel-link">
+                Take quiz
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </a>
+            </div>
+
+            <div class="chart-shell">
+              <canvas id="learningChart" aria-label="Recent quiz score trend" role="img"></canvas>
+
+              <div id="learningChartEmpty" class="dashboard-empty-state hidden">
+                <div class="dashboard-empty-icon" aria-hidden="true">
+                  <span class="material-symbols-outlined">insights</span>
+                </div>
+
+                <p class="dashboard-empty-title">No score trend yet</p>
+                <p class="dashboard-empty-text">
+                  Complete a few quizzes and your performance chart will appear here.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Priority Review</p>
+                <h2 class="panel-title">Weak Topics</h2>
+                <p class="panel-subtitle">Review low mastery areas first.</p>
+              </div>
+
+              <a href="subjects.html" class="panel-link">
+                Review
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </a>
+            </div>
+
+            <div id="weakTopicsList" class="weak-topics-list" aria-live="polite">
+              <div class="dashboard-empty-state">
+                <p class="dashboard-empty-text">No weak topics yet.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="dashboard-stack">
+          <article class="dashboard-panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Timeline</p>
+                <h2 class="panel-title">Recent Activity</h2>
+                <p class="panel-subtitle">Latest quiz and study updates.</p>
+              </div>
+            </div>
+
+            <div id="recentActivityList" class="activity-list" aria-live="polite">
+              <div class="dashboard-empty-state">
+                <p class="dashboard-empty-text">No activity recorded yet.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Subject Health</p>
+                <h2 class="panel-title">Subject Mastery</h2>
+                <p class="panel-subtitle">Strongest and weakest subjects at a glance.</p>
+              </div>
+            </div>
+
+            <div id="subjectMasteryList" class="subject-mastery-list" aria-live="polite">
+              <div class="dashboard-empty-state">
+                <p class="dashboard-empty-text">No subject progress yet.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="dashboard-bg-orb" aria-hidden="true"></div>
+  <div class="dashboard-bg-orb dashboard-bg-orb-right" aria-hidden="true"></div>
 
   <div id="app-footer"></div>
   <div id="app-mobile-nav"></div>
 
-    <!-- Scripts -->
-    <script type="module" src="js/dashboard.js"></script>
-    <script type="module" src="js/layout.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/layout.js"></script>
 </body>
 </html>

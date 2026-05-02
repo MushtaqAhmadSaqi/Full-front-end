@@ -55,7 +55,7 @@ async function initDashboard() {
     setText('userFirstName', firstName);
     setText(
       'welcomeSubtext',
-      `Great to have you back, ${fullName}. Your dashboard now reflects quiz results, studied subjects, and recent paper activity in one place.`
+      `Great to have you back, ${fullName}. Your study progress, quiz scores, weak topics, and subject mastery are organized in one focused workspace.`
     );
 
     await loadDashboardData(user.id);
@@ -69,16 +69,17 @@ function setGuestFallback() {
   setText('userFirstName', 'Student');
   setText(
     'welcomeSubtext',
-    'Track quiz scores, studied subjects, and mastery trends in one clean dashboard after you sign in.'
+    'Sign in to track quiz scores, studied subjects, weak topics, and mastery trends in one clean dashboard.'
   );
 
-  renderDashboardStats({
+  const emptyStats = {
     quizCount: 0,
     averageScore: 0,
     subjectsStudied: 0,
     studySessions: 0
-  });
+  };
 
+  renderDashboardStats(emptyStats);
   renderWeakTopics([]);
   renderRecentActivity([]);
   renderSubjectMastery([]);
@@ -187,13 +188,13 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
     .slice(0, 5)
     .map(item => ({
       name: item.topic_name || item.subject_name,
-      score: item.mastery_percent,
+      score: clampPercent(item.mastery_percent),
       subject: item.subject_code || item.subject_name
     }));
 
   const recentQuizActivity = quizAttempts.slice(0, 4).map(item => {
     const subject = resolveSubjectLabel(item.subject_code, subjectNameMap);
-    const score = Number(item.score_percent || 0);
+    const score = clampPercent(Number(item.score_percent || 0));
 
     return {
       type: 'quiz',
@@ -206,7 +207,7 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
   const recentStudyActivity = studyRowsForActivity.slice(0, 4).map(item => ({
     type: 'study',
     title: `Studied ${item.subject_name}`,
-    meta: `${item.sessions_count} session${item.sessions_count === 1 ? '' : 's'} • ${item.mastery_percent}% mastery`,
+    meta: `${item.sessions_count} session${item.sessions_count === 1 ? '' : 's'} • ${clampPercent(item.mastery_percent)}% mastery`,
     date: item.updated_at
   }));
 
@@ -232,7 +233,7 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
     }
 
     const existing = masteryMap.get(key);
-    existing.total += item.mastery_percent;
+    existing.total += clampPercent(item.mastery_percent);
     existing.count += 1;
     existing.sessions = Math.max(existing.sessions, item.sessions_count);
   });
@@ -241,7 +242,7 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
     .map(item => ({
       name: item.name,
       code: item.code,
-      mastery: Math.round(item.total / item.count),
+      mastery: item.count ? Math.round(item.total / item.count) : 0,
       sessions: item.sessions
     }))
     .sort((a, b) => (b.mastery !== a.mastery ? b.mastery - a.mastery : b.sessions - a.sessions))
@@ -249,7 +250,7 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
 
   const chartItems = quizAttempts.slice(0, 8).reverse();
   const chartLabels = chartItems.map((item, index) => item.quiz_title || `Quiz ${index + 1}`);
-  const chartScores = chartItems.map(item => Number(item.score_percent || 0));
+  const chartScores = chartItems.map(item => clampPercent(Number(item.score_percent || 0)));
 
   return {
     quizCount,
@@ -265,10 +266,21 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
 }
 
 function renderDashboardStats(stats) {
-  setText('statQuizCount', stats.quizCount);
-  setText('statAverageScore', `${stats.averageScore}%`);
-  setText('statSubjectsStudied', stats.subjectsStudied);
-  setText('statStudySessions', stats.studySessions);
+  const quizCount = Number(stats.quizCount || 0);
+  const averageScore = clampPercent(Number(stats.averageScore || 0));
+  const subjectsStudied = Number(stats.subjectsStudied || 0);
+  const studySessions = Number(stats.studySessions || 0);
+
+  setText('statQuizCount', quizCount);
+  setText('statAverageScore', `${averageScore}%`);
+  setText('statSubjectsStudied', subjectsStudied);
+  setText('statStudySessions', studySessions);
+
+  // Extra hero/pulse values use the same data, so no backend changes are needed.
+  setText('pulseQuizCount', quizCount);
+  setText('pulseAverageScore', `${averageScore}%`);
+  setText('pulseSubjectsStudied', subjectsStudied);
+  setText('averageScoreStatus', getScoreLabel(averageScore));
 }
 
 function renderWeakTopics(items) {
@@ -276,28 +288,34 @@ function renderWeakTopics(items) {
   if (!el) return;
 
   if (!items.length) {
-    el.innerHTML = `
-      <div class="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-5 bg-slate-50/70 dark:bg-slate-800/30">
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          No weak topics yet. Keep studying and completing quizzes to surface low-confidence areas.
-        </p>
-      </div>
-    `;
+    el.innerHTML = renderEmptyState({
+      icon: 'verified',
+      title: 'No weak topics yet',
+      text: 'Complete more quizzes and your low-confidence topics will appear here for focused revision.'
+    });
     return;
   }
 
   el.innerHTML = items
-    .map(
-      item => `
-        <div class="flex items-center justify-between rounded-2xl border border-slate-200 dark:border-white/10 px-4 py-3 bg-slate-50/70 dark:bg-slate-800/40">
-          <div class="min-w-0">
-            <p class="font-semibold text-slate-900 dark:text-white truncate">${escapeHtml(item.name)}</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400 truncate">${escapeHtml(item.subject)}</p>
+    .map(item => {
+      const score = clampPercent(Number(item.score || 0));
+      const severity = getWeakTopicSeverity(score);
+
+      return `
+        <article class="weak-topic-card">
+          <div class="weak-topic-main">
+            <div class="weak-topic-copy">
+              <p class="weak-topic-title">${escapeHtml(item.name)}</p>
+              <p class="weak-topic-meta">${escapeHtml(item.subject)} • ${severity.label}</p>
+            </div>
+            <span class="topic-score ${severity.className}">${score}%</span>
           </div>
-          <span class="ml-4 shrink-0 inline-flex items-center rounded-full bg-red-50 dark:bg-red-500/10 px-2.5 py-1 text-sm font-bold text-red-600 dark:text-red-400">${item.score}%</span>
-        </div>
-      `
-    )
+          <div class="mini-progress" aria-hidden="true">
+            <span style="width:${score}%"></span>
+          </div>
+        </article>
+      `;
+    })
     .join('');
 }
 
@@ -306,29 +324,36 @@ function renderRecentActivity(items) {
   if (!el) return;
 
   if (!items.length) {
-    el.innerHTML = `
-      <div class="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-5 bg-slate-50/70 dark:bg-slate-800/30">
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          No activity recorded yet. Your latest study sessions and quiz attempts will appear here.
-        </p>
-      </div>
-    `;
+    el.innerHTML = renderEmptyState({
+      icon: 'history',
+      title: 'No activity recorded',
+      text: 'Your latest study sessions and quiz attempts will appear here automatically.'
+    });
     return;
   }
 
   el.innerHTML = items
-    .map(
-      item => `
-        <div class="rounded-2xl border border-slate-200 dark:border-white/10 px-4 py-3 bg-slate-50/70 dark:bg-slate-800/40">
-          <div class="flex items-center justify-between gap-3">
-            <p class="font-semibold text-slate-900 dark:text-white min-w-0 truncate">${escapeHtml(item.title)}</p>
-            <span class="shrink-0 rounded-full px-2 py-1 text-[11px] font-bold uppercase tracking-wide ${item.type === 'quiz' ? 'bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300'}">${item.type}</span>
+    .map(item => {
+      const isQuiz = item.type === 'quiz';
+      const typeLabel = isQuiz ? 'Quiz' : 'Study';
+      const icon = isQuiz ? 'quiz' : 'school';
+
+      return `
+        <article class="activity-item">
+          <div class="activity-icon ${isQuiz ? 'activity-icon-quiz' : 'activity-icon-study'}" aria-hidden="true">
+            <span class="material-symbols-outlined">${icon}</span>
           </div>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">${escapeHtml(item.meta)}</p>
-          <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">${formatRelativeDate(item.date)}</p>
-        </div>
-      `
-    )
+          <div class="activity-copy">
+            <div class="activity-topline">
+              <p class="activity-title">${escapeHtml(item.title)}</p>
+              <span class="activity-type">${typeLabel}</span>
+            </div>
+            <p class="activity-meta">${escapeHtml(item.meta)}</p>
+            <p class="activity-date">${formatRelativeDate(item.date)}</p>
+          </div>
+        </article>
+      `;
+    })
     .join('');
 }
 
@@ -337,33 +362,35 @@ function renderSubjectMastery(items) {
   if (!el) return;
 
   if (!items.length) {
-    el.innerHTML = `
-      <div class="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-5 bg-slate-50/70 dark:bg-slate-800/30">
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          No subject progress yet. Start with a paper or quiz and your mastery bars will show up here.
-        </p>
-      </div>
-    `;
+    el.innerHTML = renderEmptyState({
+      icon: 'stacked_bar_chart',
+      title: 'No subject progress yet',
+      text: 'Start a paper or quiz and your subject mastery bars will show up here.'
+    });
     return;
   }
 
   el.innerHTML = items
-    .map(
-      item => `
-        <div>
-          <div class="flex items-center justify-between mb-1.5 gap-3">
-            <div class="min-w-0">
-              <p class="font-semibold text-slate-900 dark:text-white truncate">${escapeHtml(item.name)}</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400">${escapeHtml(item.code || '')}</p>
+    .map(item => {
+      const mastery = clampPercent(Number(item.mastery || 0));
+      const status = getMasteryStatus(mastery);
+
+      return `
+        <article class="mastery-item">
+          <div class="mastery-head">
+            <div class="mastery-title-wrap">
+              <p class="mastery-title">${escapeHtml(item.name)}</p>
+              <p class="mastery-meta">${escapeHtml(item.code || 'Subject')} • ${item.sessions} session${item.sessions === 1 ? '' : 's'}</p>
             </div>
-            <span class="shrink-0 text-sm font-bold text-brand-600 dark:text-brand-400">${item.mastery}%</span>
+            <span class="mastery-percent ${status.className}">${mastery}%</span>
           </div>
-          <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden" aria-hidden="true">
-            <div class="h-full rounded-full bg-gradient-to-r from-sky-500 to-brand-500 transition-all duration-500" style="width:${item.mastery}%"></div>
+          <div class="mastery-progress" aria-label="${escapeHtml(item.name)} mastery ${mastery}%">
+            <span style="width:${mastery}%"></span>
           </div>
-        </div>
-      `
-    )
+          <p class="mastery-status">${status.label}</p>
+        </article>
+      `;
+    })
     .join('');
 }
 
@@ -396,14 +423,16 @@ async function renderLearningChart(labels, data) {
   }
 
   const isDark = document.documentElement.classList.contains('dark');
-  const borderColor = isDark ? '#38bdf8' : '#0ea5e9';
-  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)';
+  const borderColor = isDark ? '#60a5fa' : '#2563eb';
+  const secondaryColor = isDark ? '#22d3ee' : '#06b6d4';
+  const gridColor = isDark ? 'rgba(148, 163, 184, 0.14)' : 'rgba(15, 23, 42, 0.07)';
   const textColor = isDark ? '#cbd5e1' : '#64748b';
-  const pointBg = isDark ? '#0f172a' : '#ffffff';
+  const pointBg = isDark ? '#020617' : '#ffffff';
 
-  const gradient = ctx.createLinearGradient(0, 0, 0, 280);
-  gradient.addColorStop(0, isDark ? 'rgba(56,189,248,0.25)' : 'rgba(14,165,233,0.18)');
-  gradient.addColorStop(1, isDark ? 'rgba(56,189,248,0.02)' : 'rgba(14,165,233,0.01)');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, isDark ? 'rgba(96,165,250,0.35)' : 'rgba(37,99,235,0.20)');
+  gradient.addColorStop(0.55, isDark ? 'rgba(34,211,238,0.10)' : 'rgba(6,182,212,0.08)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
 
   learningChart = new Chart(ctx, {
     type: 'line',
@@ -416,12 +445,12 @@ async function renderLearningChart(labels, data) {
           borderColor,
           backgroundColor: gradient,
           fill: true,
-          tension: 0.35,
+          tension: 0.4,
           borderWidth: 3,
           pointRadius: 4,
-          pointHoverRadius: 6,
+          pointHoverRadius: 7,
           pointBackgroundColor: pointBg,
-          pointBorderColor: borderColor,
+          pointBorderColor: secondaryColor,
           pointBorderWidth: 3
         }
       ]
@@ -429,17 +458,19 @@ async function renderLearningChart(labels, data) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 550 },
+      animation: { duration: 650, easing: 'easeOutQuart' },
+      interaction: { intersect: false, mode: 'index' },
       plugins: {
         legend: { display: false },
         tooltip: {
           displayColors: false,
-          backgroundColor: isDark ? 'rgba(15,23,42,0.96)' : 'rgba(255,255,255,0.98)',
+          backgroundColor: isDark ? 'rgba(15,23,42,0.97)' : 'rgba(255,255,255,0.98)',
           titleColor: isDark ? '#ffffff' : '#0f172a',
           bodyColor: isDark ? '#cbd5e1' : '#475569',
-          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.06)',
+          borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.08)',
           borderWidth: 1,
           padding: 12,
+          cornerRadius: 14,
           callbacks: {
             label: context => `Score: ${context.parsed.y}%`
           }
@@ -448,19 +479,69 @@ async function renderLearningChart(labels, data) {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { color: textColor },
+          ticks: {
+            color: textColor,
+            maxRotation: 0,
+            autoSkip: true,
+            callback(value) {
+              const label = this.getLabelForValue(value);
+              return label.length > 14 ? `${label.slice(0, 14)}…` : label;
+            }
+          },
           border: { display: false }
         },
         y: {
           beginAtZero: true,
           max: 100,
-          ticks: { color: textColor, stepSize: 20 },
+          ticks: {
+            color: textColor,
+            stepSize: 20,
+            callback: value => `${value}%`
+          },
           grid: { color: gridColor, drawTicks: false },
           border: { display: false }
         }
       }
     }
   });
+}
+
+function renderEmptyState({ icon, title, text }) {
+  return `
+    <div class="dashboard-empty-state">
+      <div class="dashboard-empty-icon" aria-hidden="true">
+        <span class="material-symbols-outlined">${icon}</span>
+      </div>
+      <p class="dashboard-empty-title">${escapeHtml(title)}</p>
+      <p class="dashboard-empty-text">${escapeHtml(text)}</p>
+    </div>
+  `;
+}
+
+function getWeakTopicSeverity(score) {
+  if (score < 40) return { label: 'Critical focus', className: 'score-danger' };
+  if (score < 55) return { label: 'Needs practice', className: 'score-warning' };
+  return { label: 'Close to safe', className: 'score-info' };
+}
+
+function getMasteryStatus(score) {
+  if (score >= 80) return { label: 'Strong command', className: 'mastery-strong' };
+  if (score >= 65) return { label: 'Good progress', className: 'mastery-good' };
+  if (score >= 40) return { label: 'Needs revision', className: 'mastery-watch' };
+  return { label: 'Start focused practice', className: 'mastery-low' };
+}
+
+function getScoreLabel(score) {
+  if (score >= 80) return 'Excellent momentum';
+  if (score >= 65) return 'Good, keep pushing';
+  if (score > 0) return 'Needs focused revision';
+  return 'No score yet';
+}
+
+function clampPercent(value) {
+  const numeric = Number(value || 0);
+  if (Number.isNaN(numeric)) return 0;
+  return Math.max(0, Math.min(100, Math.round(numeric)));
 }
 
 function setText(id, value) {
