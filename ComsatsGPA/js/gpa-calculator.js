@@ -1,3 +1,5 @@
+import { supabase, auth } from '../../js/core.js';
+
 /**
  * gpa-calculator.js — COMSATS PLUS GPA Calculator UI Controller
  *
@@ -58,6 +60,212 @@
   const cancelEditBtn = document.getElementById('cancel-changes-btn');
 
   let subjectToEditId = null;
+
+  const GPA_STORAGE_KEY = 'comsatsprephub:gpa-subjects:v1';
+
+  function normalizeSubject(subject, fallbackIndex = 0) {
+    const safeId = Number(subject?.id) || fallbackIndex + 1;
+
+    return {
+      id: safeId,
+      name: String(subject?.name || 'Unnamed Subject'),
+      creditHours: Number(subject?.creditHours) || 3,
+      percentage: Number(subject?.percentage) || 0,
+      gpa: Number(subject?.gpa) || 0,
+      letter: String(subject?.letter || 'F'),
+      hasLab: Boolean(subject?.hasLab),
+      theoryTotal: Number(subject?.theoryTotal) || 0,
+      labTotal: Number(subject?.labTotal) || 0,
+      raw: {
+        q: {
+          obt: Number(subject?.raw?.q?.obt) || 0,
+          tot: Number(subject?.raw?.q?.tot) || 10,
+        },
+        a: {
+          obt: Number(subject?.raw?.a?.obt) || 0,
+          tot: Number(subject?.raw?.a?.tot) || 12.5,
+        },
+        m: {
+          obtained: Number(subject?.raw?.m?.obtained) || 0,
+          total: Number(subject?.raw?.m?.total) || 25,
+        },
+        f: {
+          obtained: Number(subject?.raw?.f?.obtained) || 0,
+          total: Number(subject?.raw?.f?.total) || 50,
+        },
+      },
+    };
+  }
+
+  function getNextSubjectIdFromSubjects(subjects) {
+    if (!subjects.length) return 1;
+
+    const maxId = subjects.reduce((max, subject) => {
+      return Math.max(max, Number(subject.id) || 0);
+    }, 0);
+
+    return maxId + 1;
+  }
+
+  function buildGpaPayload() {
+    return {
+      subjects: addedSubjects.map((subject, index) => normalizeSubject(subject, index)),
+      nextSubjectId: Number(nextSubjectId) || getNextSubjectIdFromSubjects(addedSubjects),
+      savedAt: new Date().toISOString(),
+    };
+  }
+
+  function saveGpaToBrowser() {
+    try {
+      localStorage.setItem(GPA_STORAGE_KEY, JSON.stringify(buildGpaPayload()));
+    } catch (error) {
+      console.warn('[GPA Persistence] Browser save failed:', error);
+    }
+  }
+
+  function readGpaFromBrowser() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(GPA_STORAGE_KEY));
+      if (!saved || !Array.isArray(saved.subjects)) return null;
+
+      return {
+        subjects: saved.subjects.map(normalizeSubject),
+        nextSubjectId:
+          Number(saved.nextSubjectId) ||
+          getNextSubjectIdFromSubjects(saved.subjects),
+      };
+    } catch (error) {
+      console.warn('[GPA Persistence] Browser load failed:', error);
+      return null;
+    }
+  }
+
+  async function getSignedInUser() {
+    try {
+      const session = await auth.getSession();
+      return session?.user || null;
+    } catch (error) {
+      console.warn('[GPA Persistence] Could not read auth session:', error);
+      return null;
+    }
+  }
+
+  async function saveGpaToCloud(userId) {
+    if (!userId) return;
+
+    const payload = buildGpaPayload();
+
+    const { error } = await supabase
+      .from('user_gpa_data')
+      .upsert(
+        {
+          user_id: userId,
+          subjects: payload.subjects,
+          next_subject_id: payload.nextSubjectId,
+          updated_at: payload.savedAt,
+        },
+        {
+          onConflict: 'user_id',
+        }
+      );
+
+    if (error) {
+      console.warn('[GPA Persistence] Supabase save failed:', error);
+    }
+  }
+
+  async function readGpaFromCloud(userId) {
+    if (!userId) return null;
+
+    const { data, error } = await supabase
+      .from('user_gpa_data')
+      .select('subjects, next_subject_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('[GPA Persistence] Supabase load failed:', error);
+      return null;
+    }
+
+    if (!data || !Array.isArray(data.subjects)) return null;
+
+    return {
+      subjects: data.subjects.map(normalizeSubject),
+      nextSubjectId:
+        Number(data.next_subject_id) ||
+        getNextSubjectIdFromSubjects(data.subjects),
+    };
+  }
+
+  async function saveGpaData() {
+    saveGpaToBrowser();
+
+    const user = await getSignedInUser();
+    if (!user) return;
+
+    await saveGpaToCloud(user.id);
+  }
+
+  function renderSavedGpaSubjects(savedData) {
+    if (!savedData || !Array.isArray(savedData.subjects)) return;
+
+    addedSubjects.length = 0;
+
+    document
+      .querySelectorAll('[id^="subject-card-"]')
+      .forEach(card => card.remove());
+
+    const safeSubjects = savedData.subjects.map(normalizeSubject);
+
+    addedSubjects.push(...safeSubjects);
+
+    nextSubjectId =
+      Number(savedData.nextSubjectId) ||
+      getNextSubjectIdFromSubjects(safeSubjects);
+
+    if (!addedSubjects.length) {
+      emptyState.classList.remove('hidden');
+      calcGpaBtn.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+      overallResult.classList.add('hidden');
+      return;
+    }
+
+    addedSubjects.forEach((subject, index) => {
+      renderSubjectCard(subject, index + 1);
+    });
+
+    emptyState.classList.add('hidden');
+    calcGpaBtn.classList.remove('hidden');
+    resetBtn.classList.remove('hidden');
+    overallResult.classList.add('hidden');
+  }
+
+  async function loadGpaData() {
+    const browserData = readGpaFromBrowser();
+    const user = await getSignedInUser();
+
+    if (user) {
+      const cloudData = await readGpaFromCloud(user.id);
+
+      if (cloudData?.subjects?.length) {
+        renderSavedGpaSubjects(cloudData);
+        saveGpaToBrowser();
+        return;
+      }
+
+      if (browserData?.subjects?.length) {
+        renderSavedGpaSubjects(browserData);
+        await saveGpaToCloud(user.id);
+        return;
+      }
+    }
+
+    if (browserData?.subjects?.length) {
+      renderSavedGpaSubjects(browserData);
+    }
+  }
 
   function readMarkScheme() {
     return {
@@ -428,6 +636,7 @@
     resetBtn.classList.remove('hidden');
     overallResult.classList.add('hidden');
     liveBadge.classList.remove('visible');
+    void saveGpaData();
   }
 
   function openEditModal(subject) {
@@ -525,6 +734,7 @@
     }
 
     closeEditModal();
+    void saveGpaData();
     
     if (!overallResult.classList.contains('hidden')) {
       calcGpaBtn.click();
@@ -613,6 +823,7 @@
     const index = addedSubjects.findIndex(s => s.id === id);
     if (index === -1) return;
     addedSubjects.splice(index, 1);
+    void saveGpaData();
     const card = document.getElementById(`subject-card-${id}`);
     if (card) {
       card.style.opacity = '0';
@@ -679,6 +890,7 @@
     calcGpaBtn.classList.add('hidden');
     resetBtn.classList.add('hidden');
     resetFormCompletely();
+    void saveGpaData();
   });
 
   function resetFormKeepName() {
@@ -812,5 +1024,6 @@
   });
 
   setTimeout(syncLabMode, 0);
+  void loadGpaData();
 
 })();
