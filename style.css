@@ -6156,7 +6156,27 @@ html.dark .mastery-item {
   white-space: nowrap !important;
 }
 
-.mastery-progress {
-  width: 100% !important;
-  box-sizing: border-box !important;
+/* =========================================================
+   EXACT LOGO BRANDING
+   ========================================================= */
+.logo-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0;
+}
+
+.site-logo {
+  width: 90px; /* Set to 90px as requested for better visibility */
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }

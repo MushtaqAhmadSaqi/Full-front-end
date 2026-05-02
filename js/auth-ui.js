@@ -195,7 +195,7 @@ function injectModalHTML() {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZDdNBglJeWrhi1y9jHIye7HIzCaIJI2VjDX-tqDH8dlDCtls8eTrLe8AHu-8QNhXA2j51OpnRpksHOCmzKaSTGRVocinZu_g6kcjHVO-KmmMDRgKY9A5bjPCbTd74_QZ_b4E0mEa3s57hV_8PV1qoIcW1W1-cvoW50XK5HDsQXs-rmyiJQ9-eKURVp0nLXuzjPsJYIuZhEC6Sd_s8ZFgrUF-tG8TeuVUml81zCmnoAmSoX-XdJWNxIPpPGlURk9DNtY--FBNPa9HA"
                 alt="">
             </div>
-            <div class="am-logo">COMSATSPrepHub</div>
+            <div class="am-logo">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div>
             <div class="am-hero">
               <span class="am-sub">Academic Excellence</span>
               <h2 class="am-h1">WELCOME BACK!</h2>
@@ -210,7 +210,7 @@ function injectModalHTML() {
 
           <section class="am-form-panel">
             <div class="am-wrap">
-              <div class="am-m-logo"><div class="am-m-name">COMSATSPrepHub</div></div>
+              <div class="am-m-logo"><div class="am-m-name">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div></div>
               <div class="am-head">
                 <h3 class="am-h2" id="auth-modal-title">Login</h3>
                 <p class="am-h2-sub">Welcome back to your academic curator.</p>
@@ -279,14 +279,14 @@ function injectModalHTML() {
               </div>
             </div>
 
-            <div class="am-foot-l"><div class="am-logo-n">COMSATSPrepHub</div></div>
+            <div class="am-foot-l"><div class="am-logo-n">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div></div>
           </section>
 
           <section class="am-form-panel">
             <div class="am-wrap">
               <div class="am-m-logo">
                 <div style="width:36px;height:3px;background:#006f1d;margin:0 auto 12px;border-radius:999px;"></div>
-                <div class="am-m-name" style="color:#5f5e5e;">COMSATSPrepHub</div>
+                <div class="am-m-name" style="color:#5f5e5e;">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div>
               </div>
 
               <div class="am-head">

@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('Auth modal failed:', error);
   }
 
+  _bindThemeLogoSync();
   _initAOS();
   _initImagePreview();
 
@@ -300,6 +301,7 @@ function _injectHeader(currentPage, session, userName) {
   const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
 
   const base = _getBasePath();
+  const isDark = document.documentElement.classList.contains('dark');
 
   const activeClass = 'nav-active';
   const normalClass = 'nav-normal';
@@ -309,18 +311,18 @@ function _injectHeader(currentPage, session, userName) {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div class="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-xl px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3 transition-all duration-300">
 
-          <a href="${base}index.html" class="flex items-center gap-3 group no-underline flex-shrink-0" aria-label="Go to home page">
-            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform ring-2 ring-blue-300/60 dark:ring-blue-500/30">
-              C
+          <a href="${base}index.html" class="logo-box no-underline flex-shrink-0" aria-label="Go to home page">
+            <img src="${base}${isDark ? 'Dlogo.png' : 'logo.png'}" alt="Website Logo" class="site-logo">
+          </a>
+
+            <div class="hidden sm:flex items-baseline">
+              <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white">COMSATS</span>
+              <span class="font-bold text-xl tracking-tighter text-blue-600 dark:text-blue-400">PrepHub</span>
             </div>
 
-            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white hidden sm:block">
-              COMSATSPrepHub
-            </span>
-
-            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white sm:hidden">
-              COMSATS
-            </span>
+            <div class="sm:hidden flex items-baseline">
+              <span class="font-black text-lg tracking-tighter text-[#1a1a2e] dark:text-white">COMSATS</span>
+            </div>
           </a>
 
           <nav class="desktop-nav-force" aria-label="Primary">
@@ -422,6 +424,7 @@ function _injectMobileNav(currentPage) {
   const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
 
   const base = _getBasePath();
+  const isDark = document.documentElement.classList.contains('dark');
 
   const html = `
     <nav id="mobileBottomNav" aria-label="Mobile navigation" class="mobile-nav-shell">
@@ -546,12 +549,18 @@ function _injectFooter() {
 
   const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
   const base = inSubDir ? '../' : '';
+  const isDark = document.documentElement.classList.contains('dark');
 
   const html = `
     <footer class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 py-6 px-4 sm:px-6 transition-colors duration-300 rounded-t-[1.5rem]">
       <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div class="space-y-0">
-          <div class="font-black text-sm tracking-tight text-[#1a1a2e] dark:text-white">COMSATSPrepHub</div>
+          <div class="flex items-center gap-2">
+            <a href="${base}index.html" class="logo-box">
+               <img src="${base}${isDark ? 'Dlogo.png' : 'logo.png'}" alt="" class="site-logo" style="width: 70px;">
+            </a>
+            <div class="font-black text-sm tracking-tight text-[#1a1a2e] dark:text-white">COMSATS<span class="text-blue-600 dark:text-blue-400">PrepHub</span></div>
+          </div>
           <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Verified academic resources.</p>
         </div>
         <div class="flex items-center justify-center gap-4">
@@ -844,3 +853,14 @@ window.reinitVanillaTilt = () => {
     scale: 1.02
   });
 };
+
+function _bindThemeLogoSync() {
+  document.addEventListener('comsatsprephub:themechange', (e) => {
+    const isDark = e.detail.theme === 'dark';
+    document.querySelectorAll('.site-logo').forEach(img => {
+      const currentSrc = img.getAttribute('src') || '';
+      const base = currentSrc.includes('../') ? '../' : '';
+      img.src = isDark ? `${base}Dlogo.png` : `${base}logo.png`;
+    });
+  });
+}

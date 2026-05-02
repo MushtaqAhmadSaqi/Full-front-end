@@ -19,9 +19,11 @@
     <!-- Sidebar -->
     <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
       <div class="dashboard-side-brand">
-        <div class="dashboard-side-logo" aria-hidden="true">C</div>
+        <a href="index.html" class="logo-box">
+          <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 100px;">
+        </a>
         <div>
-          <p class="dashboard-side-name">COMSATSPrepHub</p>
+          <p class="dashboard-side-name">COMSATS<span class="text-blue-600 dark:text-blue-400">PrepHub</span></p>
           <p class="dashboard-side-role">Student workspace</p>
         </div>
       </div>
@@ -115,7 +117,9 @@
             </p>
 
             <div class="dashboard-title-wrap">
-              <div class="dashboard-hero-logo" aria-hidden="true">C</div>
+              <a href="index.html" class="logo-box">
+                <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 120px;">
+              </a>
 
               <h2 id="dashboardTitle" class="dashboard-hero-title">
                 Welcome back,
@@ -328,5 +332,19 @@
 
   <script type="module" src="js/dashboard.js"></script>
   <script type="module" src="js/layout.js"></script>
-</body>
+    <!-- Theme Logo Sync Script -->
+    <script>
+      (function() {
+        function updateLogos() {
+          const isDark = document.documentElement.classList.contains('dark');
+          document.querySelectorAll('.site-logo').forEach(img => {
+            img.src = isDark ? 'Dlogo.png' : 'logo.png';
+          });
+        }
+        document.addEventListener('comsatsprephub:themechange', () => updateLogos());
+        // Initial sync
+        window.addEventListener('load', updateLogos);
+      })();
+    </script>
+  </body>
 </html>
