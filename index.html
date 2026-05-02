@@ -217,8 +217,6 @@
         left: -30px;
       }
     }
-
-
   </style>
 </head>
 
@@ -231,12 +229,14 @@
 
     <!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
     <section id="home-section"
-      class="relative overflow-hidden flex flex-col items-center justify-center text-center min-h-[90vh] px-6 py-24 md:px-16 isolate"
+      class="relative overflow-hidden min-h-[calc(100vh-96px)] px-6 pt-10 pb-24 md:px-16 isolate text-center"
       style="background: radial-gradient(circle at 70% 60%, rgba(56,139,210,0.13), transparent 35%), radial-gradient(circle at 15% 10%, rgba(147,210,255,0.16), transparent 28%), linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 45%, #ddeeff 100%);"
       data-aos="fade-in">
       <!-- Blobs -->
       <div class="hero-blob-a"></div>
       <div class="hero-blob-b"></div>
+
+      <div class="h-[clamp(12rem,30vh,22rem)]"></div>
 
       <div class="relative z-10 max-w-2xl mx-auto" data-aos="zoom-in" data-aos-delay="100">
         <!-- Badge -->
@@ -469,6 +469,7 @@
   <!-- ════════════════════════ SCRIPTS ════════════════════════ -->
 
   <script type="module" src="js/layout.js"></script>
+
 
   <script>
     // Show real stats after page loads (removes skeleton)

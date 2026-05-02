@@ -28,15 +28,29 @@ const runIdle = (callback, timeout = 1200) => {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const session = await auth.getSession();
-  const userName = session ? auth.getUserName(session.user) : null;
+  let session = null;
+  let userName = null;
+
   const currentPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
+  try {
+    session = await auth.getSession();
+    userName = session ? auth.getUserName(session.user) : null;
+  } catch (error) {
+    console.warn('Auth failed, layout will still load:', error);
+  }
+
   _hydrateLayout(currentPage, session, userName);
-  initAuthModal();
+
+  try {
+    initAuthModal();
+  } catch (error) {
+    console.warn('Auth modal failed:', error);
+  }
 
   _initAOS();
   _initImagePreview();
+
   runIdle(() => {
     _initVanillaTilt();
     _initSwipeNav(currentPage);
@@ -47,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function _hydrateLayout(currentPage, session, userName) {
   _ensureMainTarget();
   _injectSkipLink();
+  _injectHeaderCriticalCSS();
   _injectHeader(currentPage, session, userName);
   _injectGlobalFeedbackBox();
   _injectFooter();
@@ -183,38 +198,156 @@ function _injectSkipLink() {
   );
 }
 
+function _getBasePath() {
+  return '';
+}
+
+function _injectHeaderCriticalCSS() {
+  if (document.getElementById('header-critical-css')) return;
+
+  const style = document.createElement('style');
+  style.id = 'header-critical-css';
+
+  style.textContent = `
+    .desktop-nav-force {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: rgba(243, 244, 246, 0.65);
+      border: 1px solid rgba(229, 231, 235, 0.75);
+      border-radius: 999px;
+      padding: 4px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
+    .desktop-nav-force a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .desktop-nav-force a.nav-active {
+      background: #ffffff;
+      color: #2563eb;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+    }
+
+    .desktop-nav-force a.nav-normal {
+      color: #4b5563;
+    }
+
+    .desktop-nav-force a.nav-normal:hover {
+      background: rgba(255, 255, 255, 0.75);
+      color: #111827;
+    }
+
+    .dark .desktop-nav-force {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .dark .desktop-nav-force a.nav-active {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .dark .desktop-nav-force a.nav-normal {
+      color: #cbd5e1;
+    }
+
+    .dark .desktop-nav-force a.nav-normal:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    @media (max-width: 767px) {
+      .desktop-nav-force {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .desktop-nav-force a {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
 function _injectHeader(currentPage, session, userName) {
   const container = document.getElementById('app-header');
-  if (!container && document.querySelector('header')) return;
 
   const isLoggedIn = !!session;
   const initial = userName ? userName.charAt(0).toUpperCase() : '?';
+
+  const isHomeActive = currentPage === 'index.html' || currentPage === '';
   const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
   const isQuizActive = currentPage === 'quiz.html';
-  const isDashboardActive = currentPage === 'dashboard.html';
+  const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
-  const base = inSubDir ? '../' : '';
+  const base = _getBasePath();
+
+  const activeClass = 'nav-active';
+  const normalClass = 'nav-normal';
 
   const html = `
-    <header class="sticky top-0 z-50 transition-all duration-300 w-full">
+    <header id="site-header" class="sticky top-0 z-50 transition-all duration-300 w-full">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-xl px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between transition-all duration-300 gap-2 sm:gap-3">
-          <a href="${base}index.html" class="flex items-center gap-3 group" aria-label="Go to home page">
-            <div class="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform ring-2 ring-blue-300/60 dark:ring-blue-500/30">C</div>
-            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white hidden sm:block">COMSATSPrepHub</span>
-            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white sm:hidden">COMSATS</span>
+        <div class="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-xl px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3 transition-all duration-300">
+
+          <a href="${base}index.html" class="flex items-center gap-3 group no-underline flex-shrink-0" aria-label="Go to home page">
+            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform ring-2 ring-blue-300/60 dark:ring-blue-500/30">
+              C
+            </div>
+
+            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white hidden sm:block">
+              COMSATSPrepHub
+            </span>
+
+            <span class="font-black text-xl tracking-tighter text-[#1a1a2e] dark:text-white sm:hidden">
+              COMSATS
+            </span>
           </a>
 
-          <nav class="hidden md:flex items-center bg-gray-100/50 dark:bg-black/20 rounded-full p-1 border border-gray-200/50 dark:border-white/5" aria-label="Primary">
-            <a href="${base}index.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'index.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Home</a>
-            <a href="${base}subjects.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isSubjectsActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Subjects</a>
-            <a href="${base}quiz.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${currentPage === 'quiz.html' ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Quiz</a>
+          <nav class="desktop-nav-force" aria-label="Primary">
 
-            <a href="${base}dashboard.html" class="nav-link-premium px-5 py-2 text-sm font-semibold rounded-full transition-all ${isDashboardActive ? 'bg-white dark:bg-white/20 text-primary dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}">Dashboard</a>
+            <a href="${base}index.html"
+               class="${isHomeActive ? activeClass : normalClass}">
+              Home
+            </a>
+
+            <a href="${base}subjects.html"
+               class="${isSubjectsActive ? activeClass : normalClass}">
+              Subjects
+            </a>
+
+            <a href="${base}quiz.html"
+               class="${isQuizActive ? activeClass : normalClass}">
+              Quiz
+            </a>
+
+            <a href="${base}about-us.html"
+               class="${isTeamActive ? activeClass : normalClass}">
+              Team
+            </a>
+
           </nav>
 
-          <div class="flex items-center gap-2 sm:gap-3">
+          <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-auto">
             <button id="dark-mode-toggle"
                     class="flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-all text-gray-600 dark:text-gray-300"
                     type="button"
@@ -232,18 +365,22 @@ function _injectHeader(currentPage, session, userName) {
                         aria-expanded="false">
                   <span class="text-sm font-black">${initial}</span>
                 </button>
-                <div id="dashboard-dropdown" 
+
+                <div id="dashboard-dropdown"
                      class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10 py-2 z-50">
+                  
                   <a href="${base}dashboard.html"
-                     class="block px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                     class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 no-underline">
                     <span class="material-symbols-outlined text-[18px]">dashboard</span>
                     Dashboard
                   </a>
+
                   <button id="logout-btn"
                           class="w-full text-left px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">logout</span>
                     Sign Out
                   </button>
+
                 </div>
               </div>
             ` : `
@@ -256,6 +393,7 @@ function _injectHeader(currentPage, session, userName) {
               </button>
             `}
           </div>
+
         </div>
       </div>
     </header>
@@ -264,26 +402,32 @@ function _injectHeader(currentPage, session, userName) {
   if (container) {
     container.innerHTML = html;
   } else {
-    document.body.insertAdjacentHTML('afterbegin', html);
+    const oldHeader = document.getElementById('site-header');
+
+    if (oldHeader) {
+      oldHeader.outerHTML = html;
+    } else {
+      document.body.insertAdjacentHTML('afterbegin', html);
+    }
   }
 }
 
 function _injectMobileNav(currentPage) {
-  if (window.innerWidth > 1024) return;
-
   const container = document.getElementById('app-mobile-nav');
   if (!container && document.getElementById('mobileBottomNav')) return;
 
+  const isHomeActive = currentPage === 'index.html' || currentPage === '';
   const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
-  const isDashboardActive = currentPage === 'dashboard.html';
+  const isQuizActive = currentPage === 'quiz.html';
+  const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
-  const base = inSubDir ? '../' : '';
+  const base = _getBasePath();
 
   const html = `
     <nav id="mobileBottomNav" aria-label="Mobile navigation" class="mobile-nav-shell">
       <div class="mobile-nav-grid">
-        <a href="${base}index.html" class="mobile-nav-item ${currentPage === 'index.html' ? 'active' : ''}">
+
+        <a href="${base}index.html" class="mobile-nav-item ${isHomeActive ? 'active' : ''}">
           <span class="material-symbols-outlined">home</span>
           <span class="label">Home</span>
         </a>
@@ -293,17 +437,16 @@ function _injectMobileNav(currentPage) {
           <span class="label">Subjects</span>
         </a>
 
-        <a href="${base}quiz.html" class="mobile-nav-item ${currentPage === 'quiz.html' ? 'active' : ''}">
+        <a href="${base}quiz.html" class="mobile-nav-item ${isQuizActive ? 'active' : ''}">
           <span class="material-symbols-outlined">quiz</span>
           <span class="label">Quiz</span>
         </a>
 
-
-
-        <a href="${base}about-us.html" class="mobile-nav-item ${currentPage === 'about-us.html' ? 'active' : ''}">
-          <span class="material-symbols-outlined">group</span>
+        <a href="${base}about-us.html" class="mobile-nav-item ${isTeamActive ? 'active' : ''}">
+          <span class="material-symbols-outlined">groups</span>
           <span class="label">Team</span>
         </a>
+
       </div>
     </nav>
   `;
@@ -315,10 +458,9 @@ function _injectMobileNav(currentPage) {
   }
 
   const nav = document.getElementById('mobileBottomNav');
+
   if (nav) {
-    if (nav.style.display === 'none') {
-      nav.style.display = '';
-    }
+    nav.style.display = '';
     nav.classList.remove('nav-hidden');
     nav.style.transform = '';
   }
@@ -478,7 +620,7 @@ function _wireNavButton(session) {
 }
 
 function _getSwipeRoutes() {
-  return ['index.html', 'subjects.html', 'quiz.html', 'dashboard.html'];
+  return ['index.html', 'subjects.html', 'quiz.html', 'about-us.html'];
 }
 
 function _isTouchDevice() {
