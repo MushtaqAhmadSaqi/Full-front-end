@@ -208,6 +208,10 @@ function _injectSkipLink() {
 }
 
 function _getBasePath() {
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('/comsatsgpa') || path.includes('/campus-map') || path.includes('/campus-memories')) {
+    return '../';
+  }
   return '';
 }
 
@@ -555,8 +559,7 @@ function _injectFooter() {
   const container = document.getElementById('app-footer');
   if (!container && document.querySelector('footer')) return;
 
-  const inSubDir = window.location.pathname.includes('/ComsatsGPA/');
-  const base = inSubDir ? '../' : '';
+  const base = _getBasePath();
   const isDark = document.documentElement.classList.contains('dark');
 
   const html = `

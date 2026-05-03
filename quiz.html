@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,6 +7,11 @@
     <title>Quiz | COMSATSPrepHub</title>
     <meta name="description" content="Test your knowledge with AI-generated quizzes from COMSATS past papers.">
 
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
     <!-- External Styles -->
     <link rel="stylesheet" href="styles/tailwind-built.css">
     <link rel="stylesheet" href="style.css">
@@ -30,9 +35,9 @@
 <body class="bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen">
     <div id="app-header"></div>
 
-    <!-- ═══════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          MAIN LAYOUT
-    ═══════════════════════════════════════════════ -->
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-20 page-transition">
         <div class="max-w-4xl mx-auto">
 
@@ -220,9 +225,9 @@
 
 
 
-    <!-- ═══════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          SCRIPTS
-    ═══════════════════════════════════════════════ -->
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <script type="module">
       import { supabase, auth, escapeHtml } from './utils.js';
       import { nl2brSafe } from './js/render-safety.js';
@@ -471,7 +476,7 @@
           }
       });
 
-      // ── Load Available Quizzes ───────────────────
+      // â”€â”€ Load Available Quizzes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadQuizzes() {
         const grid = document.getElementById('quizGrid');
 
@@ -568,7 +573,7 @@
         }
       }
 
-      // ── Start a Quiz ──────────────────────────────
+      // â”€â”€ Start a Quiz â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function startQuiz(quizId, title, subCode, isPopstate = false) {
         currentQuizId = quizId;
         currentQuizTitle = title || 'Untitled Quiz';
@@ -641,7 +646,7 @@
         }
       }
 
-      // ── Render Current Question ───────────────────
+      // â”€â”€ Render Current Question â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function renderQuestion() {
         const q = questions[currentQuestionIndex];
         const hasAnswered = selectedAnswers[currentQuestionIndex] !== undefined;
