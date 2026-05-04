@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz | COMSATSPrepHub</title>
-    <meta name="description" content="Test your knowledge with AI-generated quizzes from COMSATS past papers.">
+    <title>Practice Quizzes | COMSATSPrepHub</title>
+    <meta name="description" content="Test your knowledge with curated quizzes built from real COMSATS past papers.">
 
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,22 +15,12 @@
     <!-- External Styles -->
     <link rel="stylesheet" href="styles/tailwind-built.css">
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        .glass {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .dark .glass {
-            background-color: rgba(15, 23, 42, 0.8);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
-    
+
+
+
     <script src="js/dark-mode.js" defer></script>
 </head>
+
 
 <body class="bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen">
     <div id="app-header"></div>
@@ -41,115 +31,86 @@
     <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-20 page-transition">
         <div class="max-w-4xl mx-auto">
 
-            <!-- ================== STEP 1: QUIZ SELECT ================== -->
-            <section id="step1-select" class="block animate-fade-in">
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-sm mb-8">
-                    <p
-                        class="text-[11px] font-bold text-brand-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">psychology</span> Interactive Learning
+            <!-- ================== STEP 1: QUIZ CATALOG ================== -->
+            <section id="step1-select" class="block animate-fade-in" aria-label="Choose a quiz">
+                <!-- Hero -->
+                <div class="qz-hero">
+                    <p class="text-[11px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
+                        Practice &amp; Learn
                     </p>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-4 tracking-tight">AI
-                        Assessment Matrices</h1>
-                    <p class="text-slate-600 leading-relaxed text-[15px] max-w-2xl">
-                        Challenge your understanding with dynamically compiled quizzes derived from historical exam
-                        frameworks. Select a module below to initiate evaluation.
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-[#1a1a2e] dark:text-white leading-tight mb-3 tracking-tight">
+                        Pick a quiz and get started
+                    </h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed max-w-xl mb-5">
+                        Each quiz is built from real COMSATS past papers. Work through the questions at your own pace — you'll see an explanation right after each answer.
                     </p>
+                    <a href="ai-quiz-generator.html" class="qz-ai-link">
+                        <span class="material-symbols-outlined text-[18px]" aria-hidden="true">auto_awesome</span>
+                        Generate a custom quiz with AI
+                    </a>
                 </div>
 
-                <div id="quizGrid" class="grid sm:grid-cols-2 gap-6">
+                <div id="quizGrid" class="grid sm:grid-cols-2 gap-5" role="list">
                     <!-- Loading state -->
-                    <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4 text-slate-400">
-                        <div
-                            class="w-10 h-10 rounded-full border-[3px] border-slate-200 border-t-brand-500 animate-spin">
-                        </div>
-                        <p class="text-sm font-medium font-mono uppercase tracking-widest text-[11px]">Compiling
-                            available modules...</p>
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4" aria-live="polite">
+                        <div class="w-9 h-9 rounded-full border-[3px] border-slate-200 dark:border-slate-700 border-t-brand-500 animate-spin" role="status" aria-label="Loading quizzes"></div>
+                        <p class="text-sm font-medium text-slate-400">Finding available quizzes…</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ================== STEP 2: ACTIVE QUESTION ================== -->
-            <section id="step2-question" class="hidden animate-fade-in space-y-6">
-                <!-- Back Button -->
-                <div class="flex items-center">
-                    <button type="button" onclick="returnToQuizCatalog()" 
-                       class="nav-link-premium inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
-                        <span class="material-symbols-outlined text-lg">arrow_back</span>
-                        <span class="font-bold">Back to Quizzes</span>
+            <!-- ================== STEP 2: QUESTION ================== -->
+            <section id="step2-question" class="hidden space-y-5" aria-label="Quiz question" aria-live="polite">
+                <!-- Top bar -->
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="returnToQuizCatalog()"
+                        class="qz-btn-ghost text-sm py-2 px-4" aria-label="Back to quiz list">
+                        <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+                        Back
                     </button>
-                </div>
-                
-                <!-- Question Stats Bar -->
-                <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-4 sm:px-6 flex items-center justify-between gap-4 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <span id="quizBadgeLabel"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 border border-brand-100 rounded-full text-[11px] font-bold tracking-widest text-brand-600 uppercase">
-                            MODULE
-                        </span>
-                        <div class="w-px h-4 bg-slate-200"></div>
-                        <span id="questionCountLabel"
-                            class="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Question
-                            0 of 0</span>
-                    </div>
-                    <div class="flex-1 max-w-[120px] sm:max-w-xs h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="quizProgressBar" 
-                             class="h-full bg-gradient-to-r from-brand-500 to-teal-500 transition-all duration-500 ease-out"
-                             role="progressbar"
-                             aria-valuemin="0"
-                             aria-valuemax="100"
-                             aria-valuenow="0"
-                             style="width:0%"></div>
+                    <span id="quizBadgeLabel" class="qz-pill">QUIZ</span>
+                    <span id="questionCountLabel" class="text-xs font-semibold text-slate-400 whitespace-nowrap ml-1 hidden sm:block" aria-live="polite">Question 0 of 0</span>
+                    <div class="flex-1"></div>
+                    <div class="qz-progress-strip" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div id="quizProgressBar" class="qz-progress-fill"></div>
                     </div>
                 </div>
 
-                <!-- Main Question Card -->
-                <div
-                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-10 shadow-sm relative overflow-hidden transition-all">
-                    <!-- Large Background Graphic -->
-                    <div id="bgQuestionNum"
-                        class="absolute -top-10 -right-4 text-[120px] font-black text-slate-50 select-none z-0 tracking-tighter italic opacity-50">
-                        Q01
-                    </div>
-
-                    <div class="relative z-10 w-full">
+                <!-- Question card -->
+                <div class="qz-question-card">
+                    <div class="qz-question-num-bg" id="bgQuestionNum" aria-hidden="true">Q1</div>
+                    <div class="relative z-10">
                         <h2 id="questionText"
-                            class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-snug mb-8 tracking-tight font-mono">
+                            class="text-xl sm:text-2xl font-bold text-[#1a1a2e] dark:text-white leading-snug mb-7 tracking-tight">
                         </h2>
 
-                        <!-- Options List -->
-                        <div id="optionsList" class="space-y-3 font-medium text-[15px]">
-                            <!-- JS Inject -->
-                        </div>
+                        <div id="optionsList" class="space-y-3" role="radiogroup" aria-label="Answer choices"></div>
 
-                        <!-- Explanation - Premium Reveal -->
-                        <div id="explanationBox" class="hidden mt-8 animate-slide-up">
-                            <div
-                                class="relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl p-6 overflow-hidden">
-                                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-teal-500"></div>
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span
-                                        class="material-symbols-outlined text-[20px] text-teal-600">auto_awesome</span>
-                                    <h4 class="text-[11px] font-bold uppercase tracking-widest text-teal-700">Reference
-                                        Heuristic</h4>
+                        <!-- Explanation -->
+                        <div id="explanationBox" class="hidden">
+                            <div class="qz-explanation">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-[18px] text-emerald-600" aria-hidden="true">lightbulb</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">Why this answer?</span>
                                 </div>
-                                <p id="explanationText"
-                                    class="text-slate-600 dark:text-slate-300 text-[14.5px] leading-relaxed italic font-mono"></p>
+                                <p id="explanationText" class="text-slate-700 dark:text-slate-300 text-[14.5px] leading-relaxed"></p>
                             </div>
                         </div>
 
-                        <!-- Footer Actions -->
-                        <div class="mt-10 pt-8 border-t border-slate-100 flex items-center justify-between gap-4">
+                        <!-- Nav footer -->
+                        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between gap-3">
                             <button id="prevBtn" onclick="prevQuestion()"
-                                class="button-press hidden h-11 px-6 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-all items-center gap-2 group">
-                                <span
-                                    class="material-symbols-outlined text-[20px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
-                                Back
+                                class="qz-btn-ghost hidden text-sm py-2.5 button-press" aria-label="Previous question">
+                                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+                                Previous
                             </button>
                             <div class="flex-1"></div>
                             <button id="nextBtn" onclick="nextQuestion()" disabled
-                                class="button-press h-11 px-8 rounded-xl bg-brand-600 text-white text-sm font-bold shadow-sm shadow-brand-500/20 hover:bg-brand-700 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2 flex">
-                                Verify Logic <span class="material-symbols-outlined text-[20px]">send</span>
+                                class="qz-btn-primary text-sm py-2.5 button-press"
+                                aria-label="Confirm answer and move on">
+                                Next question
+                                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
                             </button>
                         </div>
                     </div>
@@ -157,63 +118,48 @@
             </section>
 
             <!-- ================== STEP 3: RESULTS ================== -->
-            <section id="step3-results" class="hidden animate-fade-in text-center">
-                <div
-                    class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-16 shadow-xl relative overflow-hidden">
-                    <!-- Subtle background patterns -->
-                    <div
-                        class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full -mr-16 -mt-16 blur-3xl opacity-50">
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 w-32 h-32 bg-teal-50 rounded-full -ml-16 -mb-16 blur-3xl opacity-50">
-                    </div>
+            <section id="step3-results" class="hidden" aria-label="Your results" aria-live="polite">
+                <div class="qz-results-card">
+                    <div class="absolute top-0 right-0 w-48 h-48 rounded-full bg-brand-50 dark:bg-brand-500/5 -mr-24 -mt-24 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
+                    <div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-emerald-50 dark:bg-emerald-500/5 -ml-20 -mb-20 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
 
                     <div class="relative z-10 max-w-sm mx-auto">
-                        <div
-                            class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300">
-                            <span class="material-symbols-outlined text-[40px]">architecture</span>
+                        <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-500" aria-hidden="true">
+                            <span class="material-symbols-outlined text-[36px]">workspace_premium</span>
                         </div>
-                        <h2 class="text-3xl font-extrabold text-slate-900 mb-2 leading-tight tracking-tight">Evaluation
-                            Results</h2>
-                        <p class="text-slate-500 text-sm mb-10 tracking-wide uppercase font-bold">Heuristic Summary
-                            Report</p>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1a1a2e] dark:text-white mb-1 tracking-tight">Quiz complete!</h2>
+                        <p class="text-slate-400 text-sm mb-8 font-medium">Here’s how you did</p>
 
-                        <!-- Circular Progress -->
-                        <div class="flex justify-center mb-10">
-                            <div class="relative w-44 h-44">
-                                <svg class="w-full h-full -rotate-90">
-                                    <circle cx="88" cy="88" r="80" fill="none" class="stroke-slate-100"
-                                        stroke-width="12"></circle>
-                                    <circle id="scoreProgress" cx="88" cy="88" r="80" fill="none"
-                                        class="stroke-brand-500 transition-all duration-1000 ease-out" stroke-width="12"
-                                        stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="502.65">
-                                    </circle>
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span id="scorePercent"
-                                        class="text-4xl font-black text-slate-900 tracking-tighter">0%</span>
-                                    <span id="scoreValue"
-                                        class="text-[11px] font-bold text-slate-400 font-mono tracking-widest mt-1 uppercase">0
-                                        / 0</span>
-                                </div>
+                        <!-- Score ring (r=68 → circumference ≈ 427.26) -->
+                        <div class="qz-score-ring" role="img" aria-label="Score">
+                            <svg class="w-full h-full" viewBox="0 0 160 160">
+                                <circle cx="80" cy="80" r="68" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+                                <circle id="scoreProgress" cx="80" cy="80" r="68" fill="none"
+                                    stroke="#0ea5e9" stroke-width="10" stroke-linecap="round"
+                                    stroke-dasharray="427.26" stroke-dashoffset="427.26"
+                                    style="transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1);"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="scorePercent" class="text-4xl font-black text-[#1a1a2e] dark:text-white tracking-tight" aria-live="polite">0%</span>
+                                <span id="scoreValue" class="text-xs font-semibold text-slate-400 mt-0.5">0 / 0 correct</span>
                             </div>
                         </div>
 
-                        <!-- Insights Card -->
-                        <div class="p-6 rounded-2xl border-2 border-slate-50 bg-white mb-10">
-                            <span id="scoreBadge"
-                                class="inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border uppercase">STATUS</span>
-                            <p id="insightsDesc" class="text-slate-600 text-[15px] leading-relaxed italic"></p>
+                        <!-- Feedback -->
+                        <div class="mb-8 p-5 rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.03]">
+                            <span id="scoreBadge" class="inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border uppercase">—</span>
+                            <p id="insightsDesc" class="text-slate-600 dark:text-slate-300 text-[15px] leading-relaxed"></p>
                         </div>
 
                         <div class="flex flex-col gap-3">
                             <button type="button" onclick="returnToQuizCatalog({ reloadList: true })"
-                                class="button-press w-full h-12 bg-slate-900 text-white font-bold rounded-xl text-sm hover:bg-black transition-all shadow-lg active:scale-95">
-                                Initiate New Cycle
+                                class="qz-btn-primary w-full justify-center button-press py-3">
+                                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">refresh</span>
+                                Try another quiz
                             </button>
                             <button type="button" onclick="returnToQuizCatalog({ reloadList: false })"
-                                class="button-press w-full h-12 flex items-center justify-center text-sm font-bold text-slate-500 hover:text-slate-900 border border-slate-200 rounded-xl transition-all hover:bg-slate-50">
-                                Back to Quiz Catalog
+                                class="qz-btn-ghost w-full justify-center button-press py-3">
+                                Back to quiz list
                             </button>
                         </div>
                     </div>
@@ -524,34 +470,27 @@
 
             const card = document.createElement('button');
             card.type = 'button';
-            card.setAttribute('data-aos', 'fade-up');
-            card.className = 'card-hover group bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:shadow-xl transition-all text-left w-full';
+            card.setAttribute('role', 'listitem');
+            card.className = 'qz-card text-left';
 
             card.innerHTML = `
-              <div class="flex items-start justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-600 dark:text-brand-400 group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined">quiz</span>
-                </div>
-                <div class="px-2 py-1 rounded-md bg-slate-100 dark:bg-white/5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  ${totalQuestions} Question${totalQuestions === 1 ? '' : 's'}
-                </div>
+              <div class="qz-card-accent">
+                <span class="material-symbols-outlined text-[22px]" aria-hidden="true">quiz</span>
               </div>
 
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-brand-600 transition-colors">
+              <h3 class="text-[17px] font-bold text-[#1a1a2e] dark:text-white mb-1 leading-snug tracking-tight">
                 ${escapeHtml(q.title || '')}
               </h3>
 
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+              <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">
                 ${escapeHtml(subjectLabel)}
               </p>
 
-              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                ${escapeHtml(q.subject_code || '')}
-              </p>
-
-              <div class="mt-6 flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold text-xs">
-                <span>Start Quiz</span>
-                <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              <div class="flex items-center justify-between">
+                <span class="qz-pill">${totalQuestions} question${totalQuestions === 1 ? '' : 's'}</span>
+                <span class="text-brand-500 dark:text-brand-400 font-bold text-xs flex items-center gap-1">
+                  Start <span class="material-symbols-outlined text-[15px]" aria-hidden="true">arrow_forward</span>
+                </span>
               </div>
             `;
 
@@ -666,19 +605,19 @@
 
         q.options.forEach((optText, index) => {
           const label = document.createElement('label');
-          label.className = 'quiz-option card-hover';
+          label.className = 'qz-option';
 
           const isSelected = selectedAnswers[currentQuestionIndex] === index;
 
           if (hasAnswered) {
-            label.classList.add('cursor-default', 'opacity-80');
+            label.classList.add('qz-opt-answered');
             if (index === q.correct_option_index) {
-              label.classList.add('correct');
+              label.classList.add('qz-correct');
             } else if (isSelected) {
-              label.classList.add('wrong');
+              label.classList.add('qz-wrong');
             }
           } else if (isSelected) {
-            label.classList.add('selected');
+            label.classList.add('qz-selected');
           }
 
           label.innerHTML = `
@@ -687,9 +626,9 @@
                    value="${index}" 
                    ${isSelected ? 'checked' : ''} 
                    ${hasAnswered ? 'disabled' : ''}
-                   class="sr-only">
-            <div class="radio-ui" aria-hidden="true"></div>
-            <div class="flex-1 leading-relaxed capitalize">${nl2brSafe(optText)}</div>
+                   aria-label="Option ${index + 1}">
+            <div class="qz-radio" aria-hidden="true"></div>
+            <div class="flex-1 leading-relaxed">${nl2brSafe(optText)}</div>
           `;
 
           if (!hasAnswered) {
@@ -707,9 +646,9 @@
         prevBtn.style.display = currentQuestionIndex > 0 ? 'flex' : 'none';
 
         if (isLast) {
-          nextBtn.innerHTML = `Finish Quiz <span class="material-symbols-outlined text-[20px]">verified_user</span>`;
+          nextBtn.innerHTML = `Finish &amp; see results <span class="material-symbols-outlined text-[18px]" aria-hidden="true">check_circle</span>`;
         } else {
-          nextBtn.innerHTML = `Next Question <span class="material-symbols-outlined text-[20px]">arrow_forward</span>`;
+          nextBtn.innerHTML = `Next question <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>`;
         }
 
         nextBtn.disabled = !hasAnswered;
@@ -764,31 +703,36 @@
         const total = questions.length;
         const percent = Math.round((correctCount / total) * 100);
 
-        const cir = 502.65;
+        // Fix circumference for new ring (r=68 → 2πr ≈ 427.26)
+        const cir = 427.26;
         const targetOffset = cir - (percent / 100) * cir;
 
         setTimeout(() => {
           document.getElementById('scoreProgress').style.strokeDashoffset = targetOffset;
         }, 150);
 
-        document.getElementById('scoreValue').textContent = `${correctCount} / ${total}`;
+        document.getElementById('scoreValue').textContent = `${correctCount} / ${total} correct`;
         document.getElementById('scorePercent').textContent = `${percent}%`;
 
         const badge = document.getElementById('scoreBadge');
         const desc = document.getElementById('insightsDesc');
 
         if (percent >= 90) {
-          badge.textContent = 'EXCELLENT';
-          badge.className = 'inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border border-teal-200 bg-teal-50 text-teal-700 uppercase';
-          desc.textContent = `Amazing work! You really understand ${currentQuizName}.`;
+          badge.textContent = 'Outstanding';
+          badge.className = 'inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border border-emerald-200 bg-emerald-50 text-emerald-700 uppercase';
+          desc.textContent = `Amazing — you really know your ${currentQuizName} material. That\'s a score to be proud of.`;
         } else if (percent >= 70) {
-          badge.textContent = 'GOOD';
+          badge.textContent = 'Good work';
           badge.className = 'inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border border-brand-200 bg-brand-50 text-brand-700 uppercase';
-          desc.textContent = `Good job! You have a solid understanding of ${currentQuizName}.`;
+          desc.textContent = `Solid understanding of ${currentQuizName}. A little more practice on the ones you missed and you\'ll be set.`;
+        } else if (percent >= 50) {
+          badge.textContent = 'Keep going';
+          badge.className = 'inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border border-amber-200 bg-amber-50 text-amber-700 uppercase';
+          desc.textContent = `You\'re on the right track with ${currentQuizName}. Review the explanations and try again — it gets easier.`;
         } else {
-          badge.textContent = 'NEEDS PRACTICE';
+          badge.textContent = 'Early days';
           badge.className = 'inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border border-red-200 bg-red-50 text-red-700 uppercase';
-          desc.textContent = `Keep practicing ${currentQuizName}. Review the questions you got wrong.`;
+          desc.textContent = `${currentQuizName} is tricky — don\'t worry. Go through the explanations and give it another shot.`;
         }
 
         try {

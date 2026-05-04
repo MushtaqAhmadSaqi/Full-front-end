@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Generate personalized, syllabus-aligned quizzes using AI for COMSATS exams. Powered by Google Gemini.">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:title" content="AI Quiz Generator • COMSATSPrepHub">
+  <meta property="og:description" content="Create personalized quizzes in seconds with AI">
+  <meta property="og:type" content="website">
+  <title>AI Quiz Generator • COMSATSPrepHub</title>
+
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles/tailwind-built.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth-modal.css">
+
+  <style>
+    /* ============ ANIMATED BACKGROUND ============ */
+    body {
+      background: linear-gradient(135deg, #f0f4ff 0%, #f0f2f5 50%, #fef6ff 100%);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 0;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -30%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 0;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+
+    .dark body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(-50px, 30px) scale(1.1);
+      }
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============ GLASSMORPHISM CARD ============ */
+    .ai-generator-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dark .ai-generator-card {
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ============ HERO BADGE ============ */
+    .hero-badge {
+      background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.15);
+      }
+    }
+
+    /* ============ GRADIENT TEXT ============ */
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ============ PROGRESS STEPS ============ */
+    .step-indicator {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .step-indicator.active .step-circle {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .step-indicator.completed .step-circle {
+      background: #10b981;
+      color: white;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e2e8f0;
+      color: #64748b;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    /* ============ EXAM TYPE BUTTONS ============ */
+    .exam-type-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .exam-type-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+
+    .exam-type-btn.active {
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .exam-type-btn.active::before {
+      opacity: 1;
+    }
+
+    .exam-type-btn:hover:not(.active) {
+      border-color: #3b82f6;
+      transform: translateY(-1px);
+    }
+
+    /* ============ FORM LABELS ============ */
+    .form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .dark .form-label {
+      color: #94a3b8;
+    }
+
+    /* ============ CUSTOM INPUTS ============ */
+    .custom-input,
+    .custom-select,
+    .custom-textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .custom-input:focus,
+    .custom-select:focus,
+    .custom-textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .dark .custom-input,
+    .dark .custom-select,
+    .dark .custom-textarea {
+      background: #0f172a;
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+
+    /* ============ CUSTOM SLIDER ============ */
+    .slider-wrapper {
+      position: relative;
+      padding: 10px 0;
+    }
+
+    input[type="range"].slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 10px;
+      background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--progress, 50%), #e2e8f0 var(--progress, 50%), #e2e8f0 100%);
+      outline: none;
+    }
+
+    .dark input[type="range"].slider {
+      background: linear-gradient(to right, #3b82f6 0%, #3b82f6 var(--progress, 50%), #334155 var(--progress, 50%), #334155 100%);
+    }
+
+    input[type="range"].slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #3b82f6;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      transition: transform 0.2s;
+    }
+
+    input[type="range"].slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* ============ GENERATE BUTTON ============ */
+    .generate-btn {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 15px 35px rgba(37, 99, 235, 0.35);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generate-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .generate-btn:hover::before {
+      opacity: 1;
+    }
+
+    .generate-btn>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 45px rgba(124, 58, 237, 0.45);
+    }
+
+    .generate-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ============ SKELETON LOADER ============ */
+    .skeleton {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: skeleton 1.5s infinite;
+      border-radius: 12px;
+    }
+
+    .dark .skeleton {
+      background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+      background-size: 200% 100%;
+    }
+
+    @keyframes skeleton {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* ============ DRAG-DROP UPLOAD ============ */
+    .upload-area {
+      border: 2px dashed #cbd5e1;
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: rgba(241, 245, 249, 0.5);
+    }
+
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.05);
+      transform: scale(1.01);
+    }
+
+    .upload-area.has-file {
+      border-color: #10b981;
+      border-style: solid;
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    /* ============ QUIZ CARDS ============ */
+    .quiz-preview {
+      animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .question-card {
+      transition: all 0.3s ease;
+      animation: slideIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .option-label {
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .option-label:hover {
+      border-color: #3b82f6;
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+
+    .option-label.selected {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .option-label.correct {
+      border-color: #10b981 !important;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)) !important;
+    }
+
+    .option-label.incorrect {
+      border-color: #ef4444 !important;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)) !important;
+    }
+
+    /* ============ TOAST NOTIFICATION ============ */
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      padding: 16px 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideInRight 0.3s ease;
+      border-left: 4px solid #10b981;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toast.error {
+      border-left-color: #ef4444;
+    }
+
+    .toast.info {
+      border-left-color: #3b82f6;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* ============ CONFETTI ============ */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      z-index: 999;
+      animation: confetti-fall 3s linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ============ COUNT-UP ANIMATION ============ */
+    .count-up {
+      animation: countUp 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes countUp {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ============ TIMER ============ */
+    .timer-badge {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    /* ============ KBD SHORTCUT ============ */
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-family: monospace;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      box-shadow: 0 1px 0 #94a3b8;
+    }
+
+    .dark kbd {
+      background: #334155;
+      border-color: #475569;
+      color: #f1f5f9;
+      box-shadow: 0 1px 0 #0f172a;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 640px) {
+      .ai-generator-card {
+        border-radius: 20px;
+      }
+
+      .exam-type-btn,
+      .difficulty-btn {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+
+    /* ============ ACCESSIBILITY ============ */
+    *:focus-visible {
+      outline: 3px solid #3b82f6;
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-[#1a1a2e] dark:text-gray-100">
+
+  <!-- Header -->
+  <div id="app-header"></div>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-10 pb-20">
+
+    <!-- Back Button -->
+    <div class="flex items-center justify-between mb-8">
+      <a href="quiz.html"
+        class="group flex items-center gap-2 text-[#475569] dark:text-[#94a3b8] hover:text-[#1a1a2e] dark:hover:text-white transition-colors">
+        <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+        <span class="font-semibold">Back to Quizzes</span>
+      </a>
+      <div class="hidden sm:flex items-center gap-2 text-xs text-[#64748b]">
+        <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to generate
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+      <div
+        class="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full text-blue-700 dark:text-blue-300 text-sm font-bold mb-5">
+        <span class="material-symbols-outlined text-base">auto_awesome</span>
+        POWERED BY GEMINI AI
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4">
+        <span class="gradient-text">AI Quiz Generator</span>
+      </h1>
+      <p class="text-lg text-[#475569] dark:text-[#94a3b8] max-w-xl mx-auto leading-relaxed">
+        Create personalized, syllabus-aligned quizzes in seconds. Master your COMSATS exams with AI-powered practice.
+      </p>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap justify-center gap-6 mt-8">
+        <div class="flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-blue-600">bolt</span>
+          <span class="font-semibold">~5s Generation</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-green-600">verified</span>
+          <span class="font-semibold">Syllabus-Aligned</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-purple-600">diversity_3</span>
+          <span class="font-semibold">10K+ Students</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="ai-generator-card p-6 sm:p-8 md:p-10">
+      <form id="ai-quiz-form" class="space-y-7">
+
+        <!-- Subject -->
+        <div>
+          <label class="form-label" for="subject">
+            <span class="material-symbols-outlined text-sm">menu_book</span>
+            Subject
+          </label>
+          <select id="subject" required class="custom-select">
+            <option value="">Select a subject...</option>
+            <option value="Calculus">📐 Calculus</option>
+            <option value="Data Structures">🌳 Data Structures</option>
+            <option value="Object Oriented Programming">☕ Object Oriented Programming</option>
+            <option value="Computer Networks">🌐 Computer Networks</option>
+            <option value="Database Systems">🗄️ Database Systems</option>
+            <option value="Software Engineering">⚙️ Software Engineering</option>
+            <option value="Linear Algebra">➗ Linear Algebra</option>
+            <option value="Digital Logic Design">💡 Digital Logic Design</option>
+            <option value="Operating Systems">💻 Operating Systems</option>
+            <option value="Artificial Intelligence">🤖 Artificial Intelligence</option>
+          </select>
+        </div>
+
+        <!-- Exam Type -->
+        <div>
+          <label class="form-label">
+            <span class="material-symbols-outlined text-sm">quiz</span>
+            Exam Type
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" id="btn-midterm"
+              class="exam-type-btn py-4 px-6 rounded-2xl border-2 border-[#e2e8f0] dark:border-[#334155] font-semibold active">
+              <div class="text-2xl mb-1">📝</div>
+              Midterm
+            </button>
+            <button type="button" id="btn-final"
+              class="exam-type-btn py-4 px-6 rounded-2xl border-2 border-[#e2e8f0] dark:border-[#334155] font-semibold">
+              <div class="text-2xl mb-1">🎓</div>
+              Final
+            </button>
+          </div>
+          <input type="hidden" id="exam-type" value="midterm">
+        </div>
+
+        <!-- Topics -->
+        <div>
+          <label class="form-label" for="topics">
+            <span class="material-symbols-outlined text-sm">topic</span>
+            Topics / Chapters <span class="text-[#94a3b8] normal-case font-normal">(optional)</span>
+          </label>
+          <textarea id="topics" rows="2" placeholder="e.g., Chapter 3, Recursion, Binary Trees, Graph Algorithms..."
+            class="custom-textarea resize-y min-h-[70px]"></textarea>
+          <p class="text-xs text-[#64748b] mt-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">info</span>
+            Leave blank for full syllabus coverage
+          </p>
+        </div>
+
+        <!-- Number of Questions -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="form-label mb-0" for="question-count">
+              <span class="material-symbols-outlined text-sm">format_list_numbered</span>
+              Number of Questions
+            </label>
+            <span id="question-count-value" class="font-extrabold text-2xl gradient-text">10</span>
+          </div>
+          <div class="slider-wrapper">
+            <input type="range" id="question-count" min="5" max="15" step="1" value="10" class="slider">
+          </div>
+          <div class="flex justify-between text-xs text-[#64748b] mt-2 font-medium">
+            <span>Quick (5)</span><span>Standard (10)</span><span>Full (15)</span>
+          </div>
+        </div>
+
+        <!-- Difficulty -->
+        <div>
+          <label class="form-label">
+            <span class="material-symbols-outlined text-sm">trending_up</span>
+            Difficulty Mix
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-difficulty="easy"
+              class="difficulty-btn py-3 px-3 rounded-2xl border-2 border-[#e2e8f0] dark:border-[#334155] font-semibold text-sm transition-all hover:-translate-y-0.5">
+              <div class="text-xl mb-1">🌱</div>
+              Easier
+            </button>
+            <button type="button" data-difficulty="balanced"
+              class="difficulty-btn py-3 px-3 rounded-2xl border-2 border-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 font-semibold text-sm active">
+              <div class="text-xl mb-1">⚖️</div>
+              Balanced
+            </button>
+            <button type="button" data-difficulty="hard"
+              class="difficulty-btn py-3 px-3 rounded-2xl border-2 border-[#e2e8f0] dark:border-[#334155] font-semibold text-sm transition-all hover:-translate-y-0.5">
+              <div class="text-xl mb-1">🔥</div>
+              Harder
+            </button>
+          </div>
+          <input type="hidden" id="difficulty" value="balanced">
+        </div>
+
+        <!-- File Upload -->
+        <div>
+          <label class="form-label">
+            <span class="material-symbols-outlined text-sm">upload_file</span>
+            Upload Notes / PDF <span class="text-[#94a3b8] normal-case font-normal">(optional)</span>
+          </label>
+          <div id="upload-area" class="upload-area">
+            <input type="file" id="notes-file" accept=".pdf,.txt,.docx" class="hidden">
+            <div id="upload-default">
+              <span class="material-symbols-outlined text-4xl text-blue-500">cloud_upload</span>
+              <p class="mt-2 text-sm font-semibold">Drop PDF or click to upload</p>
+              <p class="text-xs text-[#64748b] mt-1">PDF, TXT, DOCX • Max 10MB</p>
+            </div>
+            <div id="upload-preview" class="hidden">
+              <span class="material-symbols-outlined text-4xl text-green-600">check_circle</span>
+              <p id="file-name" class="mt-2 text-sm font-semibold text-green-700 dark:text-green-400"></p>
+              <button type="button" id="remove-file"
+                class="mt-2 text-xs text-red-500 hover:underline font-medium">Remove file</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button type="submit" id="generate-btn"
+          class="generate-btn w-full py-5 rounded-2xl text-lg font-bold flex items-center justify-center gap-3">
+          <span class="material-symbols-outlined">auto_awesome</span>
+          <span id="btn-text">Generate Quiz with AI</span>
+        </button>
+
+        <p class="text-center text-xs text-[#64748b] flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-sm">lock</span>
+          Powered by Google Gemini • Free for students • Your data is private
+        </p>
+      </form>
+    </div>
+
+    <!-- Skeleton Loader (shown during generation) -->
+    <div id="skeleton-loader" class="hidden mt-8 ai-generator-card p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="skeleton w-12 h-12 rounded-full"></div>
+        <div class="flex-1">
+          <div class="skeleton h-4 w-48 mb-2"></div>
+          <div class="skeleton h-3 w-32"></div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="skeleton h-20 w-full"></div>
+        <div class="skeleton h-20 w-full"></div>
+        <div class="skeleton h-20 w-full"></div>
+      </div>
+      <p class="text-center mt-6 text-sm text-[#64748b] animate-pulse">
+        ✨ Gemini is crafting your personalized quiz...
+      </p>
+    </div>
+
+    <!-- Quiz Preview -->
+    <div id="quiz-preview" class="hidden mt-10 ai-generator-card p-6 sm:p-8">
+      <div
+        class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-[#e2e8f0] dark:border-[#334155]">
+        <div>
+          <h3 class="font-extrabold text-2xl" id="preview-title"></h3>
+          <p class="text-sm text-[#64748b] mt-1 flex items-center gap-2" id="preview-subtitle"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div id="quiz-timer" class="timer-badge">
+            <span class="material-symbols-outlined text-sm">timer</span>
+            <span id="timer-display">00:00</span>
+          </div>
+          <button onclick="regenerateQuiz()" type="button"
+            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold border-2 border-[#e2e8f0] dark:border-[#334155] rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all">
+            <span class="material-symbols-outlined text-base">refresh</span>
+            <span class="hidden sm:inline">Regenerate</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="mb-6">
+        <div class="flex justify-between text-xs text-[#64748b] mb-2 font-medium">
+          <span id="progress-text">0 / 0 answered</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="h-2 bg-[#e2e8f0] dark:bg-[#334155] rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+            style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div id="quiz-questions" class="space-y-6"></div>
+    </div>
+
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Footer -->
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="js/dark-mode.js"></script>
+  <script src="user-state.js"></script>
+  <script src="utils.js"></script>
+
+  <script>
+    // ==================== AI QUIZ GENERATOR - ENHANCED VERSION ====================
+    let currentQuizData = null;
+    let userAnswers = {};
+    let quizStartTime = null;
+    let timerInterval = null;
+
+    // ==================== TOAST NOTIFICATIONS ====================
+    function showToast(message, type = 'success') {
+      const icons = { success: 'check_circle', error: 'error', info: 'info' };
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+      <span class="material-symbols-outlined text-${type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue'}-500">${icons[type]}</span>
+      <span class="font-medium">${message}</span>
+    `;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'slideInRight 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ==================== CONFETTI ====================
+    function launchConfetti() {
+      const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
+      for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+
+    // ==================== AUTO-SAVE FORM STATE ====================
+    function saveFormState() {
+      const state = {
+        subject: document.getElementById('subject').value,
+        examType: document.getElementById('exam-type').value,
+        topics: document.getElementById('topics').value,
+        questionCount: document.getElementById('question-count').value,
+        difficulty: document.getElementById('difficulty').value
+      };
+      localStorage.setItem('quizFormState', JSON.stringify(state));
+    }
+
+    function restoreFormState() {
+      try {
+        const state = JSON.parse(localStorage.getItem('quizFormState') || '{}');
+        if (state.subject) document.getElementById('subject').value = state.subject;
+        if (state.topics) document.getElementById('topics').value = state.topics;
+        if (state.questionCount) {
+          document.getElementById('question-count').value = state.questionCount;
+          document.getElementById('question-count-value').textContent = state.questionCount;
+          updateSliderProgress();
+        }
+      } catch (e) { console.warn('Could not restore form state'); }
+    }
+
+    // ==================== SETUP FUNCTIONS ====================
+    function setupExamTypeToggle() {
+      const btnMid = document.getElementById('btn-midterm');
+      const btnFinal = document.getElementById('btn-final');
+      const hiddenInput = document.getElementById('exam-type');
+
+      [btnMid, btnFinal].forEach(btn => {
+        btn.addEventListener('click', () => {
+          [btnMid, btnFinal].forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          hiddenInput.value = btn === btnMid ? 'midterm' : 'final';
+          saveFormState();
+        });
+      });
+    }
+
+    function setupDifficultyButtons() {
+      const buttons = document.querySelectorAll('.difficulty-btn');
+      const hiddenInput = document.getElementById('difficulty');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => {
+            b.classList.remove('active', 'border-blue-600', 'bg-gradient-to-br', 'from-blue-50', 'to-indigo-50', 'dark:from-blue-900/30', 'dark:to-indigo-900/30', 'text-blue-700', 'dark:text-blue-300');
+            b.classList.add('border-[#e2e8f0]', 'dark:border-[#334155]');
+          });
+          btn.classList.remove('border-[#e2e8f0]', 'dark:border-[#334155]');
+          btn.classList.add('active', 'border-blue-600', 'bg-gradient-to-br', 'from-blue-50', 'to-indigo-50', 'dark:from-blue-900/30', 'dark:to-indigo-900/30', 'text-blue-700', 'dark:text-blue-300');
+          hiddenInput.value = btn.dataset.difficulty;
+          saveFormState();
+        });
+      });
+    }
+
+    function updateSliderProgress() {
+      const slider = document.getElementById('question-count');
+      const progress = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+      slider.style.setProperty('--progress', progress + '%');
+    }
+
+    function setupQuestionSlider() {
+      const slider = document.getElementById('question-count');
+      const valueDisplay = document.getElementById('question-count-value');
+      updateSliderProgress();
+
+      slider.addEventListener('input', () => {
+        valueDisplay.textContent = slider.value;
+        valueDisplay.classList.remove('count-up');
+        void valueDisplay.offsetWidth;
+        valueDisplay.classList.add('count-up');
+        updateSliderProgress();
+        saveFormState();
+      });
+    }
+
+    function setupFileUpload() {
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('notes-file');
+      const defaultView = document.getElementById('upload-default');
+      const previewView = document.getElementById('upload-preview');
+      const fileNameDiv = document.getElementById('file-name');
+      const removeBtn = document.getElementById('remove-file');
+
+      uploadArea.addEventListener('click', (e) => {
+        if (e.target.id !== 'remove-file') fileInput.click();
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        uploadArea.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadArea.classList.add('drag-over');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        uploadArea.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove('drag-over');
+        });
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files.length > 0) {
+          fileInput.files = e.dataTransfer.files;
+          showFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) showFile(fileInput.files[0]);
+      });
+
+      function showFile(file) {
+        if (file.size > 10 * 1024 * 1024) {
+          showToast('File too large! Max 10MB.', 'error');
+          return;
+        }
+        fileNameDiv.textContent = file.name;
+        defaultView.classList.add('hidden');
+        previewView.classList.remove('hidden');
+        uploadArea.classList.add('has-file');
+      }
+
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.value = '';
+        defaultView.classList.remove('hidden');
+        previewView.classList.add('hidden');
+        uploadArea.classList.remove('has-file');
+      });
+    }
+
+    // ==================== TIMER ====================
+    function startTimer() {
+      quizStartTime = Date.now();
+      const display = document.getElementById('timer-display');
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+        const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const secs = String(elapsed % 60).padStart(2, '0');
+        display.textContent = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    // ==================== PROGRESS ====================
+    function updateProgress() {
+      if (!currentQuizData) return;
+      const total = currentQuizData.questions.length;
+      const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+      const percent = Math.round((answered / total) * 100);
+      document.getElementById('progress-text').textContent = `${answered} / ${total} answered`;
+      document.getElementById('progress-percent').textContent = `${percent}%`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+    }
+
+    // ==================== FORM SUBMISSION ====================
+    function setupFormSubmission() {
+      const form = document.getElementById('ai-quiz-form');
+      const generateBtn = document.getElementById('generate-btn');
+      const btnText = document.getElementById('btn-text');
+      const skeletonLoader = document.getElementById('skeleton-loader');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!document.getElementById('subject').value) {
+          showToast('Please select a subject first!', 'error');
+          document.getElementById('subject').focus();
+          return;
+        }
+
+        generateBtn.disabled = true;
+        btnText.innerHTML = `<span class="animate-spin material-symbols-outlined mr-2">autorenew</span>Generating with Gemini...`;
+        skeletonLoader.classList.remove('hidden');
+        skeletonLoader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById('quiz-preview').classList.add('hidden');
+
+        const formData = {
+          subject: document.getElementById('subject').value,
+          examType: document.getElementById('exam-type').value,
+          topics: document.getElementById('topics').value,
+          questionCount: document.getElementById('question-count').value,
+          difficulty: document.getElementById('difficulty').value
+        };
+
+        try {
+          const response = await fetch('/api/generate-quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to generate quiz');
+          }
+
+          const quizData = await response.json();
+          currentQuizData = quizData;
+          skeletonLoader.classList.add('hidden');
+          displayQuizForTaking(quizData);
+          showToast('Quiz generated successfully! 🎉');
+
+        } catch (error) {
+          skeletonLoader.classList.add('hidden');
+          showToast(error.message, 'error');
+        } finally {
+          generateBtn.disabled = false;
+          btnText.innerHTML = 'Generate Quiz with AI';
+        }
+      });
+    }
+
+    // ==================== DISPLAY QUIZ ====================
+    function displayQuizForTaking(quizData) {
+      const preview = document.getElementById('quiz-preview');
+      const titleEl = document.getElementById('preview-title');
+      const subtitleEl = document.getElementById('preview-subtitle');
+      const questionsContainer = document.getElementById('quiz-questions');
+
+      titleEl.textContent = quizData.title || `${quizData.metadata?.subject || 'AI'} Quiz`;
+      subtitleEl.innerHTML = `
+      <span class="material-symbols-outlined text-sm">quiz</span>
+      ${quizData.questions.length} Questions • 
+      <span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase">
+        ${quizData.metadata?.examType || 'AI Generated'}
+      </span>
+    `;
+
+      questionsContainer.innerHTML = '';
+      userAnswers = {};
+
+      quizData.questions.forEach((q, index) => {
+        const questionHTML = `
+        <div class="qz-question-card mb-6" 
+             data-question-id="${index}" style="animation-delay: ${index * 0.05}s">
+          <div class="qz-question-num-bg" aria-hidden="true">Q${index + 1}</div>
+          <div class="relative z-10">
+            <h2 class="text-xl sm:text-2xl font-bold text-[#1a1a2e] dark:text-white leading-snug mb-7 tracking-tight">
+              ${q.question}
+            </h2>
+            <div class="space-y-3">
+              ${q.options.map((option, optIndex) => `
+                <label class="qz-option" data-option="${optIndex}">
+                  <input type="radio" name="q${index}" value="${optIndex}" aria-label="Option ${String.fromCharCode(65 + optIndex)}">
+                  <div class="qz-radio" aria-hidden="true"></div>
+                  <div class="flex-1 leading-relaxed"><span class="font-semibold text-slate-400 mr-2">${String.fromCharCode(65 + optIndex)}.</span> ${option}</div>
+                </label>
+              `).join('')}
+            </div>
+            <div class="qz-explanation hidden mt-6" data-explanation="${index}">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-[18px] text-emerald-600" aria-hidden="true">lightbulb</span>
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">Why this answer?</span>
+              </div>
+              <p class="text-slate-700 dark:text-slate-300 text-[14.5px] leading-relaxed">${q.explanation}</p>
+            </div>
+          </div>
+        </div>
+      `;
+        questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+      });
+
+      const submitHTML = `
+      <div class="mt-8 flex justify-center">
+        <button onclick="submitQuiz()" type="button" id="submit-quiz-btn"
+                class="generate-btn px-12 py-4 rounded-2xl text-lg font-bold flex items-center gap-3">
+          <span class="material-symbols-outlined">check_circle</span>
+          Submit Quiz
+        </button>
+      </div>
+    `;
+      questionsContainer.insertAdjacentHTML('beforeend', submitHTML);
+
+      // Selection handlers
+      document.querySelectorAll('.qz-option').forEach(label => {
+        label.addEventListener('click', () => {
+          // If already answered, don't allow changing
+          if (label.classList.contains('qz-opt-answered')) return;
+          
+          const card = label.closest('.qz-question-card');
+          card.querySelectorAll('.qz-option').forEach(l => l.classList.remove('qz-selected'));
+          label.classList.add('qz-selected');
+          setTimeout(updateProgress, 50);
+        });
+      });
+
+      preview.classList.remove('hidden');
+      preview.scrollIntoView({ behavior: 'smooth' });
+      startTimer();
+      updateProgress();
+    }
+
+    // ==================== SUBMIT QUIZ ====================
+    function submitQuiz() {
+      if (!currentQuizData) return;
+      stopTimer();
+      const questions = currentQuizData.questions;
+      let score = 0;
+
+      questions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const card = document.querySelector(`[data-question-id="${index}"]`);
+        const labels = card.querySelectorAll('.qz-option');
+
+        labels.forEach((label, i) => {
+          label.classList.add('qz-opt-answered');
+          label.classList.remove('qz-selected');
+          
+          if (i === q.correctAnswer) {
+            label.classList.add('qz-correct');
+          }
+          if (selected && parseInt(selected.value) === i && i !== q.correctAnswer) {
+            label.classList.add('qz-wrong');
+          }
+        });
+
+        if (selected && parseInt(selected.value) === q.correctAnswer) score++;
+        if (selected) userAnswers[index] = parseInt(selected.value);
+
+        const exp = document.querySelector(`[data-explanation="${index}"]`);
+        if (exp) exp.classList.remove('hidden');
+      });
+
+      document.getElementById('submit-quiz-btn')?.remove();
+      showResultSummary(score, questions.length);
+    }
+
+    // ==================== RESULT SUMMARY ====================
+    function showResultSummary(score, total) {
+      const percentage = Math.round((score / total) * 100);
+      let message, emoji, color;
+
+      if (percentage >= 85) { message = "Outstanding! You're exam-ready! 🏆"; emoji = "🎉"; color = "green"; launchConfetti(); }
+      else if (percentage >= 70) { message = "Great work! Keep it up!"; emoji = "👏"; color = "blue"; }
+      else if (percentage >= 50) { message = "Good effort! Review weak areas."; emoji = "💪"; color = "yellow"; }
+      else { message = "Keep practicing! You'll improve."; emoji = "📚"; color = "red"; }
+
+      const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+      const timeMins = Math.floor(elapsed / 60);
+      const timeSecs = elapsed % 60;
+
+      const cir = 427.26;
+      const dashoffset = cir - (percentage / 100) * cir;
+
+      const resultHTML = `
+      <div class="qz-results-card mt-10 count-up">
+        <div class="absolute top-0 right-0 w-48 h-48 rounded-full bg-blue-50 dark:bg-blue-500/5 -mr-24 -mt-24 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-emerald-50 dark:bg-emerald-500/5 -ml-20 -mb-20 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
+
+        <div class="relative z-10 max-w-sm mx-auto">
+          <div class="text-6xl mb-4">${emoji}</div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1a1a2e] dark:text-white mb-1 tracking-tight">Quiz complete!</h2>
+          <p class="text-slate-400 text-sm mb-8 font-medium">Here’s how you did</p>
+
+          <div class="qz-score-ring" role="img" aria-label="Score">
+              <svg class="w-full h-full" viewBox="0 0 160 160">
+                  <circle cx="80" cy="80" r="68" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+                  <circle id="aiScoreProgress" cx="80" cy="80" r="68" fill="none"
+                      stroke="#0ea5e9" stroke-width="10" stroke-linecap="round"
+                      stroke-dasharray="${cir}" stroke-dashoffset="${cir}"
+                      style="transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1);" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-4xl font-black text-[#1a1a2e] dark:text-white tracking-tight">${percentage}%</span>
+                  <span class="text-xs font-semibold text-slate-400 mt-0.5">${score} / ${total} correct</span>
+              </div>
+          </div>
+
+          <div class="mb-8 p-5 rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.03]">
+              <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black tracking-widest mb-3 border uppercase border-${color}-200 bg-${color}-50 text-${color}-700">Performance</span>
+              <p class="text-slate-600 dark:text-slate-300 text-[15px] leading-relaxed">${message}</p>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button onclick="retryQuiz()" type="button" class="qz-btn-primary w-full justify-center button-press py-3">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">refresh</span>
+              Try another quiz
+            </button>
+            <button onclick="saveToProfile()" type="button" class="qz-btn-ghost w-full justify-center button-press py-3">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">bookmark_add</span>
+              Save to My Quizzes
+            </button>
+            <button onclick="shareResult(${percentage})" type="button" class="qz-btn-ghost w-full justify-center button-press py-3">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">share</span>
+              Share Result
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+      document.getElementById('quiz-questions').insertAdjacentHTML('beforeend', resultHTML);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      
+      setTimeout(() => {
+        const ring = document.getElementById('aiScoreProgress');
+        if (ring) ring.style.strokeDashoffset = dashoffset;
+      }, 150);
+    }
+
+    function shareResult(percentage) {
+      const text = `I scored ${percentage}% on an AI-generated quiz at COMSATSPrepHub! 🎓`;
+      if (navigator.share) {
+        navigator.share({ title: 'My Quiz Result', text, url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(text + ' ' + window.location.href);
+        showToast('Result copied to clipboard!', 'info');
+      }
+    }
+
+    function retryQuiz() {
+      document.getElementById('quiz-preview').classList.add('hidden');
+      document.getElementById('ai-quiz-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function regenerateQuiz() {
+      document.getElementById('ai-quiz-form').dispatchEvent(new Event('submit'));
+    }
+
+    function saveToProfile() {
+      if (!currentQuizData) return;
+      const saved = JSON.parse(localStorage.getItem('savedQuizzes') || '[]');
+      saved.push({
+        ...currentQuizData,
+        savedAt: new Date().toISOString(),
+        userAnswers
+      });
+      localStorage.setItem('savedQuizzes', JSON.stringify(saved));
+      showToast('✅ Quiz saved to your profile!');
+    }
+
+    // ==================== KEYBOARD SHORTCUTS ====================
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('ai-quiz-form').dispatchEvent(new Event('submit'));
+        }
+      });
+    }
+
+    // ==================== INITIALIZE ====================
+    function initAIQuizGenerator() {
+      setupExamTypeToggle();
+      setupDifficultyButtons();
+      setupQuestionSlider();
+      setupFileUpload();
+      setupFormSubmission();
+      setupKeyboardShortcuts();
+      restoreFormState();
+
+      document.getElementById('subject').addEventListener('change', saveFormState);
+      document.getElementById('topics').addEventListener('input', saveFormState);
+
+      if (typeof loadHeader === 'function') loadHeader();
+      if (typeof loadFooter === 'function') loadFooter();
+    }
+
+    window.onload = initAIQuizGenerator;
+  </script>
+</body>
+
+</html>
