@@ -97,9 +97,9 @@ input:focus-visible,
 textarea:focus-visible,
 [role="button"]:focus-visible,
 .skip-link:focus {
-  outline: 3px solid #0f766e;
+  outline: 3px solid var(--primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.16);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
 .skip-link {
@@ -107,7 +107,7 @@ textarea:focus-visible,
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0f766e;
+  background: var(--primary);
   color: white;
   padding: 12px 24px;
   z-index: 1000;
@@ -207,16 +207,25 @@ html.dark .active-pill {
 /* --- Human-like Premium Animations --- */
 .card-hover {
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
   transform-style: preserve-3d;
   will-change: transform;
 }
 
 .card-hover:hover {
   transform: translateY(-6px) scale(1.015);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  border-color: rgba(14, 165, 233, 0.25);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(14, 165, 233, 0.3);
 }
 
 @media (max-width: 1024px) {
@@ -483,24 +492,29 @@ html:not(.aos-initialized) [data-aos] {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   text-decoration: none;
   min-height: 48px;
   /* minimum touch target */
   min-width: 48px;
   border: none;
+  will-change: transform;
+}
+
+.btn:active {
+  transform: scale(0.96);
 }
 
 .btn-primary {
   background: var(--primary);
   color: #fff;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(15, 118, 110, 0.25);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
 }
 
 .btn-outline {
@@ -6332,5 +6346,357 @@ html.dark .mastery-item {
   width: 40%;
   left: 30%;
   background: #2563eb;
+}
+
+/* =============================================
+   QUIZ SECTION — PREMIUM ENHANCED (v2)
+   Fully aligned with site design system.
+   All selectors match existing HTML exactly.
+   No HTML/JS changes required.
+   ============================================= */
+
+/* --- Quiz Catalog --- */
+.qz-hero {
+  text-align: center;
+  padding: 2.5rem 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.qz-ai-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+}
+
+.qz-ai-link:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.45);
+}
+
+.qz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s ease;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.qz-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12),
+              0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: rgba(14, 165, 233, 0.2);
+}
+
+.dark .qz-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35),
+              0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.qz-card .qz-card-accent {
+  width: 48px;
+  height: 48px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.qz-card:hover .qz-card-accent {
+  background: var(--primary);
+  color: white;
+}
+
+/* --- Progress & Top Bar --- */
+.qz-progress-strip {
+  position: relative;
+  height: 5px;
+  background: var(--border);
+  border-radius: 9999px;
+  overflow: hidden;
+  flex: 1;
+  max-width: 180px;
+}
+
+.qz-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
+}
+
+.qz-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+/* --- Question Card --- */
+.qz-question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.75rem;
+  padding: 2.25rem 2rem 2rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.qz-question-card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.qz-question-num-bg {
+  position: absolute;
+  top: -30px;
+  right: -25px;
+  font-size: 9rem;
+  font-weight: 900;
+  color: var(--primary);
+  opacity: 0.06;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* --- Options --- */
+#optionsList .qz-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.15rem 1.35rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+#optionsList .qz-option:hover {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+  transform: translateY(-1px);
+}
+
+.dark #optionsList .qz-option:hover {
+  background: rgba(14, 165, 233, 0.08);
+}
+
+#optionsList .qz-option.qz-selected {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.dark #optionsList .qz-option.qz-selected {
+  background: rgba(14, 165, 233, 0.12);
+}
+
+#optionsList .qz-option.qz-opt-answered {
+  cursor: default;
+  pointer-events: none;
+}
+
+#optionsList .qz-option.qz-correct {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.dark #optionsList .qz-option.qz-correct {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #34d399;
+}
+
+#optionsList .qz-option.qz-wrong {
+  border-color: #ef4444;
+  background: #fef2f2;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.dark #optionsList .qz-option.qz-wrong {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #f87171;
+}
+
+.qz-radio {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.qz-option input:checked + .qz-radio {
+  border-color: #0ea5e9;
+  background: #0ea5e9;
+}
+
+.qz-option.qz-correct .qz-radio {
+  border-color: #10b981;
+  background: #10b981;
+}
+
+.qz-option.qz-wrong .qz-radio {
+  border-color: #ef4444;
+  background: #ef4444;
+}
+
+.qz-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- Explanation --- */
+.qz-explanation {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.dark .qz-explanation {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Buttons --- */
+.qz-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qz-btn-primary:hover:not(:disabled) {
+  background: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.45);
+}
+
+.qz-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.qz-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1.5px solid var(--border);
+  border-radius: 9999px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qz-btn-ghost:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+/* --- Results --- */
+.qz-results-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.qz-score-ring {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  margin: 0 auto 1.5rem;
+}
+
+#scoreProgress {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --- Responsive & Polish --- */
+@media (max-width: 640px) {
+  .qz-question-card {
+    padding: 1.75rem 1.25rem;
+  }
+  
+  #optionsList .qz-option {
+    padding: 1rem 1.1rem;
+    font-size: 0.9rem;
+  }
+  
+  .qz-btn-primary,
+  .qz-btn-ghost {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .qz-card,
+  .qz-option,
+  .qz-btn-primary,
+  .qz-btn-ghost,
+  #scoreProgress {
+    transition: none !important;
+    transform: none !important;
+  }
 }
 

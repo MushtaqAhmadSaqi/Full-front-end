@@ -12,11 +12,11 @@ module.exports = {
         sans: ['Inter', 'sans-serif']
       },
       colors: {
-        primary: '#0f766e',
-        'primary-hover': '#0d6b64',
-        'primary-light': '#ccfbf1',
+        primary: '#0ea5e9',
+        'primary-hover': '#0284c7',
+        'primary-light': '#e0f2fe',
         dark: '#1a1a2e',
-        accent: '#0f9690',
+        accent: '#38bdf8',
         brand: {
           50: '#f0f9ff',
           100: '#e0f2fe',
