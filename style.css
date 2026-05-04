@@ -61,10 +61,15 @@ body {
 [data-aos] {
   transition-duration: 0.7s !important;
 }
+
 /* After 3 seconds, force all AOS elements visible regardless */
 @keyframes aos-reveal-fallback {
-  to { opacity: 1 !important; transform: none !important; }
+  to {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
+
 .aos-fallback-active [data-aos]:not(.aos-animate) {
   animation: aos-reveal-fallback 0.3s forwards;
 }
@@ -3730,6 +3735,8 @@ main,
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
+  display: grid;
+  gap: 24px;
 }
 
 .student-tools-header {
@@ -6284,7 +6291,8 @@ html.dark .mastery-item {
 }
 
 /* Make hero blobs slightly more subtle on hover */
-.hero-blob-a, .hero-blob-b {
+.hero-blob-a,
+.hero-blob-b {
   transition: all 0.6s ease;
 }
 
