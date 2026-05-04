@@ -6195,12 +6195,134 @@ html.dark .mastery-item {
   line-height: 0;
 }
 
-.site-logo {
-  width: 90px; /* Set to 90px as requested for better visibility */
-  height: auto;
-  display: block;
-  object-fit: contain;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+/* ========== HERO SECTION IMPROVEMENTS ========== */
+
+/* ========== HERO SECTION IMPROVEMENTS ========== */
+
+/* Smooth background transition for hero */
+#home-section {
+  transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
+
+#home-section:hover {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 30%, #bae6fd 70%, #93c5fd 100%) !important;
+}
+
+/* Smaller, cleaner logo */
+.site-logo {
+  width: 55px !important;
+  height: auto;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Footer-style hover on hero badge */
+.badge-tilted:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+/* Hero-specific expanding underline (Teal color to differ from footer blue) */
+.hero-hover-underline {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.hero-hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0d9488, #2dd4bf);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.hero-hover-underline:hover::after {
+  width: 90%;
+  left: 5%;
+}
+
+/* Enhanced button-press with footer-like feel */
+.button-press {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.button-press:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.18) !important;
+}
+
+/* Hero underline animation (already good, made smoother) */
+.hero-underline {
+  position: relative;
+  display: inline-block;
+  color: #1a73e8;
+}
+
+.hero-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M0 8 Q15 2,30 8 T60 8 T90 8 T120 8' fill='none' stroke='%231a73e8' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.hero-underline:hover::after {
+  opacity: 1;
+}
+
+/* Make hero blobs slightly more subtle on hover */
+.hero-blob-a, .hero-blob-b {
+  transition: all 0.6s ease;
+}
+
+#home-section:hover .hero-blob-a {
+  transform: translate(15px, -15px) scale(1.05);
+  filter: blur(4px);
+}
+
+#home-section:hover .hero-blob-b {
+  transform: translate(-10px, 10px) scale(1.05);
+  filter: blur(4px);
+}
+
+/* SYNC HEADER NAV WITH FOOTER STYLE */
+.desktop-nav-force a {
+  position: relative !important;
+}
+
+.desktop-nav-force a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #2563eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.desktop-nav-force a:hover::after {
+  width: 60%;
+  left: 20%;
+}
+
+.desktop-nav-force a.nav-active::after {
+  width: 40%;
+  left: 30%;
+  background: #2563eb;
+}
+

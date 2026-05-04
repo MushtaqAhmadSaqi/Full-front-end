@@ -242,22 +242,23 @@
 
     <!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
     <section id="home-section"
-      class="relative overflow-hidden min-h-[calc(100vh-96px)] px-6 pt-10 pb-24 md:px-16 isolate text-center"
-      style="background: radial-gradient(circle at 70% 60%, rgba(56,139,210,0.13), transparent 35%), radial-gradient(circle at 15% 10%, rgba(147,210,255,0.16), transparent 28%), linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 45%, #ddeeff 100%);"
+      class="relative overflow-hidden min-h-[calc(100vh-96px)] px-6 pt-8 pb-20 md:px-16 isolate text-center"
+      style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%);"
       data-aos="fade-in">
-      <!-- Blobs -->
+
+      <!-- Blobs (kept for nice floating animation) -->
       <div class="hero-blob-a"></div>
       <div class="hero-blob-b"></div>
 
-      <div class="h-[clamp(12rem,30vh,22rem)]"></div>
+      <div class="h-[clamp(10rem,25vh,18rem)]"></div>
 
       <div class="relative z-10 max-w-2xl mx-auto" data-aos="zoom-in" data-aos-delay="100">
-        <!-- Badge -->
-        <div class="badge-tilted inline-block mb-7">
+        <!-- Badge with smaller logo -->
+        <div class="badge-tilted inline-block mb-6">
           <div
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-50/50 dark:bg-brand-500/5 border border-brand-100 dark:border-brand-500/10 backdrop-blur-md">
+            class="hero-hover-underline inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/70 dark:bg-white/5 border border-white/60 dark:border-white/10 backdrop-blur-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
             <a href="index.html" class="logo-box">
-              <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 80px;" loading="lazy">
+              <img src="Dlogo.png" alt="Website Logo" class="site-logo" style="width: 55px;" loading="lazy">
             </a>
             <span class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Trusted
               by Students</span>
@@ -271,30 +272,28 @@
         </h1>
 
         <!-- Subtext -->
-        <p class="text-[#6b7280] text-base sm:text-lg leading-relaxed mb-10 max-w-md mx-auto">
+        <p class="text-[#6b7280] text-base sm:text-lg leading-relaxed mb-8 max-w-md mx-auto">
           Verified past papers, real-time practice quizzes,<br class="hidden sm:block"> and performance analytics —
           built by students, for students.
         </p>
 
-        <!-- CTA Buttons -->
+        <!-- CTA Buttons (with footer-style smooth hover) -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <a href="subjects.html"
-            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-primary text-white font-semibold text-[15px] shadow-md hover:bg-primary-hover hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 no-underline">
+            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-primary text-white font-semibold text-[15px] shadow-md hover:bg-primary-hover hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
             <span class="material-symbols-outlined text-[18px]">auto_stories</span>
             Browse Subjects
           </a>
           <a href="quiz.html"
-            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a2e] font-semibold text-[15px] border-2 border-[#1a1a2e] hover:bg-[#1a1a2e] hover:text-white transition-all duration-300 no-underline">
+            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a2e] font-semibold text-[15px] border-2 border-[#1a1a2e] hover:bg-[#1a1a2e] hover:text-white hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
             <span class="material-symbols-outlined text-[18px]">quiz</span>
             Start Quiz
           </a>
-
         </div>
 
-        <!-- Micro social proof -->
-        <p class="mt-10 text-[12px] text-[#9ca3af] tracking-wide">
-          Trusted by <strong class="text-[#6b7280] font-semibold">1,000+</strong> COMSATS students &nbsp;·&nbsp; Free
-          &amp; open
+        <!-- Micro social proof (with hover) -->
+        <p class="hero-hover-underline mt-8 text-[12px] text-[#9ca3af] tracking-wide hover:text-[#6b7280] transition-colors duration-300 cursor-default">
+          Trusted by <strong class="text-[#6b7280] font-semibold">1,000+</strong> COMSATS students &nbsp;·&nbsp; Free &amp; open
         </p>
       </div>
     </section>
