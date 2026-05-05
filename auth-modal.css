@@ -106,7 +106,7 @@
 }
 
 .am-l-side {
-    background: linear-gradient(135deg, #0284c7 0%, #0f172a 100%);
+    background: linear-gradient(135deg, var(--brand-ink) 0%, var(--bg) 100%);
 }
 
 .am-s-side {
@@ -435,11 +435,11 @@
 }
 
 .am-b-login {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%);
 }
 
 .am-b-signup {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    background: linear-gradient(135deg, var(--brand-ink) 0%, var(--brand-deep) 100%);
     text-transform: uppercase;
     letter-spacing: 0.15em;
     font-size: 12px;
@@ -569,7 +569,7 @@
 
 /* ── SIGN IN NAV BUTTON ── */
 .btn-signin-nav {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%);
     color: #fff;
     padding: 9px 22px;
     border-radius: 999px;

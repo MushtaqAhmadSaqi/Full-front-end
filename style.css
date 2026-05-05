@@ -2,48 +2,122 @@
 /* See: https://web.dev/defer-non-critical-css/ */
 
 :root {
-  --bg-main: #f0f2f5;
-  --text-main: #1a1a2e;
-  --text-muted: #6b7280;
-  --primary: #0ea5e9;
-  /* Modernized to brand color */
-  --primary-hover: #0284c7;
-  --primary-light: #e0f2fe;
-  --primary-text: #ffffff;
-  --surface: #ffffff;
-  --surface-alt: #f8f9fb;
-  --border: #e2e8f0;
-  --error: #ef4444;
+  /* Brand — sky blue, inherited from the quiz module.
+     Every page now extends this, not competes with it. */
+  --brand:       #0ea5e9;   /* sky-500 */
+  --brand-ink:   #0284c7;   /* sky-600 — pressed, borders */
+  --brand-deep:  #0369a1;   /* sky-700 — text on tint */
+  --brand-soft:  #f0f9ff;   /* sky-50  — tinted surfaces */
+  --brand-soft-2:#e0f2fe;   /* sky-100 — hover tints */
+
+  /* Neutrals (light) — matches qz card surfaces */
+  --bg:            #f8fafc;
+  --surface:       #ffffff;
+  --surface-2:     #ffffff;
+  --surface-3:     #f1f5f9;
+  --border:        #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Text (light) */
+  --text:        #1a1a2e;   /* same ink the site body already uses */
+  --text-muted:  #475569;
+  --text-subtle: #64748b;
+
+  /* Semantic (unchanged from qz module) */
   --success: #10b981;
-  --accent: #6366f1;
-  --dark-accent: #0f172a;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --radius: 0.75rem;
-  --radius-lg: 1rem;
+  --warning: #f59e0b;
+  --danger:  #f87171;
+  --danger-ink: #dc2626;
+
+  /* Focus ring — sky tinted, generous */
+  --ring:        rgba(14, 165, 233, 0.22);
+  --ring-strong: rgba(14, 165, 233, 0.55);
+
+  /* Radii — exact match with qz-styles.css scale */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   24px;
+  --radius-2xl:  28px;
+  --radius-pill: 9999px;
+
+  /* Elevation — calmer than before, matches qz shadow language */
+  --shadow-1: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-2: 0 6px 20px rgba(15, 23, 42, 0.07),
+              0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-3: 0 14px 40px rgba(15, 23, 42, 0.10),
+              0 4px 12px rgba(15, 23, 42, 0.05);
+  --shadow-brand: 0 4px 18px rgba(14, 165, 233, 0.25);
+
+  /* Motion — two easings, matching what qz already uses.
+     Standard for UI, spring for delightful moments (cards, CTAs). */
+  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:    180ms;
+  --dur-base:    240ms;
+
+  /* Layout */
+  --header-h: 64px;
+  --container: 1180px;
+
+  /* Legacy Mappings */
+  --primary: var(--brand);
+  --primary-hover: var(--brand-ink);
+  --primary-light: var(--brand-soft-2);
+  --bg-main: var(--bg);
+  --text-main: var(--text);
+  --surface-alt: var(--surface-3);
+  --shadow-sm: var(--shadow-1);
+  --shadow-md: var(--shadow-2);
+  --shadow-lg: var(--shadow-3);
+  --radius: var(--radius-md);
+  --transition: all var(--dur-base) var(--ease);
 }
 
-html.dark {
-  --bg-main: #0f172a;
-  --primary-light: rgba(14, 165, 233, 0.15);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --surface: #1e293b;
-  --surface-alt: #0f172a;
-  --border: rgba(255, 255, 255, 0.08);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+/* Dark — inherits qz dark surfaces exactly */
+[data-theme="dark"],
+.dark,
+html.dark body {
+  --bg:            #0f172a;   /* slate-900 — matches qz */
+  --surface:       #1e293b;   /* slate-800 — the card color qz uses */
+  --surface-2:     #1e293b;
+  --surface-3:     #263245;
+  --border:        rgba(255, 255, 255, 0.08);   /* qz uses this exactly */
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --text:        #f1f5f9;
+  --text-muted:  #94a3b8;
+  --text-subtle: #64748b;
+
+  --brand:      #38bdf8;   /* sky-400 — the brighter variant qz uses in dark */
+  --brand-ink:  #0ea5e9;
+  --brand-deep: #7dd3fc;
+  --brand-soft:    rgba(14, 165, 233, 0.10);
+  --brand-soft-2:  rgba(14, 165, 233, 0.18);
+
+  --ring:        rgba(56, 189, 248, 0.30);
+  --ring-strong: rgba(56, 189, 248, 0.55);
+
+  --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.40),
+              0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-3: 0 14px 40px rgba(0, 0, 0, 0.55),
+              0 4px 14px rgba(0, 0, 0, 0.30);
+  --shadow-brand: 0 4px 18px rgba(14, 165, 233, 0.35);
+
+  /* Legacy Fallbacks */
+  --bg-main: var(--bg);
+  --text-main: var(--text);
+  --primary-light: var(--brand-soft-2);
+  --surface-alt: var(--surface-3);
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
+  background-color: var(--bg);
+  color: var(--text);
   font-family: var(--font-family);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.5;
+  transition: background-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
 }
 
 /* ─── FOUC Prevention ──────────────────────────────────────────────────────

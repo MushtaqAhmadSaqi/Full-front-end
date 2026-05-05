@@ -22,10 +22,12 @@ export const auth = {
         return data?.session ?? null;
     },
 
-    /** Signs the user out and reloads */
+    /** Signs the user out */
     async signOut() {
-        await supabase.auth.signOut();
-        window.location.reload();
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error('Supabase signout error:', error);
+        }
     },
 
     /** Returns a friendly first-name from the user object */

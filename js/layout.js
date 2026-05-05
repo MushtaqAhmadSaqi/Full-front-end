@@ -622,12 +622,13 @@ function _wireNavButton(session) {
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async (e) => {
         e.preventDefault();
+        const base = typeof _getBasePath === 'function' ? _getBasePath() : '';
         try {
           await auth.signOut();
-          window.location.href = 'index.html';
+          window.location.href = base + 'index.html';
         } catch (error) {
           console.error('Logout failed:', error);
-          window.location.href = 'index.html';
+          window.location.href = base + 'index.html';
         }
       });
     }

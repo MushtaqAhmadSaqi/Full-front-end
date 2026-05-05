@@ -17,7 +17,7 @@ body {
 }
 
 *:focus-visible {
-  outline: 2px solid #0ea5e9;
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
 
@@ -43,7 +43,7 @@ body {
 }
 
 .l-side {
-  background: linear-gradient(135deg, #0284c7 0%, #0f172a 100%);
+  background: linear-gradient(135deg, var(--brand-ink) 0%, var(--bg) 100%);
 }
 
 .s-side {
@@ -415,11 +415,11 @@ body {
 }
 
 .b-login {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%);
 }
 
 .b-signup {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  background: linear-gradient(135deg, var(--brand-ink) 0%, var(--brand-deep) 100%);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   font-size: 13px;
