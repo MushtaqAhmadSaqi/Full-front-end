@@ -2,3 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Cards */
+  .ui-card {
+    @apply bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden;
+  }
+  .ui-card-interactive {
+    @apply ui-card transition-all duration-200 ease-in-out hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 hover:-translate-y-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer;
+  }
+  
+  /* Buttons */
+  .ui-button {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .ui-button-primary {
+    @apply ui-button bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus-visible:ring-blue-500;
+  }
+  .ui-button-secondary {
+    @apply ui-button bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 focus-visible:ring-slate-500;
+  }
+
+  /* Quiz Elements */
+  .quiz-option {
+    @apply w-full text-left p-4 rounded-lg border border-slate-200 dark:border-slate-700 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500;
+  }
+  .quiz-option[aria-selected="true"] {
+    @apply border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500;
+  }
+
+  /* Layout & States */
+  .section-shell {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12;
+  }
+  .ui-empty-state {
+    @apply flex flex-col items-center justify-center p-8 text-center bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700;
+  }
+  .meta-chip {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300;
+  }
+}

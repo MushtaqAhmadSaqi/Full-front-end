@@ -118,7 +118,7 @@
               <!-- Upload Zone -->
               <div class="form-group">
                 <label class="form-label" for="fileInput">Upload Document (PDF/Image)</label>
-                <div class="upload-zone text-on-surface">
+                <div id="uploadZone" class="upload-zone text-on-surface transition-all duration-200">
                   <input
                     class="upload-input"
                     type="file"
@@ -296,8 +296,34 @@
       const fileInput = document.getElementById('fileInput');
       const selectedFileName = document.getElementById('selectedFileName');
       const submitBtn = document.getElementById('submitBtn');
+      const uploadZone = document.getElementById('uploadZone');
+
       fileInput?.addEventListener('change', updateSelectedFileStatus);
       updateSelectedFileStatus();
+
+      // Drag and drop styles
+      if (uploadZone && fileInput) {
+          uploadZone.addEventListener('dragover', (e) => {
+              e.preventDefault();
+              uploadZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
+              uploadZone.classList.remove('border-dashed');
+          });
+          uploadZone.addEventListener('dragleave', (e) => {
+              e.preventDefault();
+              uploadZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
+              uploadZone.classList.add('border-dashed');
+          });
+          uploadZone.addEventListener('drop', (e) => {
+              e.preventDefault();
+              uploadZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
+              uploadZone.classList.add('border-dashed');
+              
+              if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                  fileInput.files = e.dataTransfer.files;
+                  updateSelectedFileStatus();
+              }
+          });
+      }
 
       form.addEventListener('submit', async event => {
           event.preventDefault();

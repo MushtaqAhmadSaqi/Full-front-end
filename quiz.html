@@ -29,8 +29,8 @@
     <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          MAIN LAYOUT
     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-8 pb-20 page-transition">
-        <div class="max-w-4xl mx-auto">
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 pt-8 pb-20 page-transition">
+        <div class="max-w-3xl mx-auto">
 
             <!-- ================== STEP 1: QUIZ CATALOG ================== -->
             <section id="step1-select" class="block animate-fade-in" aria-label="Choose a quiz">
@@ -89,7 +89,7 @@
                         <div id="optionsList" class="space-y-3" role="radiogroup" aria-label="Answer choices"></div>
 
                         <!-- Explanation -->
-                        <div id="explanationBox" class="hidden">
+                        <div id="explanationBox" class="hidden" aria-live="polite">
                             <div class="quiz-explanation-panel ui-card qz-explanation">
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="material-symbols-outlined text-[18px] text-emerald-600" aria-hidden="true">lightbulb</span>
@@ -606,7 +606,7 @@
 
         q.options.forEach((optText, index) => {
           const label = document.createElement('label');
-          label.className = 'qz-option';
+          label.className = 'quiz-option';
 
           const isSelected = selectedAnswers[currentQuestionIndex] === index;
 
@@ -618,7 +618,7 @@
               label.classList.add('qz-wrong');
             }
           } else if (isSelected) {
-            label.classList.add('qz-selected');
+            label.setAttribute('aria-selected', 'true');
           }
 
           label.innerHTML = `
