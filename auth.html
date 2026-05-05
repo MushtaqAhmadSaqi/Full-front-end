@@ -37,7 +37,7 @@
                 <!-- Hero content -->
                 <div class="hero">
                     <span class="sub">Academic Excellence</span>
-                    <h1 class="h1">WELCOME BACK!</h1>
+                    <h1 class="h1">Welcome back</h1>
                     <p class="p">
                         Access your curated prep materials and continue your journey toward academic mastery at COMSATS.
                     </p>
@@ -78,13 +78,13 @@
                         <div class="item">
                             <div class="label-row">
                                 <label class="label" for="l-pass" style="margin-bottom:0;">Password</label>
-                                <a class="label-link" href="#">Forgot Password?</a>
+                                <a class="label-link" href="feedback.html">Need Login Help?</a>
                             </div>
                             <div class="field">
                                 <span class="material-symbols-outlined icon">lock</span>
                                 <input class="in" id="l-pass" name="password" type="password"
                                     placeholder="••••••••" required>
-                                <button class="eye" type="button" aria-label="Toggle password">
+                                <button class="eye" type="button" aria-label="Show password">
                                     <span class="material-symbols-outlined" style="font-size:20px;">visibility</span>
                                 </button>
                             </div>
@@ -97,7 +97,13 @@
                         </div>
 
                         <!-- Error Display -->
-                        <div id="loginError" style="display: none; color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 13px; font-weight: 500; border: 1px solid #fecaca;"></div>
+                        <div
+                          id="loginError"
+                          class="auth-message auth-message-error"
+                          role="alert"
+                          aria-live="assertive"
+                          style="display: none;"
+                        ></div>
 
                         <!-- Submit -->
                         <button id="loginBtn" class="btn b-login" type="submit">
@@ -142,7 +148,7 @@
                     <div class="line"></div>
                     <div class="stack">
                         <span class="sub">Academic Excellence</span>
-                        <h1 class="h1">WELCOME!</h1>
+                        <h1 class="h1">Welcome</h1>
                         <p class="p">
                             Join the community of scholars at COMSATSPrepHub. Your curated journey to academic mastery
                             starts here.
@@ -206,7 +212,7 @@
                             <div class="field">
                                 <input class="in no-icon" id="s-pass" name="password" type="password"
                                     placeholder="••••••••" required>
-                                <button class="eye" type="button" aria-label="Toggle password">
+                                <button class="eye" type="button" aria-label="Show password">
                                     <span class="material-symbols-outlined" style="font-size:20px;">visibility</span>
                                 </button>
                             </div>
@@ -221,7 +227,13 @@
                         </div>
 
                         <!-- Error Display -->
-                        <div id="signUpError" style="display: none; color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 13px; font-weight: 500; border: 1px solid #fecaca;"></div>
+                        <div
+                          id="signUpError"
+                          class="auth-message auth-message-error"
+                          role="alert"
+                          aria-live="assertive"
+                          style="display: none;"
+                        ></div>
 
                         <!-- Submit -->
                         <button id="signUpBtn" class="btn b-signup" type="submit">

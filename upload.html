@@ -117,7 +117,7 @@
 
               <!-- Upload Zone -->
               <div class="form-group">
-                <label class="form-label">Upload Document (PDF/Image)</label>
+                <label class="form-label" for="fileInput">Upload Document (PDF/Image)</label>
                 <div class="upload-zone text-on-surface">
                   <input
                     class="upload-input"
@@ -147,6 +147,7 @@
                   >
                     Maximum file size 5MB
                   </p>
+                  <p id="selectedFileName" class="upload-file-meta" aria-live="polite">No file selected</p>
                 </div>
               </div>
 
@@ -165,7 +166,13 @@
                 >
                   Submit Contribution
                 </button>
-                <div id="feedbackMessage" class="hidden text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in text-center"></div>
+                <div
+                  id="feedbackMessage"
+                  class="hidden text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in text-center"
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                ></div>
               </div>
             </form>
           </div>
@@ -196,7 +203,6 @@
                 </p>
               </div>
               <div class="guideline-item">
-                <div class="guideline-number">3</div>
                 <div class="guideline-number">3</div>
                 <p
                   class="question-desc"
@@ -288,7 +294,10 @@
       const yearInput = document.getElementById('year');
       const semesterSelect = document.getElementById('semester');
       const fileInput = document.getElementById('fileInput');
+      const selectedFileName = document.getElementById('selectedFileName');
       const submitBtn = document.getElementById('submitBtn');
+      fileInput?.addEventListener('change', updateSelectedFileStatus);
+      updateSelectedFileStatus();
 
       form.addEventListener('submit', async event => {
           event.preventDefault();
@@ -366,6 +375,7 @@
               }
 
               form.reset();
+              updateSelectedFileStatus();
               showSuccess('Thank you! Your paper has been submitted for review.');
           } catch (error) {
               console.error('Upload failed:', error);
@@ -374,6 +384,36 @@
               restoreButton(originalHtml);
           }
       });
+
+      function updateSelectedFileStatus() {
+        if (!selectedFileName || !fileInput) return;
+
+        const file = fileInput.files?.[0];
+
+        if (!file) {
+          selectedFileName.textContent = 'No file selected';
+          selectedFileName.classList.remove('is-ready', 'is-warning');
+          return;
+        }
+
+        const fileSize = formatFileSize(file.size);
+        const isAllowed = ALLOWED_TYPES.has(file.type);
+        const isTooLarge = file.size > MAX_FILE_SIZE;
+
+        selectedFileName.textContent = `${file.name} · ${fileSize}`;
+
+        selectedFileName.classList.toggle('is-ready', isAllowed && !isTooLarge);
+        selectedFileName.classList.toggle('is-warning', !isAllowed || isTooLarge);
+      }
+
+      function formatFileSize(bytes) {
+        const size = Number(bytes) || 0;
+
+        if (size < 1024) return `${size} B`;
+        if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+
+        return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+      }
 
       function validateForm() {
           const subjectValue = String(subjectInput.value || '').trim();

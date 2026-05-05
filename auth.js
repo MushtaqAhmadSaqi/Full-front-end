@@ -283,17 +283,18 @@ function restoreButton(button, html) {
 
 function showAuthError(target, message) {
   if (!target) return;
-  
-  // Show Inline Error
+
   target.textContent = message;
   target.style.display = 'block';
+  target.setAttribute('aria-hidden', 'false');
+  target.setAttribute('tabindex', '-1');
+
   target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  // Show Global Banner for serious errors
   if (window.updateGlobalFeedback) {
     window.updateGlobalFeedback({
       type: 'error',
-      message: message,
+      message,
       duration: 6000
     });
   }
@@ -302,8 +303,11 @@ function showAuthError(target, message) {
 function clearAllMessages() {
   [signUpError, loginError].forEach(box => {
     if (!box) return;
+
     box.textContent = '';
     box.style.display = 'none';
+    box.setAttribute('aria-hidden', 'true');
+    box.removeAttribute('tabindex');
   });
 }
 
