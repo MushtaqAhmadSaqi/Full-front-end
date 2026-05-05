@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function bindThemeRefresh() {
   document.addEventListener('comsatsprephub:themechange', () => {
     const { labels, data } = lastChartPayload;
+
     renderLearningChart(labels, data).catch(error => {
       console.error('Dashboard chart refresh failed:', error);
     });
@@ -83,25 +84,35 @@ function setGuestFallback() {
   renderWeakTopics([]);
   renderRecentActivity([]);
   renderSubjectMastery([]);
-  renderLearningChart([], []);
+
+  renderLearningChart([], []).catch(error => {
+    console.error('Guest chart fallback failed:', error);
+  });
 }
 
 async function loadDashboardData(userId) {
-  const [quizAttemptsResult, subjectProgressResult, subjectsCatalogResult] = await Promise.allSettled([
-    supabase
-      .from('user_quiz_attempts')
-      .select('quiz_id, quiz_title, subject_code, score_percent, correct_answers, total_questions, completed_at')
-      .eq('user_id', userId)
-      .order('completed_at', { ascending: false }),
+  const [quizAttemptsResult, subjectProgressResult, subjectsCatalogResult] =
+    await Promise.allSettled([
+      supabase
+        .from('user_quiz_attempts')
+        .select(
+          'quiz_id, quiz_title, subject_code, score_percent, correct_answers, total_questions, completed_at'
+        )
+        .eq('user_id', userId)
+        .order('completed_at', { ascending: false }),
 
-    supabase
-      .from('user_subject_progress')
-      .select('subject_code, subject_name, topic_name, mastery_percent, sessions_count, updated_at')
-      .eq('user_id', userId)
-      .order('updated_at', { ascending: false }),
+      supabase
+        .from('user_subject_progress')
+        .select(
+          'subject_code, subject_name, topic_name, mastery_percent, sessions_count, updated_at'
+        )
+        .eq('user_id', userId)
+        .order('updated_at', { ascending: false }),
 
-    supabase.from('past_papers').select('subject_code, subject_name')
-  ]);
+      supabase
+        .from('past_papers')
+        .select('subject_code, subject_name')
+    ]);
 
   const quizAttempts = getSettledRows(quizAttemptsResult);
   const subjectProgress = getSettledRows(subjectProgressResult);
@@ -112,22 +123,33 @@ async function loadDashboardData(userId) {
   logSettledError('Subject catalog load error', subjectsCatalogResult);
 
   const subjectNameMap = buildSubjectNameMap(subjectsCatalog, subjectProgress);
-  const stats = buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap });
+
+  const stats = buildDashboardStats({
+    quizAttempts,
+    subjectProgress,
+    subjectNameMap
+  });
 
   renderDashboardStats(stats);
   renderWeakTopics(stats.weakTopics);
   renderRecentActivity(stats.recentActivity);
   renderSubjectMastery(stats.subjectMastery);
-  renderLearningChart(stats.chartLabels, stats.chartScores);
+  await renderLearningChart(stats.chartLabels, stats.chartScores);
 }
 
 function getSettledRows(result) {
-  return result.status === 'fulfilled' && !result.value.error ? result.value.data || [] : [];
+  return result.status === 'fulfilled' && !result.value.error
+    ? result.value.data || []
+    : [];
 }
 
 function logSettledError(label, result) {
   if (result.status === 'fulfilled' && result.value.error) {
     console.error(`${label}:`, result.value.error);
+  }
+
+  if (result.status === 'rejected') {
+    console.error(`${label}:`, result.reason);
   }
 }
 
@@ -148,7 +170,12 @@ function buildSubjectNameMap(subjectsCatalog, subjectProgress) {
 
 function resolveSubjectLabel(subjectCode, subjectNameMap, fallbackName = '') {
   const code = String(subjectCode || '').trim();
-  const label = String(fallbackName || '').trim() || subjectNameMap.get(code) || code || 'Untitled Subject';
+  const label =
+    String(fallbackName || '').trim() ||
+    subjectNameMap.get(code) ||
+    code ||
+    'Untitled Subject';
+
   return { code, label };
 }
 
@@ -156,11 +183,20 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
   const quizCount = quizAttempts.length;
 
   const averageScore = quizCount
-    ? Math.round(quizAttempts.reduce((sum, item) => sum + Number(item.score_percent || 0), 0) / quizCount)
+    ? Math.round(
+        quizAttempts.reduce(
+          (sum, item) => sum + Number(item.score_percent || 0),
+          0
+        ) / quizCount
+      )
     : 0;
 
   const normalizedSubjectProgress = subjectProgress.map(item => {
-    const subject = resolveSubjectLabel(item.subject_code, subjectNameMap, item.subject_name);
+    const subject = resolveSubjectLabel(
+      item.subject_code,
+      subjectNameMap,
+      item.subject_name
+    );
 
     return {
       ...item,
@@ -171,16 +207,24 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
     };
   });
 
-  const rootSubjectRows = normalizedSubjectProgress.filter(item => !item.topic_name);
+  const rootSubjectRows = normalizedSubjectProgress.filter(
+    item => !item.topic_name
+  );
+
   const studyRowsForActivity = rootSubjectRows.filter(
     item => item.sessions_count > 0 || item.mastery_percent > 0
   );
 
   const subjectsStudied = new Set(
-    normalizedSubjectProgress.map(item => item.subject_code || item.subject_name).filter(Boolean)
+    normalizedSubjectProgress
+      .map(item => item.subject_code || item.subject_name)
+      .filter(Boolean)
   ).size;
 
-  const studySessions = rootSubjectRows.reduce((sum, item) => sum + item.sessions_count, 0);
+  const studySessions = rootSubjectRows.reduce(
+    (sum, item) => sum + item.sessions_count,
+    0
+  );
 
   const weakTopics = normalizedSubjectProgress
     .filter(item => item.mastery_percent > 0 && item.mastery_percent < 65)
@@ -200,6 +244,7 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
       type: 'quiz',
       title: item.quiz_title || `${subject.label} quiz`,
       meta: `${subject.code || subject.label} • ${score}% score`,
+      score,
       date: item.completed_at
     };
   });
@@ -207,7 +252,10 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
   const recentStudyActivity = studyRowsForActivity.slice(0, 4).map(item => ({
     type: 'study',
     title: `Studied ${item.subject_name}`,
-    meta: `${item.sessions_count} session${item.sessions_count === 1 ? '' : 's'} • ${clampPercent(item.mastery_percent)}% mastery`,
+    meta: `${item.sessions_count} session${
+      item.sessions_count === 1 ? '' : 's'
+    } • ${clampPercent(item.mastery_percent)}% mastery`,
+    score: clampPercent(item.mastery_percent),
     date: item.updated_at
   }));
 
@@ -245,12 +293,18 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
       mastery: item.count ? Math.round(item.total / item.count) : 0,
       sessions: item.sessions
     }))
-    .sort((a, b) => (b.mastery !== a.mastery ? b.mastery - a.mastery : b.sessions - a.sessions))
+    .sort((a, b) =>
+      b.mastery !== a.mastery ? b.mastery - a.mastery : b.sessions - a.sessions
+    )
     .slice(0, 6);
 
   const chartItems = quizAttempts.slice(0, 8).reverse();
-  const chartLabels = chartItems.map((item, index) => item.quiz_title || `Quiz ${index + 1}`);
-  const chartScores = chartItems.map(item => clampPercent(Number(item.score_percent || 0)));
+  const chartLabels = chartItems.map(
+    (item, index) => item.quiz_title || `Quiz ${index + 1}`
+  );
+  const chartScores = chartItems.map(item =>
+    clampPercent(Number(item.score_percent || 0))
+  );
 
   return {
     quizCount,
@@ -276,7 +330,6 @@ function renderDashboardStats(stats) {
   setText('statSubjectsStudied', subjectsStudied);
   setText('statStudySessions', studySessions);
 
-  // Extra hero/pulse values use the same data, so no backend changes are needed.
   setText('pulseQuizCount', quizCount);
   setText('pulseAverageScore', `${averageScore}%`);
   setText('pulseSubjectsStudied', subjectsStudied);
@@ -291,7 +344,16 @@ function renderWeakTopics(items) {
     el.innerHTML = renderEmptyState({
       icon: 'verified',
       title: 'No weak topics yet',
-      text: 'Complete more quizzes and your low-confidence topics will appear here for focused revision.'
+      text:
+        'Complete 2–3 quizzes first. Then this section will show what actually needs revision.',
+      actions: [
+        {
+          href: 'quiz.html',
+          label: 'Start diagnosis',
+          variant: 'secondary',
+          icon: 'play_arrow'
+        }
+      ]
     });
     return;
   }
@@ -302,16 +364,17 @@ function renderWeakTopics(items) {
       const severity = getWeakTopicSeverity(score);
 
       return `
-        <article class="weak-topic-card">
+        <article class="weak-topic-item ui-generated-card">
           <div class="weak-topic-main">
-            <div class="weak-topic-copy">
-              <p class="weak-topic-title">${escapeHtml(item.name)}</p>
-              <p class="weak-topic-meta">${escapeHtml(item.subject)} • ${severity.label}</p>
-            </div>
-            <span class="topic-score ${severity.className}">${score}%</span>
+            <h3 class="weak-topic-title">${escapeHtml(item.name)}</h3>
+            <p class="weak-topic-meta">${escapeHtml(item.subject)}</p>
           </div>
-          <div class="mini-progress" aria-hidden="true">
-            <span style="width:${score}%"></span>
+
+          <div class="weak-topic-result">
+            <strong class="weak-topic-score ${severity.className}">${score}%</strong>
+            <span class="weak-topic-severity ${severity.className}">
+              ${escapeHtml(severity.label)}
+            </span>
           </div>
         </article>
       `;
@@ -326,8 +389,23 @@ function renderRecentActivity(items) {
   if (!items.length) {
     el.innerHTML = renderEmptyState({
       icon: 'history',
-      title: 'No activity recorded',
-      text: 'Your latest study sessions and quiz attempts will appear here automatically.'
+      title: 'No activity recorded yet',
+      text:
+        'Start a quiz or browse subjects to begin building your study history.',
+      actions: [
+        {
+          href: 'quiz.html',
+          label: 'Take Quiz',
+          variant: 'primary',
+          icon: 'quiz'
+        },
+        {
+          href: 'subjects.html',
+          label: 'Browse Subjects',
+          variant: 'secondary',
+          icon: 'menu_book'
+        }
+      ]
     });
     return;
   }
@@ -339,17 +417,23 @@ function renderRecentActivity(items) {
       const icon = isQuiz ? 'quiz' : 'school';
 
       return `
-        <article class="activity-item">
-          <div class="activity-icon ${isQuiz ? 'activity-icon-quiz' : 'activity-icon-study'}" aria-hidden="true">
+        <article class="activity-item ui-generated-card">
+          <div class="activity-icon" aria-hidden="true">
             <span class="material-symbols-outlined">${icon}</span>
           </div>
-          <div class="activity-copy">
+
+          <div class="activity-body">
             <div class="activity-topline">
-              <p class="activity-title">${escapeHtml(item.title)}</p>
-              <span class="activity-type">${typeLabel}</span>
+              <h3 class="activity-title">${escapeHtml(item.title)}</h3>
+              <span class="activity-type-chip">${typeLabel}</span>
             </div>
+
             <p class="activity-meta">${escapeHtml(item.meta)}</p>
-            <p class="activity-date">${formatRelativeDate(item.date)}</p>
+            <time class="activity-date" datetime="${escapeHtml(
+              item.date || ''
+            )}">
+              ${formatRelativeDate(item.date)}
+            </time>
           </div>
         </article>
       `;
@@ -365,7 +449,16 @@ function renderSubjectMastery(items) {
     el.innerHTML = renderEmptyState({
       icon: 'stacked_bar_chart',
       title: 'No subject progress yet',
-      text: 'Start a paper or quiz and your subject mastery bars will show up here.'
+      text:
+        'Study at least one subject and attempt related quizzes to unlock mastery tracking.',
+      actions: [
+        {
+          href: 'subjects.html',
+          label: 'Browse subjects',
+          variant: 'secondary',
+          icon: 'menu_book'
+        }
+      ]
     });
     return;
   }
@@ -376,18 +469,29 @@ function renderSubjectMastery(items) {
       const status = getMasteryStatus(mastery);
 
       return `
-        <article class="mastery-item">
-          <div class="mastery-head">
-            <div class="mastery-title-wrap">
-              <p class="mastery-title">${escapeHtml(item.name)}</p>
-              <p class="mastery-meta">${escapeHtml(item.code || 'Subject')} • ${item.sessions} session${item.sessions === 1 ? '' : 's'}</p>
+        <article class="mastery-item ui-generated-card">
+          <div class="mastery-header">
+            <div>
+              <h3 class="mastery-title">${escapeHtml(item.name)}</h3>
+              <p class="mastery-meta">
+                ${escapeHtml(item.code || 'Subject')} • ${Number(
+                  item.sessions || 0
+                )} session${Number(item.sessions || 0) === 1 ? '' : 's'}
+              </p>
             </div>
-            <span class="mastery-percent ${status.className}">${mastery}%</span>
+
+            <strong class="mastery-score ${status.className}">
+              ${mastery}%
+            </strong>
           </div>
-          <div class="mastery-progress" aria-label="${escapeHtml(item.name)} mastery ${mastery}%">
-            <span style="width:${mastery}%"></span>
+
+          <div class="mastery-progress" aria-hidden="true">
+            <span style="width: ${mastery}%"></span>
           </div>
-          <p class="mastery-status">${status.label}</p>
+
+          <span class="mastery-status-chip ${status.className}">
+            ${escapeHtml(status.label)}
+          </span>
         </article>
       `;
     })
@@ -395,10 +499,14 @@ function renderSubjectMastery(items) {
 }
 
 async function renderLearningChart(labels, data) {
-  lastChartPayload = { labels: [...labels], data: [...data] };
+  lastChartPayload = {
+    labels: [...labels],
+    data: [...data]
+  };
 
   const canvas = dashboardEls.learningChart();
   const empty = dashboardEls.learningChartEmpty();
+
   if (!canvas) return;
 
   if (!labels.length || !data.length) {
@@ -409,6 +517,21 @@ async function renderLearningChart(labels, data) {
 
     canvas.classList.add('hidden');
     empty?.classList.remove('hidden');
+
+    if (empty && !empty.querySelector('.empty-state-actions')) {
+      empty.insertAdjacentHTML(
+        'beforeend',
+        `
+          <div class="empty-state-actions">
+            <a href="quiz.html" class="btn-primary empty-state-cta">
+              <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+              Take your first quiz
+            </a>
+          </div>
+        `
+      );
+    }
+
     return;
   }
 
@@ -416,6 +539,7 @@ async function renderLearningChart(labels, data) {
   empty?.classList.add('hidden');
 
   const { Chart } = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.1/+esm');
+
   const ctx = canvas.getContext('2d');
 
   if (learningChart) {
@@ -425,13 +549,21 @@ async function renderLearningChart(labels, data) {
   const isDark = document.documentElement.classList.contains('dark');
   const borderColor = isDark ? '#60a5fa' : '#2563eb';
   const secondaryColor = isDark ? '#22d3ee' : '#06b6d4';
-  const gridColor = isDark ? 'rgba(148, 163, 184, 0.14)' : 'rgba(15, 23, 42, 0.07)';
+  const gridColor = isDark
+    ? 'rgba(148, 163, 184, 0.14)'
+    : 'rgba(15, 23, 42, 0.07)';
   const textColor = isDark ? '#cbd5e1' : '#64748b';
   const pointBg = isDark ? '#020617' : '#ffffff';
 
   const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-  gradient.addColorStop(0, isDark ? 'rgba(96,165,250,0.35)' : 'rgba(37,99,235,0.20)');
-  gradient.addColorStop(0.55, isDark ? 'rgba(34,211,238,0.10)' : 'rgba(6,182,212,0.08)');
+  gradient.addColorStop(
+    0,
+    isDark ? 'rgba(96,165,250,0.35)' : 'rgba(37,99,235,0.20)'
+  );
+  gradient.addColorStop(
+    0.55,
+    isDark ? 'rgba(34,211,238,0.10)' : 'rgba(6,182,212,0.08)'
+  );
   gradient.addColorStop(1, 'rgba(255,255,255,0)');
 
   learningChart = new Chart(ctx, {
@@ -458,16 +590,30 @@ async function renderLearningChart(labels, data) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 650, easing: 'easeOutQuart' },
-      interaction: { intersect: false, mode: 'index' },
+      animation: prefersReducedMotion()
+        ? false
+        : {
+            duration: 650,
+            easing: 'easeOutQuart'
+          },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
       plugins: {
-        legend: { display: false },
+        legend: {
+          display: false
+        },
         tooltip: {
           displayColors: false,
-          backgroundColor: isDark ? 'rgba(15,23,42,0.97)' : 'rgba(255,255,255,0.98)',
+          backgroundColor: isDark
+            ? 'rgba(15,23,42,0.97)'
+            : 'rgba(255,255,255,0.98)',
           titleColor: isDark ? '#ffffff' : '#0f172a',
           bodyColor: isDark ? '#cbd5e1' : '#475569',
-          borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.08)',
+          borderColor: isDark
+            ? 'rgba(255,255,255,0.10)'
+            : 'rgba(15,23,42,0.08)',
           borderWidth: 1,
           padding: 12,
           cornerRadius: 14,
@@ -478,7 +624,9 @@ async function renderLearningChart(labels, data) {
       },
       scales: {
         x: {
-          grid: { display: false },
+          grid: {
+            display: false
+          },
           ticks: {
             color: textColor,
             maxRotation: 0,
@@ -488,7 +636,9 @@ async function renderLearningChart(labels, data) {
               return label.length > 14 ? `${label.slice(0, 14)}…` : label;
             }
           },
-          border: { display: false }
+          border: {
+            display: false
+          }
         },
         y: {
           beginAtZero: true,
@@ -498,37 +648,108 @@ async function renderLearningChart(labels, data) {
             stepSize: 20,
             callback: value => `${value}%`
           },
-          grid: { color: gridColor, drawTicks: false },
-          border: { display: false }
+          grid: {
+            color: gridColor,
+            drawTicks: false
+          },
+          border: {
+            display: false
+          }
         }
       }
     }
   });
 }
 
-function renderEmptyState({ icon, title, text }) {
+function renderEmptyState({ icon, title, text, actions = [] }) {
+  const actionMarkup =
+    Array.isArray(actions) && actions.length
+      ? `
+        <div class="empty-state-actions">
+          ${actions
+            .map(action => {
+              const variant =
+                action.variant === 'secondary' ? 'btn-secondary' : 'btn-primary';
+
+              const iconMarkup = action.icon
+                ? `<span class="material-symbols-outlined" aria-hidden="true">${escapeHtml(
+                    action.icon
+                  )}</span>`
+                : '';
+
+              return `
+                <a href="${escapeHtml(
+                  action.href || '#'
+                )}" class="${variant} empty-state-cta">
+                  ${iconMarkup}
+                  ${escapeHtml(action.label || 'Continue')}
+                </a>
+              `;
+            })
+            .join('')}
+        </div>
+      `
+      : '';
+
   return `
-    <div class="dashboard-empty-state">
-      <div class="dashboard-empty-icon" aria-hidden="true">
-        <span class="material-symbols-outlined">${icon}</span>
-      </div>
-      <p class="dashboard-empty-title">${escapeHtml(title)}</p>
-      <p class="dashboard-empty-text">${escapeHtml(text)}</p>
+    <div class="empty-state dashboard-empty-state ui-empty-state-enhanced">
+      <span class="material-symbols-outlined" aria-hidden="true">${escapeHtml(
+        icon
+      )}</span>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(text)}</p>
+      ${actionMarkup}
     </div>
   `;
 }
 
 function getWeakTopicSeverity(score) {
-  if (score < 40) return { label: 'Critical focus', className: 'score-danger' };
-  if (score < 55) return { label: 'Needs practice', className: 'score-warning' };
-  return { label: 'Close to safe', className: 'score-info' };
+  if (score < 40) {
+    return {
+      label: 'Critical focus',
+      className: 'score-danger'
+    };
+  }
+
+  if (score < 55) {
+    return {
+      label: 'Needs practice',
+      className: 'score-warning'
+    };
+  }
+
+  return {
+    label: 'Close to safe',
+    className: 'score-info'
+  };
 }
 
 function getMasteryStatus(score) {
-  if (score >= 80) return { label: 'Strong command', className: 'mastery-strong' };
-  if (score >= 65) return { label: 'Good progress', className: 'mastery-good' };
-  if (score >= 40) return { label: 'Needs revision', className: 'mastery-watch' };
-  return { label: 'Start focused practice', className: 'mastery-low' };
+  if (score >= 80) {
+    return {
+      label: 'Strong command',
+      className: 'mastery-strong'
+    };
+  }
+
+  if (score >= 65) {
+    return {
+      label: 'Good progress',
+      className: 'mastery-good'
+    };
+  }
+
+  if (score >= 40) {
+    return {
+      label: 'Needs revision',
+      className: 'mastery-watch'
+    };
+  }
+
+  return {
+    label: 'Start focused practice',
+    className: 'mastery-low'
+  };
 }
 
 function getScoreLabel(score) {
@@ -540,7 +761,9 @@ function getScoreLabel(score) {
 
 function clampPercent(value) {
   const numeric = Number(value || 0);
+
   if (Number.isNaN(numeric)) return 0;
+
   return Math.max(0, Math.min(100, Math.round(numeric)));
 }
 
@@ -560,12 +783,22 @@ function formatRelativeDate(value) {
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffHours < 1) return 'Just now';
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+  }
+  if (diffDays < 7) {
+    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+  }
 
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
   });
+}
+
+function prefersReducedMotion() {
+  return (
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  );
 }

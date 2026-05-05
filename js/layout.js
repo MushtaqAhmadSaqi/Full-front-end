@@ -8,6 +8,7 @@
 
 import { auth } from './core.js';
 import { initAuthModal, openModal } from './auth-ui.js';
+import './ui-enhancements.js';
 
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
