@@ -63,7 +63,7 @@
         </a>
       </nav>
 
-      <div class="dashboard-side-note">
+      <div class="dashboard-boss-note dashboard-side-note">
         <div class="dashboard-side-note-icon" aria-hidden="true">
           <span class="material-symbols-outlined">tips_and_updates</span>
         </div>
@@ -121,7 +121,7 @@
       </nav>
 
       <!-- Hero -->
-      <section class="dashboard-hero" aria-labelledby="dashboardTitle">
+      <section class="dashboard-hero ui-card" aria-labelledby="dashboardTitle">
         <div class="dashboard-hero-grid">
           <div class="dashboard-hero-copy">
             <p class="dashboard-kicker">
@@ -145,12 +145,12 @@
             </p>
 
             <div class="dashboard-actions" aria-label="Primary actions">
-              <a href="quiz.html" class="dash-btn dash-btn-primary">
+              <a href="quiz.html" class="btn-primary dash-btn dash-btn-primary">
                 <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
                 Resume Practice
               </a>
 
-              <a href="subjects.html" class="dash-btn dash-btn-secondary">
+              <a href="subjects.html" class="btn-secondary dash-btn dash-btn-secondary">
                 <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
                 Browse Subjects
               </a>
@@ -158,7 +158,7 @@
           </div>
 
           <!-- Pulse card -->
-          <aside class="study-pulse-card" aria-label="Study pulse summary">
+          <aside class="dashboard-stat-card ui-card study-pulse-card" aria-label="Study pulse summary">
             <div class="pulse-card-header">
               <div>
                 <p class="pulse-label">Average Score</p>
@@ -192,7 +192,7 @@
 
       <!-- KPI row -->
       <section class="kpi-grid" aria-label="Dashboard statistics">
-        <article class="kpi-card">
+        <article class="dashboard-metric-card ui-card kpi-card">
           <div class="kpi-topline">
             <span class="kpi-icon" aria-hidden="true">
               <span class="material-symbols-outlined">task_alt</span>
@@ -205,7 +205,7 @@
           <p class="kpi-meta">Completed attempts from your account.</p>
         </article>
 
-        <article class="kpi-card">
+        <article class="dashboard-metric-card ui-card kpi-card">
           <div class="kpi-topline">
             <span class="kpi-icon" aria-hidden="true">
               <span class="material-symbols-outlined">percent</span>
@@ -218,7 +218,7 @@
           <p class="kpi-meta">Mean score across quizzes.</p>
         </article>
 
-        <article class="kpi-card">
+        <article class="dashboard-metric-card ui-card kpi-card">
           <div class="kpi-topline">
             <span class="kpi-icon" aria-hidden="true">
               <span class="material-symbols-outlined">auto_stories</span>
@@ -231,7 +231,7 @@
           <p class="kpi-meta">Unique subjects with progress.</p>
         </article>
 
-        <article class="kpi-card">
+        <article class="dashboard-metric-card ui-card kpi-card">
           <div class="kpi-topline">
             <span class="kpi-icon" aria-hidden="true">
               <span class="material-symbols-outlined">timer</span>
@@ -248,7 +248,7 @@
       <!-- Main content -->
       <section class="dashboard-content-grid" aria-label="Dashboard details">
         <div class="dashboard-stack">
-          <article class="dashboard-panel dashboard-panel-chart">
+          <article class="dashboard-panel progress-panel ui-card dashboard-panel-chart">
             <div class="panel-header">
               <div>
                 <p class="panel-eyebrow">Performance Trend</p>
@@ -272,13 +272,17 @@
 
                 <p class="dashboard-empty-title">No score trend yet</p>
                 <p class="dashboard-empty-text">
-                  Complete a few quizzes and your performance chart will appear here.
+                  Complete 2–3 quizzes and your progress chart will start showing real patterns. Guessing randomly is not strategy.
                 </p>
+                <a href="quiz.html" class="btn-primary empty-state-cta">
+                  <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+                  Take your first quiz
+                </a>
               </div>
             </div>
           </article>
 
-          <article class="dashboard-panel">
+          <article class="dashboard-panel weak-topics-panel ui-card">
             <div class="panel-header">
               <div>
                 <p class="panel-eyebrow">Priority Review</p>
@@ -294,14 +298,17 @@
 
             <div id="weakTopicsList" class="weak-topics-list" aria-live="polite">
               <div class="dashboard-empty-state">
-                <p class="dashboard-empty-text">No weak topics yet.</p>
+                <p class="dashboard-empty-text">No weak topics yet. Complete a few quizzes first, then this section will show what needs revision.</p>
+                <a href="quiz.html" class="btn-secondary empty-state-cta">
+                  Start diagnosis
+                </a>
               </div>
             </div>
           </article>
         </div>
 
         <div class="dashboard-stack">
-          <article class="dashboard-panel">
+          <article class="dashboard-panel activity-panel ui-card">
             <div class="panel-header">
               <div>
                 <p class="panel-eyebrow">Timeline</p>
@@ -312,12 +319,12 @@
 
             <div id="recentActivityList" class="activity-list" aria-live="polite">
               <div class="dashboard-empty-state">
-                <p class="dashboard-empty-text">No activity recorded yet.</p>
+                <p class="dashboard-empty-text">No activity recorded yet. Start a quiz or browse subjects to begin building your study history.</p>
               </div>
             </div>
           </article>
 
-          <article class="dashboard-panel">
+          <article class="dashboard-panel subject-mastery-panel ui-card">
             <div class="panel-header">
               <div>
                 <p class="panel-eyebrow">Subject Health</p>
@@ -328,7 +335,10 @@
 
             <div id="subjectMasteryList" class="subject-mastery-list" aria-live="polite">
               <div class="dashboard-empty-state">
-                <p class="dashboard-empty-text">No subject progress yet.</p>
+                <p class="dashboard-empty-text">No subject progress yet. Study at least one subject and attempt related quizzes to unlock mastery tracking.</p>
+                <a href="subjects.html" class="btn-secondary empty-state-cta">
+                  Browse subjects
+                </a>
               </div>
             </div>
           </article>

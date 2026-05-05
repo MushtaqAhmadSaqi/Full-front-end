@@ -23,7 +23,7 @@
 </head>
 
 
-<body class="bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen">
+<body class="quiz-page bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen">
     <div id="app-header"></div>
 
     <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -35,7 +35,7 @@
             <!-- ================== STEP 1: QUIZ CATALOG ================== -->
             <section id="step1-select" class="block animate-fade-in" aria-label="Choose a quiz">
                 <!-- Hero -->
-                <div class="qz-hero">
+                <div class="quiz-hero section-shell ui-card qz-hero">
                     <p class="text-[11px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[14px]" aria-hidden="true">school</span>
                         Practice &amp; Learn
@@ -46,7 +46,7 @@
                     <p class="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed max-w-xl mb-5">
                         Each quiz is built from real COMSATS past papers. Work through the questions at your own pace — you'll see an explanation right after each answer.
                     </p>
-                    <a href="ai-quiz-generator.html" class="qz-ai-link">
+                    <a href="ai-quiz-generator.html" class="btn-secondary ai-quiz-cta qz-ai-link">
                         <span class="material-symbols-outlined text-[18px]" aria-hidden="true">auto_awesome</span>
                         Generate a custom quiz with AI
                     </a>
@@ -54,15 +54,15 @@
 
                 <div id="quizGrid" class="grid sm:grid-cols-2 gap-5" role="list">
                     <!-- Loading state -->
-                    <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4" aria-live="polite">
-                        <div class="w-9 h-9 rounded-full border-[3px] border-slate-200 dark:border-slate-700 border-t-brand-500 animate-spin" role="status" aria-label="Loading quizzes"></div>
+                    <div class="quiz-loading-state col-span-full flex flex-col items-center justify-center py-16 gap-4" role="status" aria-live="polite" aria-atomic="true">
+                        <div class="w-9 h-9 rounded-full border-[3px] border-slate-200 dark:border-slate-700 border-t-brand-500 animate-spin" aria-label="Loading quizzes"></div>
                         <p class="text-sm font-medium text-slate-400">Finding available quizzes…</p>
                     </div>
                 </div>
             </section>
 
             <!-- ================== STEP 2: QUESTION ================== -->
-            <section id="step2-question" class="hidden space-y-5" aria-label="Quiz question" aria-live="polite">
+            <section id="step2-question" class="is-waiting-for-quiz hidden space-y-5" aria-label="Quiz question" aria-live="polite">
                 <!-- Top bar -->
                 <div class="flex items-center gap-3">
                     <button type="button" onclick="returnToQuizCatalog()"
@@ -71,7 +71,7 @@
                         Back
                     </button>
                     <span id="quizBadgeLabel" class="qz-pill">QUIZ</span>
-                    <span id="questionCountLabel" class="text-xs font-semibold text-slate-400 whitespace-nowrap ml-1 hidden sm:block" aria-live="polite">Question 0 of 0</span>
+                    <span id="questionCountLabel" class="quiz-question-status text-xs font-semibold text-slate-400 whitespace-nowrap ml-1 hidden sm:block" aria-live="polite" aria-atomic="true">Question 0 of 0</span>
                     <div class="flex-1"></div>
                     <div class="qz-progress-strip" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                         <div id="quizProgressBar" class="qz-progress-fill"></div>
@@ -79,7 +79,7 @@
                 </div>
 
                 <!-- Question card -->
-                <div class="qz-question-card">
+                <div class="quiz-question-shell ui-card qz-question-card">
                     <div class="qz-question-num-bg" id="bgQuestionNum" aria-hidden="true">Q1</div>
                     <div class="relative z-10">
                         <h2 id="questionText"
@@ -90,7 +90,7 @@
 
                         <!-- Explanation -->
                         <div id="explanationBox" class="hidden">
-                            <div class="qz-explanation">
+                            <div class="quiz-explanation-panel ui-card qz-explanation">
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="material-symbols-outlined text-[18px] text-emerald-600" aria-hidden="true">lightbulb</span>
                                     <span class="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">Why this answer?</span>
@@ -102,13 +102,13 @@
                         <!-- Nav footer -->
                         <div class="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between gap-3">
                             <button id="prevBtn" onclick="prevQuestion()"
-                                class="qz-btn-ghost hidden text-sm py-2.5 button-press" aria-label="Previous question">
+                                class="btn-secondary hidden text-sm py-2.5 button-press" aria-label="Previous question">
                                 <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
                                 Previous
                             </button>
                             <div class="flex-1"></div>
                             <button id="nextBtn" onclick="nextQuestion()" disabled
-                                class="qz-btn-primary text-sm py-2.5 button-press"
+                                class="btn-primary text-sm py-2.5 button-press"
                                 aria-label="Confirm answer and move on">
                                 Next question
                                 <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
@@ -120,7 +120,7 @@
 
             <!-- ================== STEP 3: RESULTS ================== -->
             <section id="step3-results" class="hidden" aria-label="Your results" aria-live="polite">
-                <div class="qz-results-card">
+                <div class="quiz-complete-state ui-card qz-results-card">
                     <div class="absolute top-0 right-0 w-48 h-48 rounded-full bg-brand-50 dark:bg-brand-500/5 -mr-24 -mt-24 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
                     <div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-emerald-50 dark:bg-emerald-500/5 -ml-20 -mb-20 blur-3xl opacity-60 pointer-events-none" aria-hidden="true"></div>
 
@@ -129,7 +129,7 @@
                             <span class="material-symbols-outlined text-[36px]">workspace_premium</span>
                         </div>
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1a1a2e] dark:text-white mb-1 tracking-tight">Quiz complete!</h2>
-                        <p class="text-slate-400 text-sm mb-8 font-medium">Here’s how you did</p>
+                        <p class="text-slate-400 text-sm mb-8 font-medium">Review your wrong answers before starting another quiz. Speed is useless if you repeat the same mistake.</p>
 
                         <!-- Score ring (r=68 → circumference ≈ 427.26) -->
                         <div class="qz-score-ring" role="img" aria-label="Score">
@@ -154,12 +154,12 @@
 
                         <div class="flex flex-col gap-3">
                             <button type="button" onclick="returnToQuizCatalog({ reloadList: true })"
-                                class="qz-btn-primary w-full justify-center button-press py-3">
+                                class="btn-primary w-full justify-center button-press py-3">
                                 <span class="material-symbols-outlined text-[18px]" aria-hidden="true">refresh</span>
                                 Try another quiz
                             </button>
                             <button type="button" onclick="returnToQuizCatalog({ reloadList: false })"
-                                class="qz-btn-ghost w-full justify-center button-press py-3">
+                                class="btn-secondary w-full justify-center button-press py-3">
                                 Back to quiz list
                             </button>
                         </div>

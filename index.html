@@ -233,7 +233,7 @@
   </style>
 </head>
 
-<body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300">
+<body class="home-page font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300">
 
   <div id="app-header"></div>
 
@@ -242,7 +242,7 @@
 
     <!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
     <section id="home-section"
-      class="relative overflow-hidden min-h-[calc(100vh-96px)] px-6 pt-8 pb-20 md:px-16 isolate text-center"
+      class="home-hero section-shell relative overflow-hidden min-h-[calc(100vh-96px)] px-6 pt-8 pb-20 md:px-16 isolate text-center"
       style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%);"
       data-aos="fade-in">
 
@@ -280,19 +280,19 @@
         <!-- CTA Buttons (with footer-style smooth hover) -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <a href="subjects.html"
-            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-primary text-white font-semibold text-[15px] shadow-md hover:bg-primary-hover hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
+            class="btn-primary home-cta-primary button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-primary text-white font-semibold text-[15px] shadow-md hover:bg-primary-hover hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
             <span class="material-symbols-outlined text-[18px]">auto_stories</span>
             Browse Subjects
           </a>
           <a href="quiz.html"
-            class="button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a2e] font-semibold text-[15px] border-2 border-[#1a1a2e] hover:bg-[#1a1a2e] hover:text-white hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
+            class="btn-secondary home-cta-secondary button-press w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#1a1a2e] font-semibold text-[15px] border-2 border-[#1a1a2e] hover:bg-[#1a1a2e] hover:text-white hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300 no-underline">
             <span class="material-symbols-outlined text-[18px]">quiz</span>
             Start Quiz
           </a>
         </div>
 
         <!-- Micro social proof (with hover) -->
-        <p class="hero-hover-underline mt-8 text-[12px] text-[#9ca3af] tracking-wide hover:text-[#6b7280] transition-colors duration-300 cursor-default">
+        <p class="home-trust-line hero-hover-underline mt-8 text-[12px] text-[#9ca3af] tracking-wide hover:text-[#6b7280] transition-colors duration-300 cursor-default">
           Trusted by <strong class="text-[#6b7280] font-semibold">1,000+</strong> COMSATS students &nbsp;·&nbsp; Free &amp; open
         </p>
       </div>
@@ -323,21 +323,21 @@
         <!-- Real Stats (hidden until loaded) -->
         <div id="stats-real" class="hidden flex items-center justify-center gap-0">
           <!-- Stat 1 -->
-          <div class="flex-1 text-center py-4 px-2">
+          <div class="home-stat-card ui-card flex-1 text-center py-4 px-2">
             <div class="text-3xl sm:text-4xl font-black text-primary tracking-tight">500+</div>
             <div class="text-xs text-[#6b7280] font-medium mt-1.5 uppercase tracking-widest">Past Papers</div>
           </div>
           <div class="stat-divider hidden sm:block"></div>
 
           <!-- Stat 2 -->
-          <div class="flex-1 text-center py-4 px-2 border-x border-[#e2e8f0] sm:border-none">
+          <div class="home-stat-card ui-card flex-1 text-center py-4 px-2 border-x border-[#e2e8f0] sm:border-none">
             <div class="text-3xl sm:text-4xl font-black text-primary tracking-tight">50+</div>
             <div class="text-xs text-[#6b7280] font-medium mt-1.5 uppercase tracking-widest">Subjects</div>
           </div>
           <div class="stat-divider hidden sm:block"></div>
 
           <!-- Stat 3 -->
-          <div class="flex-1 text-center py-4 px-2">
+          <div class="home-stat-card ui-card flex-1 text-center py-4 px-2">
             <div class="text-3xl sm:text-4xl font-black text-primary tracking-tight">1,000+</div>
             <div class="text-xs text-[#6b7280] font-medium mt-1.5 uppercase tracking-widest">Students</div>
           </div>
@@ -347,7 +347,7 @@
     </section>
 
     <!-- ═══════════════════════════════════ FEATURES ═══════════════════════════════════ -->
-    <section class="py-24 px-6 bg-[#f8fafc]/50 dark:bg-slate-900/50">
+    <section class="home-features section-shell py-24 px-6 bg-[#f8fafc]/50 dark:bg-slate-900/50">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16" data-aos="fade-up">
           <h2 class="text-3xl sm:text-4xl font-black text-[#1a1a2e] dark:text-white tracking-tight mb-4">Powerful
@@ -359,7 +359,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Real-time Analytics -->
           <div data-aos="fade-up" data-aos-delay="100"
-            class="card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
+            class="feature-card ui-card ui-card-interactive card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
             <div
               class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl">trending_up</span>
@@ -371,7 +371,7 @@
 
           <!-- Verified Materials -->
           <div data-aos="fade-up" data-aos-delay="200"
-            class="card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
+            class="feature-card ui-card ui-card-interactive card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
             <div
               class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl">verified</span>
@@ -383,7 +383,7 @@
 
           <!-- Smart Search -->
           <div data-aos="fade-up" data-aos-delay="300"
-            class="card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
+            class="feature-card ui-card ui-card-interactive card-hover group bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 relative shadow-sm transition-all">
             <div
               class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-6 group-hover:scale-110 transition-transform">
               <span class="material-symbols-outlined text-3xl">bolt</span>
@@ -397,7 +397,7 @@
     </section>
 
     <!-- ═════════════════════════ STUDENT TOOLS CLEAN VERSION ═════════════════════════ -->
-    <section id="student-tools-section" class="student-tools-clean">
+    <section id="student-tools-section" class="student-tools-section section-shell student-tools-clean">
       <div class="student-tools-pattern"></div>
 
       <div class="student-tools-container">
@@ -413,7 +413,7 @@
         </div>
 
         <!-- Tool Card -->
-        <a href="ComsatsGPA/gpa-calculator.html" class="student-tool-card" data-aos="fade-up">
+        <a href="ComsatsGPA/gpa-calculator.html" class="tool-card ui-card ui-card-interactive student-tool-card" data-aos="fade-up">
           <!-- Icon Area -->
           <div class="student-tool-icon-wrap">
             <div class="student-tool-icon">
@@ -459,7 +459,7 @@
         </a>
 
         <!-- AI Quiz Generator Tool Card -->
-        <a href="ai-quiz-generator.html" class="student-tool-card" data-aos="fade-up" data-aos-delay="100">
+        <a href="ai-quiz-generator.html" class="tool-card ui-card ui-card-interactive student-tool-card" data-aos="fade-up" data-aos-delay="100">
           <!-- Icon Area -->
           <div class="student-tool-icon-wrap">
             <div class="student-tool-icon" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #2563eb;">
@@ -507,7 +507,7 @@
     </section>
 
     <!-- ═══════════════════════════════════ CTA ═══════════════════════════════════ -->
-    <section id="cta-section" class="py-16 px-6 md:px-10" data-aos="zoom-in" data-aos-delay="100">
+    <section id="cta-section" class="upload-cta-section section-shell py-16 px-6 md:px-10" data-aos="zoom-in" data-aos-delay="100">
       <div class="max-w-5xl mx-auto relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-16"
         style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #0f766e 100%);">
         <!-- Background blob -->
@@ -530,7 +530,7 @@
           </div>
           <div class="flex-shrink-0">
             <a href="upload.html"
-              class="flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-[#1a1a2e] font-bold text-[15px] hover:bg-[#ccfbf1] hover:text-primary transition-all duration-300 no-underline shadow-xl hover:-translate-y-0.5">
+              class="btn-primary upload-cta-button flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-[#1a1a2e] font-bold text-[15px] hover:bg-[#ccfbf1] hover:text-primary transition-all duration-300 no-underline shadow-xl hover:-translate-y-0.5">
               <span class="material-symbols-outlined text-xl">cloud_upload</span>
               Contribute Now
             </a>

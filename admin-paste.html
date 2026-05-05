@@ -374,22 +374,25 @@
 
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-gray-100 font-sans min-h-screen transition-colors duration-300">
+<body class="admin-page admin-paste-page bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-gray-100 font-sans min-h-screen transition-colors duration-300">
     <div id="app-header"></div>
 
     <main class="max-w-4xl mx-auto p-4 md:p-8 mb-16">
         <div class="bg-white border border-slate-200 rounded-2xl p-6 md:p-10 shadow-sm">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 dark:text-white">⚙️ Paste & Upload Whole Paper</h1>
-            <p class="text-slate-500 text-sm md:text-base leading-relaxed mb-8 dark:text-gray-400">
-                Copy the <strong>ChatGPT prompt below</strong> → paste your paper into ChatGPT → copy the JSON it gives
-                you → paste it here → click Upload. <strong>One go. No manual filling.</strong>
-            </p>
+            <div class="admin-header ui-card mb-8">
+                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 dark:text-white">⚙️ Paste & Upload Whole Paper</h1>
+                <p class="text-slate-500 text-sm md:text-base leading-relaxed dark:text-gray-400">
+                    Use this page carefully: copy the prompt, convert the paper into valid JSON, preview it, then upload. Do not upload unverified AI output. That is how bad data enters the database.
+                </p>
+            </div>
 
             <!-- Prompt Box -->
-            <div class="bg-gradient-to-br from-blue-900 to-blue-700 rounded-xl p-5 md:p-7 text-white mb-8 shadow-md">
+            <div class="admin-step-card admin-step-1 ui-card bg-gradient-to-br from-blue-900 to-blue-700 rounded-xl p-5 md:p-7 text-white mb-8 shadow-md">
                 <div class="text-[13px] font-bold uppercase tracking-wider mb-3 text-blue-200">📋 Step 1 — Copy this
                     prompt and send to ChatGPT</div>
-                <code id="promptText"
+                <details class="admin-prompt-details" open>
+                    <summary>View conversion prompt</summary>
+                    <code id="promptText"
                     class="block bg-black/30 rounded-lg p-4 md:p-5 text-[13px] font-mono whitespace-pre-wrap break-words text-blue-50 leading-relaxed shadow-inner max-h-[400px] overflow-y-auto">Convert the following past paper into the exact JSON structure provided below. Output ONLY the raw, valid JSON. Do not include markdown code blocks or any explanations.
 
 FORMATTING RULES:
@@ -440,19 +443,21 @@ JSON FORMAT:
 }
 
 [PASTE YOUR PAPER HERE]</code> 
-                <button
-                    class="copy-btn mt-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-sm flex items-center gap-2"
-                    id="copyPromptBtn"> 📋 Copy Prompt </button>
+                    <button
+                        class="btn-secondary copy-btn mt-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-2 rounded-full text-sm font-bold transition shadow-sm flex items-center gap-2"
+                        id="copyPromptBtn"> 📋 Copy Prompt </button>
+                </details>
             </div>
 
 
             <!-- Paste Area -->
-            <label class="block text-[13px] font-bold uppercase tracking-wide text-slate-500 mb-2" for="jsonPaste">📝 Step 2 — Paste
-                JSON from ChatGPT</label>
-            <div class="relative">
-                <textarea id="jsonPaste" placeholder='{"subject_code": "CSC211", ...}'
-                    class="w-full min-h-[280px] p-4 border-2 border-slate-200 rounded-xl font-mono text-[13.5px] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition resize-y bg-slate-50/50 text-slate-800 leading-relaxed shadow-inner dark:bg-slate-800/50 dark:border-slate-700 dark:text-gray-200"
-                    spellcheck="false"></textarea>
+            <div class="admin-step-card admin-step-2 ui-card mb-8">
+                <label class="block text-[13px] font-bold uppercase tracking-wide text-slate-500 mb-2" for="jsonPaste">📝 Step 2 — Paste
+                    JSON from ChatGPT</label>
+                <div class="relative">
+                    <textarea id="jsonPaste" placeholder='{"subject_code": "CSC211", ...}'
+                        class="admin-json-input w-full min-h-[280px] p-4 border-2 border-slate-200 rounded-xl font-mono text-[13.5px] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition resize-y bg-slate-50/50 text-slate-800 leading-relaxed shadow-inner dark:bg-slate-800/50 dark:border-slate-700 dark:text-gray-200"
+                        spellcheck="false" autocomplete="off"></textarea>
                 <!-- JSON line count indicator -->
                 <div id="jsonInfo" class="absolute bottom-3 right-3 text-[11px] font-mono text-slate-400"></div>
             </div>
@@ -465,22 +470,27 @@ JSON FORMAT:
             <!-- Buttons -->
             <div class="flex flex-col sm:flex-row gap-3 mt-5">
                 <button id="parseBtn"
-                    class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border-2 border-blue-500 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 dark:bg-blue-500/10 dark:hover:bg-blue-500/20">
+                    class="btn-secondary flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border-2 border-blue-500 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 dark:bg-blue-500/10 dark:hover:bg-blue-500/20">
                     🔍 <span class="btn-label">Parse & Preview</span>
                 </button>
                 <button id="uploadBtn"
-                    class="hidden flex-[2] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                    class="btn-primary hidden flex-[2] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                     🚀 <span class="btn-label">Upload to Database</span>
                 </button>
                 <button id="exportBtn"
-                    class="hidden flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border-2 border-slate-300 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300">
+                    class="btn-secondary hidden flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border-2 border-slate-300 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300">
                     💾 <span class="btn-label">Export JSON</span>
                 </button>
             </div>
+            </div> <!-- Close admin-step-2 -->
 
 
             <!-- Preview -->
-            <div id="preview" class="hidden mt-10 border-t border-slate-100 pt-8 dark:border-white/5">
+            <div id="preview" class="admin-preview-panel ui-card hidden mt-10 border-t border-slate-100 pt-8 dark:border-white/5">
+                <p class="admin-warning-note mb-4 text-amber-700 dark:text-amber-500 bg-amber-50 dark:bg-amber-500/10 p-3 rounded-lg border border-amber-200 dark:border-amber-500/20 text-sm font-medium flex items-start gap-2">
+                  <span class="material-symbols-outlined text-[18px]">warning</span>
+                  <span>Preview first. If subject, year, marks, or answers look wrong, fix the JSON before upload.</span>
+                </p>
                 <div class="flex items-center justify-between mb-4">
                     <div class="text-[13px] font-bold uppercase tracking-wide text-slate-500">📑 Paper Preview — Check
                         before uploading</div>
