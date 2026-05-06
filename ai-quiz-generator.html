@@ -217,7 +217,7 @@
               <label class="form-label" for="notes-file">
                 <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
                 Upload Notes / PDF
-                <span class="optional-note">(optional)</span>
+                <span class="optional-note">(Coming Soon)</span>
               </label>
 
               <div id="upload-area" class="upload-area" role="button" tabindex="0" aria-describedby="upload-help"
@@ -728,34 +728,26 @@
 
           if (requestId !== activeQuizRequestId) return;
 
+          const result = await response.json();
+
           if (!response.ok) {
-            let errorMessage = 'Failed to generate quiz.';
-
-            try {
-              const error = await response.json();
-              errorMessage = error.error || errorMessage;
-            } catch {
-              errorMessage = response.statusText || errorMessage;
-            }
-
-            throw new Error(errorMessage);
+            throw new Error(result.error || 'Failed to generate quiz.');
           }
 
-          const quizData = await response.json();
-
-          if (!quizData || !Array.isArray(quizData.questions) || quizData.questions.length === 0) {
+          if (!result || !Array.isArray(result.questions) || result.questions.length === 0) {
             throw new Error('AI did not return valid quiz questions. Try again with clearer topics.');
           }
 
-          currentQuizData = quizData;
+          currentQuizData = result;
           skeletonLoader.classList.add('hidden');
 
-          displayQuizForTaking(quizData);
+          displayQuizForTaking(result);
           showToast('Quiz generated successfully.');
         } catch (error) {
           if (requestId === activeQuizRequestId) {
             skeletonLoader.classList.add('hidden');
-            showToast(error.message || 'Something went wrong while generating the quiz.', 'error');
+            console.error("Quiz generation error:", error);
+            showToast(error.message, 'error');
           }
         } finally {
           if (requestId === activeQuizRequestId) {

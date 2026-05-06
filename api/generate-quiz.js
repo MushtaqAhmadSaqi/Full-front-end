@@ -17,12 +17,12 @@ export default async function handler(req, res) {
 
     // Choose model (best free tier option)
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash", // Stable, widely available model (fixed from gemini-2.0-flash)
+      model: "gemini-1.5-flash",
       systemInstruction: `You are an expert COMSATS University Islamabad exam setter with 12+ years of experience. 
       You create high-quality, realistic exam-style questions that match COMSATS past paper patterns.
       
       Rules:
-      - Always return ONLY valid JSON (no markdown, no explanations outside JSON).
+      - Return ONLY valid JSON.
       - Questions must be syllabus-aligned and appropriate for undergraduate level.
       - Include 1-2 lines explanation for each correct answer.
       - Use proper Bloom's taxonomy distribution.`
@@ -42,7 +42,7 @@ ${examType === 'midterm'
 
 ${notes ? `Additional context from student's notes: ${notes}` : ''}
 
-Return the response in this exact JSON format:
+Return the response in this JSON format:
 {
   "title": "Subject - MIDTERM/FINAL Quiz",
   "questions": [
@@ -56,21 +56,24 @@ Return the response in this exact JSON format:
   ]
 }`;
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
+    });
+
     const response = await result.response;
     let text = response.text();
-
-    // Clean up possible markdown formatting
-    text = text.replace(/```json|```/g, '').trim();
 
     // Parse JSON safely
     let quizData;
     try {
       quizData = JSON.parse(text);
     } catch (parseError) {
-      console.error("JSON Parse Error:", text);
+      console.error("JSON Parse Error. Raw text:", text);
       return res.status(500).json({ 
-        error: "AI returned invalid format. Please try again." 
+        error: "AI returned invalid format. Please try again with simpler topics." 
       });
     }
 
@@ -86,16 +89,25 @@ Return the response in this exact JSON format:
     return res.status(200).json(quizData);
 
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("Gemini API Error details:", error);
+
+    // Specific error handling
+    if (error.message.includes("API key")) {
+      return res.status(401).json({ error: "Invalid or missing GEMINI_API_KEY. Check your environment variables." });
+    }
 
     if (error.message.includes("quota") || error.message.includes("429")) {
       return res.status(429).json({ 
-        error: "Daily limit reached. Please try again tomorrow or use pre-generated quizzes." 
+        error: "Daily limit reached. Please try again in an hour or use pre-generated quizzes." 
       });
     }
 
+    if (error.message.includes("safety") || error.message.includes("blocked")) {
+      return res.status(400).json({ error: "The request was blocked by AI safety filters. Try changing the topics." });
+    }
+
     return res.status(500).json({ 
-      error: "Failed to generate quiz. Please try again in a moment." 
+      error: `Generation failed: ${error.message.substring(0, 100)}...` 
     });
   }
 }
