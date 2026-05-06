@@ -791,3 +791,65 @@ body {
     transform: none;
   }
 }
+
+/* === FULL DARK MODE SUPPORT (additive, non-breaking) === */
+.dark .main,
+.dark .auth-modal,
+.dark .am-modal-card,
+.dark .am-form-panel {
+  --am-surface: #1e293b;
+  --am-text: #f1f5f9;
+  --am-muted: #94a3b8;
+  background: var(--am-surface);
+  color: var(--am-text);
+}
+
+.dark .wrap {
+  background: rgba(30, 41, 59, 0.72) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .h2 { color: #fff; }
+.dark .h2-sub { color: #94a3b8; }
+
+.dark .in,
+.dark input,
+.dark textarea {
+  background: #1e293b !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .in:focus {
+  background: #1e293b !important;
+  border-color: var(--brand) !important;
+}
+
+.dark .in::placeholder,
+.dark input::placeholder {
+  color: #64748b !important;
+}
+
+.dark .btn-g {
+  background: #1e293b !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .btn-g:hover {
+  background: #334155 !important;
+}
+
+.dark .auth-message-error {
+  background: rgba(248, 113, 113, 0.12) !important;
+  border-color: rgba(248, 113, 113, 0.3) !important;
+  color: #f87171 !important;
+}
+
+.dark .swap, .dark .swap a {
+  color: #94a3b8;
+}
+
+.dark .swap a:hover {
+  color: #fff;
+}

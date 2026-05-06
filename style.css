@@ -99,18 +99,28 @@ html.dark body {
   --ring-strong: rgba(56, 189, 248, 0.55);
 
   --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.35);
-  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.40),
-              0 2px 6px rgba(0, 0, 0, 0.25);
-  --shadow-3: 0 14px 40px rgba(0, 0, 0, 0.55),
-              0 4px 14px rgba(0, 0, 0, 0.30);
+  --shadow-2: 0 6px 24px rgba(0, 0, 0, 0.40), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-3: 0 14px 40px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.30);
   --shadow-brand: 0 4px 18px rgba(14, 165, 233, 0.35);
-
-  /* Legacy Fallbacks */
-  --bg-main: var(--bg);
-  --text-main: var(--text);
-  --primary-light: var(--brand-soft-2);
-  --surface-alt: var(--surface-3);
+  --bg-main: var(--bg); --text-main: var(--text); --primary-light: var(--brand-soft-2); --surface-alt: var(--surface-3);
+  /* NEW: Enhanced dark tokens for polish */
+  --success-dark: #4ade80;
+  --warning-dark: #fbbf24;
+  --danger-dark: #f87171;
+  --input-bg-dark: #1e293b;
+  --input-border-dark: rgba(255,255,255,0.12);
+  --placeholder-dark: #64748b;
 }
+
+/* Dark Mode Utility Overrides (Additive) */
+.dark .bg-red-50 { background-color: rgba(248, 113, 113, 0.12) !important; }
+.dark .border-red-200 { border-color: rgba(248, 113, 113, 0.3) !important; }
+.dark .text-red-700 { color: #f87171 !important; }
+
+.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.12) !important; }
+.dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.3) !important; }
+.dark .text-emerald-700 { color: #34d399 !important; }
+
 
 body {
   background-color: var(--bg);
@@ -7519,7 +7529,47 @@ html.dark .terminal-output {
 .home-page .home-hero {
   padding-block: clamp(3rem, 8vw, 6rem);
   text-align: center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%);
 }
+
+/* Force hero to stay light even in dark mode */
+.dark .home-hero {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 40%, #bae6fd 100%) !important;
+}
+
+.dark .home-hero h1 {
+  color: #1a1a2e !important;
+}
+
+.dark .home-hero p {
+  color: #6b7280 !important;
+}
+
+.dark .home-hero .ui-button-secondary {
+  background-color: #f1f5f9 !important; /* bg-slate-100 approx */
+  color: #0f172a !important; /* text-slate-900 approx */
+}
+
+.dark .home-hero .ui-button-secondary:hover {
+  background-color: #e2e8f0 !important; /* bg-slate-200 approx */
+}
+
+.dark .home-hero .badge-tilted span {
+  color: #0284c7 !important; /* text-brand-600 approx */
+}
+
+.dark .home-hero .home-trust-line {
+  color: #475569 !important; /* text-muted (light) approx */
+}
+
+.dark .home-hero .home-trust-line strong {
+  color: #1e293b !important; /* text-slate-900 approx */
+}
+
+
+
+
+
 
 .home-page .home-trust-line {
   display: inline-flex;

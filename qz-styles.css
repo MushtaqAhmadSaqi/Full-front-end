@@ -404,3 +404,32 @@
     transform: none !important;
   }
 }
+
+/* === DARK MODE POLISH OVERRIDES (safe additive) === */
+.dark .qz-option.qz-correct {
+  background: rgba(74, 222, 128, 0.12) !important;
+  border-color: var(--success-dark) !important;
+  color: var(--success-dark) !important;
+}
+.dark .qz-option.qz-wrong {
+  background: rgba(248, 113, 113, 0.12) !important;
+  border-color: var(--danger-dark) !important;
+  color: var(--danger-dark) !important;
+}
+.dark .qz-explanation {
+  background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(52,211,153,0.06)) !important;
+  border: 1px solid rgba(74, 222, 128, 0.25) !important;
+  border-left: 4px solid var(--success-dark) !important;
+}
+.dark .difficulty-btn.active {
+  background-color: rgba(56, 189, 248, 0.18) !important;
+  border-color: #38bdf8 !important;
+  color: #7dd3fc !important;
+}
+.dark .qz-ai-link {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #fff !important;
+}
+.dark .qz-progress-fill {
+  background: linear-gradient(90deg, #38bdf8, #7dd3fc) !important;
+}

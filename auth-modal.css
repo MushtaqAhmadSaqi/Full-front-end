@@ -591,3 +591,16 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(58, 123, 213, 0.45);
 }
+
+/* === DARK MODE OVERRIDES (additive) === */
+.dark .auth-modal { background: #1e293b; color: #f1f5f9; }
+.dark .am-form-panel { background: #1e293b; }
+.dark .am-input,
+.dark .am-input:focus { background: #1e293b; color: #f1f5f9; border-bottom-color: #38bdf8; }
+.dark .am-input::placeholder { color: #64748b; }
+.dark .am-btn-g { background: #1e293b; border-color: rgba(255,255,255,0.12); color: #f1f5f9; }
+.dark .am-btn-g:hover { background: #334155; }
+.dark .am-label { color: #94a3b8; }
+.dark .am-h2 { color: #fff; }
+.dark .am-h2-sub { color: #94a3b8; }
+.dark .am-ck-lbl { color: #94a3b8; }
