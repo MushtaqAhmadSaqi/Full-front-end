@@ -341,22 +341,22 @@ function _injectHeader(currentPage, session, userName) {
           <nav class="desktop-nav-force" aria-label="Primary">
 
             <a href="${base}index.html"
-               class="${isHomeActive ? activeClass : normalClass}">
+               class="${isHomeActive ? activeClass : normalClass}" ${isHomeActive ? 'aria-current="page"' : ''}>
               Home
             </a>
 
             <a href="${base}subjects.html"
-               class="${isSubjectsActive ? activeClass : normalClass}">
+               class="${isSubjectsActive ? activeClass : normalClass}" ${isSubjectsActive ? 'aria-current="page"' : ''}>
               Subjects
             </a>
 
             <a href="${base}quiz.html"
-               class="${isQuizActive ? activeClass : normalClass}">
+               class="${isQuizActive ? activeClass : normalClass}" ${isQuizActive ? 'aria-current="page"' : ''}>
               Quiz
             </a>
 
             <a href="${base}about-us.html"
-               class="${isTeamActive ? activeClass : normalClass}">
+               class="${isTeamActive ? activeClass : normalClass}" ${isTeamActive ? 'aria-current="page"' : ''}>
               Team
             </a>
 
@@ -443,22 +443,22 @@ function _injectMobileNav(currentPage) {
     <nav id="mobileBottomNav" aria-label="Mobile navigation" class="mobile-nav-shell">
       <div class="mobile-nav-grid">
 
-        <a href="${base}index.html" class="mobile-nav-item ${isHomeActive ? 'active' : ''}">
+        <a href="${base}index.html" class="mobile-nav-item ${isHomeActive ? 'active' : ''}" ${isHomeActive ? 'aria-current="page"' : ''}>
           <span class="material-symbols-outlined">home</span>
           <span class="label">Home</span>
         </a>
 
-        <a href="${base}subjects.html" class="mobile-nav-item ${isSubjectsActive ? 'active' : ''}">
+        <a href="${base}subjects.html" class="mobile-nav-item ${isSubjectsActive ? 'active' : ''}" ${isSubjectsActive ? 'aria-current="page"' : ''}>
           <span class="material-symbols-outlined">menu_book</span>
           <span class="label">Subjects</span>
         </a>
 
-        <a href="${base}quiz.html" class="mobile-nav-item ${isQuizActive ? 'active' : ''}">
+        <a href="${base}quiz.html" class="mobile-nav-item ${isQuizActive ? 'active' : ''}" ${isQuizActive ? 'aria-current="page"' : ''}>
           <span class="material-symbols-outlined">quiz</span>
           <span class="label">Quiz</span>
         </a>
 
-        <a href="${base}about-us.html" class="mobile-nav-item ${isTeamActive ? 'active' : ''}">
+        <a href="${base}about-us.html" class="mobile-nav-item ${isTeamActive ? 'active' : ''}" ${isTeamActive ? 'aria-current="page"' : ''}>
           <span class="material-symbols-outlined">groups</span>
           <span class="label">Team</span>
         </a>

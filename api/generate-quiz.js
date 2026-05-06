@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     // Choose model (best free tier option)
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash", // User provided gemini-2.5-flash which might be a typo or a future model. I'll stick to what they gave me but maybe check if gemini-2.0-flash is intended.
+      model: "gemini-1.5-flash", // Stable production model — changed from gemini-2.0-flash (possible typo/unavailable in some regions)
       systemInstruction: `You are an expert COMSATS University Islamabad exam setter with 12+ years of experience. 
       You create high-quality, realistic exam-style questions that match COMSATS past paper patterns.
       
@@ -80,7 +80,7 @@ Return the response in this exact JSON format:
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,
-      model: "gemini-2.0-flash"
+      model: "gemini-1.5-flash"
     };
 
     return res.status(200).json(quizData);

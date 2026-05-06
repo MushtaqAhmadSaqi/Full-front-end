@@ -72,6 +72,19 @@
   --shadow-lg: var(--shadow-3);
   --radius: var(--radius-md);
   --transition: all var(--dur-base) var(--ease);
+
+  /* Unified Color Palette (Phase 5) */
+  --color-primary-600: #0ea5e9;
+  --color-accent-500: #38bdf8;
+  --color-neutral-900: #1a1a2e;
+  --color-neutral-600: #475569;
+  --color-neutral-400: #94a3b8;
+  --color-success-600: #059669;
+  --color-warning-500: #d97706;
+  --color-danger-600: #dc2626;
+  --color-surface-0: #ffffff;
+  --color-surface-1: #f8fafc;
+  --color-border-subtle: #e2e8f0;
 }
 
 /* Dark — inherits qz dark surfaces exactly */
@@ -110,6 +123,19 @@ html.dark body {
   --input-bg-dark: #1e293b;
   --input-border-dark: rgba(255,255,255,0.12);
   --placeholder-dark: #64748b;
+
+  /* Unified Color Palette (Phase 5) */
+  --color-primary-400: #38bdf8;
+  --color-accent-400: #7dd3fc;
+  --color-neutral-50: #f1f5f9;
+  --color-neutral-300: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-success-400: #4ade80;
+  --color-warning-400: #fbbf24;
+  --color-danger-400: #f87171;
+  --color-surface-0: #0f172a;
+  --color-surface-1: #1e293b;
+  --color-border-subtle: rgba(255,255,255,0.08);
 }
 
 /* Dark Mode Utility Overrides (Additive) */
@@ -8247,6 +8273,54 @@ html.dark .ui-empty-state-enhanced {
 html.dark .score-warning,
 html.dark .mastery-watch {
   color: #fbbf24;
+}
+
+/* Enhanced nav active + states — safe additive rules */
+.desktop-nav-force a.nav-active,
+.mobile-nav-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.18);
+  border: 1px solid var(--primary);
+  position: relative;
+}
+.desktop-nav-force a.nav-active::after,
+.mobile-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 9999px;
+}
+.desktop-nav-force a.nav-normal:hover,
+.mobile-nav-item:hover {
+  background: rgba(14, 165, 233, 0.08);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+.desktop-nav-force a.nav-normal:focus-visible,
+.mobile-nav-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.25);
+}
+.dark .desktop-nav-force a.nav-active,
+.dark .mobile-nav-item.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #bae6fd;
+  border-color: #38bdf8;
+}
+.dark .desktop-nav-force a.nav-active::after,
+.dark .mobile-nav-item.active::after {
+  background: #38bdf8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .desktop-nav-force a, .mobile-nav-item { transition: none !important; }
 }
 
 @media (max-width: 640px) {

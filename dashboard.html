@@ -1652,8 +1652,22 @@
             </div>
           </article>
         </div>
+
+        <!-- Saved Items Panel (added for Bug 2 fix) -->
+        <section class="dashboard-panel mt-8" id="saved-panel">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-500">bookmark</span>
+              Saved Items
+            </h3>
+            <span class="text-sm text-muted" id="saved-count">0 items</span>
+          </div>
+          <div id="saved-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+          <div id="saved-empty" class="ui-empty-state hidden">
+            <p class="text-muted">No saved items yet. Browse subjects or quizzes and tap the bookmark icon.</p>
+          </div>
+        </section>
       </section>
-    </section>
   </main>
 
   <div class="dashboard-bg-orb" aria-hidden="true"></div>
@@ -1677,6 +1691,46 @@
       document.addEventListener('comsatsprephub:themechange', updateLogos);
       window.addEventListener('load', updateLogos);
     })();
+  </script>
+
+  <script>
+  (function() {
+    const savedList = document.getElementById('saved-list');
+    const savedEmpty = document.getElementById('saved-empty');
+    const savedCount = document.getElementById('saved-count');
+    if (!savedList || !savedEmpty) return;
+
+    function renderSaved() {
+      const saved = JSON.parse(localStorage.getItem('comsats-saved') || '[]');
+      savedList.innerHTML = '';
+      savedCount.textContent = `${saved.length} item${saved.length === 1 ? '' : 's'}`;
+      if (saved.length === 0) {
+        savedEmpty.classList.remove('hidden');
+        return;
+      }
+      savedEmpty.classList.add('hidden');
+      saved.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'ui-card p-4 flex items-start gap-3 hover:shadow-md transition-all cursor-pointer';
+        card.innerHTML = `
+          <div class="flex-1">
+            <div class="font-medium">${item.title || 'Untitled'}</div>
+            <div class="text-sm text-muted">${item.type || 'Resource'} • ${item.subject || ''}</div>
+          </div>
+          <button class="btn-icon text-danger" onclick="event.stopImmediatePropagation(); removeSaved(${idx});">✕</button>
+        `;
+        card.onclick = () => { if (item.url) window.location.href = item.url; };
+        savedList.appendChild(card);
+      });
+    }
+    window.removeSaved = function(idx) {
+      const saved = JSON.parse(localStorage.getItem('comsats-saved') || '[]');
+      saved.splice(idx, 1);
+      localStorage.setItem('comsats-saved', JSON.stringify(saved));
+      renderSaved();
+    };
+    renderSaved();
+  })();
   </script>
 </body>
 
