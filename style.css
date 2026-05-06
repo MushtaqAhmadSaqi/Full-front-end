@@ -8350,4 +8350,183 @@ html.dark .mastery-watch {
   .ui-generated-card:hover {
     transform: none !important;
   }
-}
+}
+
+/* =========================================================
+   COMSATSPrepHub — Enhanced Interactive States + Unified Palette
+   Safe additive block — does not modify any existing rules
+   ========================================================= */
+
+/* ---------- NAV ACTIVE / HOVER / FOCUS STATES (Bug 1 Fix) ---------- */
+.desktop-nav-force a.nav-active,
+.mobile-nav-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.18);
+  border: 1px solid var(--primary);
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.desktop-nav-force a.nav-active::after,
+.mobile-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 9999px;
+}
+
+.desktop-nav-force a.nav-normal:hover,
+.mobile-nav-item:hover {
+  background: rgba(14, 165, 233, 0.08);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.desktop-nav-force a.nav-normal:focus-visible,
+.mobile-nav-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.25);
+}
+
+.dark .desktop-nav-force a.nav-active,
+.dark .mobile-nav-item.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #bae6fd;
+  border-color: #38bdf8;
+}
+
+.dark .desktop-nav-force a.nav-active::after,
+.dark .mobile-nav-item.active::after {
+  background: #38bdf8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-nav-force a,
+  .mobile-nav-item {
+    transition: none !important;
+  }
+}
+
+/* ---------- UNIFIED SEMANTIC COLOR PALETTE (Phase 5) ---------- */
+:root {
+  /* Primary Scale (Sky Blue - Academic & Trustworthy) */
+  --color-primary-50:  #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+
+  /* Accent / Secondary (Complementary Cool Cyan) */
+  --color-accent-50:  #ecfeff;
+  --color-accent-100: #cffafe;
+  --color-accent-200: #a5f3fc;
+  --color-accent-300: #67e8f9;
+  --color-accent-400: #22d3ee;
+  --color-accent-500: #06b6d4;
+  --color-accent-600: #0891b2;
+  --color-accent-700: #0e7490;
+
+  /* Neutral Scale (Cool Slate) */
+  --color-neutral-50:  #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Semantic Colors */
+  --color-success-600: #059669;
+  --color-success-400: #4ade80;
+  --color-warning-500: #d97706;
+  --color-warning-400: #fbbf24;
+  --color-danger-600:  #dc2626;
+  --color-danger-400:  #f87171;
+  --color-info-600:    #0284c7;
+
+  /* Surface Levels */
+  --color-surface-0: #ffffff;
+  --color-surface-1: #f8fafc;
+  --color-surface-2: #f1f5f9;
+  --color-surface-3: #e2e8f0;
+
+  /* Text Levels */
+  --color-text-primary:   #1a1a2e;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #64748b;
+  --color-text-inverse:   #f1f5f9;
+
+  /* Border Levels */
+  --color-border-subtle: #e2e8f0;
+  --color-border-default: #cbd5e1;
+  --color-border-strong:  #94a3b8;
+
+  /* State Overlays */
+  --color-hover-overlay:   rgba(14, 165, 233, 0.08);
+  --color-active-overlay:  rgba(14, 165, 233, 0.15);
+  --color-focus-ring:      rgba(14, 165, 233, 0.35);
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --color-primary-600: #38bdf8;
+  --color-accent-500:  #22d3ee;
+
+  --color-neutral-50:  #f1f5f9;
+  --color-neutral-900: #0f172a;
+
+  --color-surface-0: #0f172a;
+  --color-surface-1: #1e293b;
+  --color-surface-2: #263245;
+  --color-surface-3: #334155;
+
+  --color-text-primary:   #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted:     #64748b;
+
+  --color-border-subtle: rgba(255,255,255,0.08);
+  --color-border-default: rgba(255,255,255,0.14);
+  --color-border-strong:  rgba(255,255,255,0.25);
+
+  --color-hover-overlay:   rgba(56, 189, 248, 0.12);
+  --color-active-overlay:  rgba(56, 189, 248, 0.22);
+  --color-focus-ring:      rgba(56, 189, 248, 0.45);
+}
+
+/* Apply semantic tokens globally (safe enhancement) */
+body {
+  background-color: var(--color-surface-0);
+  color: var(--color-text-primary);
+}
+
+.ui-card,
+.dashboard-panel {
+  background-color: var(--color-surface-1);
+  border-color: var(--color-border-subtle);
+}
+
+.ui-button-primary {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+.ui-button-primary:hover {
+  background-color: var(--color-primary-700);
+}
+

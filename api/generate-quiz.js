@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     // Choose model (best free tier option)
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash", // Stable production model — changed from gemini-2.0-flash (possible typo/unavailable in some regions)
+      model: "gemini-1.5-flash", // Stable, widely available model (fixed from gemini-2.0-flash)
       systemInstruction: `You are an expert COMSATS University Islamabad exam setter with 12+ years of experience. 
       You create high-quality, realistic exam-style questions that match COMSATS past paper patterns.
       
