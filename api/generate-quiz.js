@@ -107,7 +107,7 @@ Return the response in this JSON format:
     }
 
     return res.status(500).json({ 
-      error: `Generation failed: ${error.message.substring(0, 100)}...` 
+      error: `Generation failed: ${error.message}` 
     });
   }
 }
