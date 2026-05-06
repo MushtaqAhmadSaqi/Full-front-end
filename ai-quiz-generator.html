@@ -492,6 +492,12 @@
     function setupFileUpload() {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('notes-file');
+
+      if (!uploadArea || !fileInput) {
+        console.warn('[AI Quiz] Upload section not found - skipping');
+        return;
+      }
+
       const defaultView = document.getElementById('upload-default');
       const previewView = document.getElementById('upload-preview');
       const fileNameDiv = document.getElementById('file-name');
@@ -549,22 +555,21 @@
           return;
         }
 
-        fileNameDiv.textContent = file.name;
-        defaultView.classList.add('hidden');
-        previewView.classList.remove('hidden');
+        if (fileNameDiv) fileNameDiv.textContent = file.name;
+        if (defaultView) defaultView.classList.add('hidden');
+        if (previewView) previewView.classList.remove('hidden');
         uploadArea.classList.add('has-file');
-        uploadArea.setAttribute('aria-label', `Selected file: ${file.name}. Click to replace it.`);
       }
 
-      removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-
-        fileInput.value = '';
-        defaultView.classList.remove('hidden');
-        previewView.classList.add('hidden');
-        uploadArea.classList.remove('has-file');
-        uploadArea.setAttribute('aria-label', 'Upload notes file. PDF, TXT, or DOCX. Maximum size 10MB.');
-      });
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.value = '';
+          if (defaultView) defaultView.classList.remove('hidden');
+          if (previewView) previewView.classList.add('hidden');
+          uploadArea.classList.remove('has-file');
+        });
+      }
     }
 
     // ==================== TIMER ====================

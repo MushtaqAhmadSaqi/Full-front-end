@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     }
 
     // Choose model (stable version)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Build smart prompt with instructions embedded (more stable than systemInstruction parameter)
     let prompt = `You are an expert COMSATS University Islamabad exam setter.
@@ -81,7 +81,7 @@ JSON FORMAT:
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,
-      model: "gemini-1.5-flash"
+      model: "gemini-2.0-flash"
     };
 
     return res.status(200).json(quizData);
