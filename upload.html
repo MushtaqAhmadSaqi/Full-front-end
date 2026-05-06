@@ -1,17 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Past Paper | COMSATSPrepHub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+
     <!-- Use built CSS instead -->
     <link rel="stylesheet" href="styles/tailwind-built.css">
     <link rel="stylesheet" href="style.css">
@@ -50,14 +53,7 @@
                 <!-- Subject Name -->
                 <div class="form-group">
                   <label class="form-label" for="subject">Subject Name</label>
-                  <input
-                    class="form-control"
-                    id="subject"
-                    type="text"
-                    list="subjectList"
-                    placeholder="e.g. Data Structures"
-                    required
-                  />
+                  <input class="form-control" id="subject" type="text" list="subjectList" placeholder="e.g. Data Structures" required>
                   <datalist id="subjectList">
                     <option value="Loading subjects..."></option>
                   </datalist>
@@ -66,14 +62,7 @@
                 <!-- Academic Year -->
                 <div class="form-group">
                   <label class="form-label" for="year">Academic Year</label>
-                  <input
-                    class="form-control"
-                    id="year"
-                    min="2010"
-                    placeholder="e.g. 2024"
-                    type="number"
-                    required
-                  />
+                  <input class="form-control" id="year" min="2010" placeholder="e.g. 2024" type="number" required>
                 </div>
 
                 <!-- Exam Type -->
@@ -81,24 +70,11 @@
                   <label class="form-label">Exam Type</label>
                   <div class="radio-group">
                     <label class="radio-label">
-                      <input
-                        checked
-                        class="radio-input"
-                        id="exam-mid"
-                        name="exam_type"
-                        type="radio"
-                        value="Mid Term"
-                      />
+                        <input checked class="radio-input" id="exam-mid" name="exam_type" type="radio" value="Mid Term">
                       <div class="radio-button">Mid</div>
                     </label>
                     <label class="radio-label">
-                      <input
-                        class="radio-input"
-                        id="exam-final"
-                        name="exam_type"
-                        type="radio"
-                        value="Final Term"
-                      />
+                        <input class="radio-input" id="exam-final" name="exam_type" type="radio" value="Final Term">
                       <div class="radio-button">Final</div>
                     </label>
                   </div>
@@ -119,12 +95,7 @@
               <div class="form-group">
                 <label class="form-label" for="fileInput">Upload Document (PDF/Image)</label>
                 <div id="uploadZone" class="upload-zone text-on-surface transition-all duration-200">
-                  <input
-                    class="upload-input"
-                    type="file"
-                    id="fileInput"
-                    accept=".pdf,image/*"
-                  />
+                    <input class="upload-input" type="file" id="fileInput" accept=".pdf,image/*">
                   <span
                     class="material-symbols-outlined"
                     style="

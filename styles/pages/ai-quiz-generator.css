@@ -1,0 +1,160 @@
+/* =========================================================
+   AI QUIZ GENERATOR PAGE STYLES
+   Specific layout and components for the Gemini-powered quiz generator.
+   ========================================================= */
+
+.ai-quiz-page {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(14, 165, 233, 0.08), transparent 28%),
+    radial-gradient(circle at 8% 28%, rgba(129, 140, 248, 0.08), transparent 30%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+.generator-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 16px 88px;
+}
+
+/* --- Topbar & Navigation --- */
+.generator-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 34px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-weight: 800;
+  text-decoration: none;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.back-link:hover {
+  background: var(--brand-soft);
+  color: var(--text);
+  transform: translateX(-2px);
+}
+
+/* --- Hero --- */
+.hero-section {
+  max-width: 820px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.13), rgba(129, 140, 248, 0.09));
+  border: 1px solid rgba(14, 165, 233, 0.26);
+  color: var(--brand-ink);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  margin-bottom: 14px;
+  font-size: clamp(2.35rem, 7vw, 4.7rem);
+  font-weight: 950;
+  letter-spacing: -0.07em;
+  line-height: 0.98;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--brand) 0%, #6366f1 58%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Generator Card & Form --- */
+.ai-generator-card {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  box-shadow: var(--shadow-3);
+}
+
+.ai-generator-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand), #6366f1, #a855f7);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* --- Inputs --- */
+.custom-input,
+.custom-select,
+.custom-textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 14px 17px;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-3);
+  color: var(--text);
+  font-family: inherit;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.custom-input:focus,
+.custom-select:focus,
+.custom-textarea:focus {
+  background: var(--surface);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+/* --- Toggle Buttons --- */
+.exam-type-btn,
+.difficulty-btn {
+  min-height: 48px;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-3);
+  color: var(--text-muted);
+  font-weight: 850;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.exam-type-btn.active {
+  background: linear-gradient(135deg, var(--brand), #6366f1);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(14, 165, 233, 0.28);
+}

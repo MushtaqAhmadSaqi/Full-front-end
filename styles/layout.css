@@ -1,0 +1,78 @@
+/* =========================================================
+   LAYOUT STYLES
+   Containers, grids, headers, footers, and structural shells.
+   ========================================================= */
+
+.container {
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  max-width: var(--container);
+}
+
+/* Header & Navigation Shells */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: transform 0.4s var(--ease);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-hidden {
+  transform: translateY(-110%);
+}
+
+#app-header {
+  min-height: 72px; /* Prevent FOUC */
+}
+
+/* Footer Shell */
+.site-footer {
+  margin-top: auto;
+  padding: 48px 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+/* Shared Layout Grids */
+.section-shell {
+  width: min(100% - 2rem, 1180px);
+  margin-inline: auto;
+}
+
+/* Navbar specific layout */
+.nav-links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile Bottom Nav (Persistent) */
+#app-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #app-mobile-nav {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    background: color-mix(in srgb, var(--surface) 95%, transparent);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
