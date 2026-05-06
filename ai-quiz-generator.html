@@ -997,95 +997,87 @@
     }
 
     // ==================== DYNAMIC SUBJECTS FROM SUPABASE ====================
-    async function loadSubjectsFromSupabase() {
-      const select = document.getElementById('subject');
-      if (!select) return;
+// ==================== FINAL INITIALIZATION (FIX) ====================
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('%c[AI Quiz] Page loaded - initializing...', 'color:#3b82f6');
 
-      select.innerHTML = '<option value="">Loading subjects from database...</option>';
-      select.disabled = true;
+  // 1. Load subjects from Supabase (dynamic)
+  await loadSubjectsFromSupabase();
 
-      try {
-        // Load Supabase client (from core.js)
-        const { supabase } = await import('./js/core.js');
+  // 2. Setup all form handlers
+  setupFormSubmission();
+  // setupExamTypeToggle(); // Replaced by onclick in redesign
+  // setupDifficultyButtons(); // Replaced by onclick in redesign
+  setupQuestionSlider();
+  setupFileUpload();
+  restoreFormState();
 
-        const { data, error } = await supabase
-          .from('past_papers')
-          .select('subject_name')
-          .order('subject_name', { ascending: true });
+  // 3. Auto-save on any change
+  const form = document.getElementById('ai-quiz-form');
+  if (form) {
+    form.addEventListener('input', saveFormState);
+  }
 
-        if (error) throw error;
+  console.log('%c[AI Quiz] All handlers initialized successfully', 'color:#22c55e');
+});
 
-        // Get unique subject names
-        const uniqueSubjects = [...new Set(
-          data.map(row => row.subject_name).filter(Boolean)
-        )];
+// ==================== DYNAMIC SUBJECTS (Updated) ====================
+async function loadSubjectsFromSupabase() {
+  const select = document.getElementById('subject');
+  if (!select) return;
 
-        // Rebuild dropdown
-        select.innerHTML = '<option value="">Select a subject...</option>';
+  select.innerHTML = '<option value="">Loading subjects...</option>';
+  select.disabled = true;
 
-        uniqueSubjects.forEach(subject => {
-          const option = document.createElement('option');
-          option.value = subject;
-          option.textContent = subject;
-          select.appendChild(option);
-        });
+  try {
+    const { supabase } = await import('./js/core.js');
 
-        select.disabled = false;
+    const { data, error } = await supabase
+      .from('past_papers')
+      .select('subject_name')
+      .order('subject_name', { ascending: true });
 
-        // Restore previously selected subject (if any)
-        const savedState = localStorage.getItem('quizFormState');
-        if (savedState) {
-          const state = JSON.parse(savedState);
-          if (state.subject && uniqueSubjects.includes(state.subject)) {
-            select.value = state.subject;
-          }
-        }
+    if (error) throw error;
 
-      } catch (err) {
-        console.error('Failed to load subjects:', err);
-        
-        // Fallback to original hardcoded list
-        select.innerHTML = `
-          <option value="">Select a subject...</option>
-          <option value="Calculus">Calculus</option>
-          <option value="Data Structures">Data Structures</option>
-          <option value="Object Oriented Programming">Object Oriented Programming</option>
-          <option value="Computer Networks">Computer Networks</option>
-          <option value="Database Systems">Database Systems</option>
-          <option value="Software Engineering">Software Engineering</option>
-          <option value="Linear Algebra">Linear Algebra</option>
-          <option value="Digital Logic Design">Digital Logic Design</option>
-          <option value="Operating Systems">Operating Systems</option>
-          <option value="Artificial Intelligence">Artificial Intelligence</option>
-        `;
-        select.disabled = false;
-        showToast('Could not load subjects from database. Using default list.', 'info');
+    const uniqueSubjects = [...new Set(data.map(r => r.subject_name).filter(Boolean))];
+
+    select.innerHTML = '<option value="">Select a subject...</option>';
+    uniqueSubjects.forEach(subject => {
+      const opt = document.createElement('option');
+      opt.value = subject;
+      opt.textContent = subject;
+      select.appendChild(opt);
+    });
+
+    select.disabled = false;
+
+    // Restore saved value
+    const saved = localStorage.getItem('quizFormState');
+    if (saved) {
+      const state = JSON.parse(saved);
+      if (state.subject && uniqueSubjects.includes(state.subject)) {
+        select.value = state.subject;
       }
     }
-
-    // ==================== INITIALIZE ====================
-    async function initAIQuizGenerator() {
-      if (aiQuizInitialized) return;
-      aiQuizInitialized = true;
-
-      // Load subjects FIRST (important)
-      await loadSubjectsFromSupabase();
-
-      // setupExamTypeToggle and setupDifficultyButtons are now handled by onclick
-      setupQuestionSlider();
-      setupFileUpload();
-      setupFormSubmission();
-      setupKeyboardShortcuts();
-      restoreFormState();
-
-      const subject = document.getElementById('subject');
-      const topics = document.getElementById('topics');
-
-      if (subject) subject.addEventListener('change', saveFormState);
-      if (topics) topics.addEventListener('input', saveFormState);
-    }
-
-    window.addEventListener('load', initAIQuizGenerator);
+  } catch (err) {
+    console.error('Supabase subjects failed:', err);
+    // Fallback
+    select.innerHTML = `
+      <option value="">Select a subject...</option>
+      <option value="Calculus">Calculus</option>
+      <option value="Data Structures">Data Structures</option>
+      <option value="Object Oriented Programming">Object Oriented Programming</option>
+      <option value="Computer Networks">Computer Networks</option>
+      <option value="Database Systems">Database Systems</option>
+      <option value="Software Engineering">Software Engineering</option>
+      <option value="Linear Algebra">Linear Algebra</option>
+      <option value="Digital Logic Design">Digital Logic Design</option>
+      <option value="Operating Systems">Operating Systems</option>
+      <option value="Artificial Intelligence">Artificial Intelligence</option>
+    `;
+    select.disabled = false;
+  }
+}
   </script>
 </body>
 
