@@ -15,43 +15,41 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Subject is required' });
     }
 
-    // Choose model (best free tier option)
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: `You are an expert COMSATS University Islamabad exam setter with 12+ years of experience. 
-      You create high-quality, realistic exam-style questions that match COMSATS past paper patterns.
-      
-      Rules:
-      - Return ONLY valid JSON.
-      - Questions must be syllabus-aligned and appropriate for undergraduate level.
-      - Include 1-2 lines explanation for each correct answer.
-      - Use proper Bloom's taxonomy distribution.`
-    });
+    // Choose model (stable version)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Build smart prompt
-    let prompt = `Generate a ${examType.toUpperCase()} quiz for the subject "${subject}".
+    // Build smart prompt with instructions embedded (more stable than systemInstruction parameter)
+    let prompt = `You are an expert COMSATS University Islamabad exam setter.
+Create a high-quality, realistic exam-style quiz in JSON format.
 
-Exam Type: ${examType}
-Number of Questions: ${questionCount}
-Difficulty Mix: ${difficulty}
-Topics Focus: ${topics || "Full syllabus"}
+RULES:
+- Return ONLY valid JSON.
+- Questions must be syllabus-aligned and undergraduate level.
+- Include 1-2 lines explanation for each correct answer.
+
+QUIZ SPECS:
+- Subject: "${subject}"
+- Exam Type: ${examType}
+- Number of Questions: ${questionCount}
+- Difficulty: ${difficulty}
+- Topics: ${topics || "Full syllabus"}
 
 ${examType === 'midterm' 
-  ? 'Focus on the first half of the syllabus. More conceptual and application questions. Slightly easier overall.' 
-  : 'Comprehensive coverage of the full syllabus. Higher-order thinking questions (analysis, evaluation). Include integration of multiple topics.'}
+  ? 'Focus on the first half of the syllabus. Conceptual and application questions.' 
+  : 'Comprehensive coverage of the full syllabus. High-order thinking (analysis, evaluation).'}
 
-${notes ? `Additional context from student's notes: ${notes}` : ''}
+${notes ? `Context from notes: ${notes}` : ''}
 
-Return the response in this JSON format:
+JSON FORMAT:
 {
-  "title": "Subject - MIDTERM/FINAL Quiz",
+  "title": "${subject} - ${examType.toUpperCase()} Quiz",
   "questions": [
     {
       "id": 1,
       "question": "Question text here?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": 1,
-      "explanation": "Brief explanation why this is correct"
+      "correctAnswer": 0,
+      "explanation": "Brief explanation"
     }
   ]
 }`;
