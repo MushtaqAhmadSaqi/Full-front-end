@@ -83,226 +83,146 @@
       </div>
     </section>
 
-    <section class="generator-layout" aria-label="AI quiz generator workspace">
-      <div class="ai-generator-card p-6 sm:p-8 md:p-10">
-        <div class="generator-card-header">
-          <div>
-            <p class="generator-card-kicker">
-              <span class="material-symbols-outlined text-[15px]" aria-hidden="true">tune</span>
-              Quiz setup
-            </p>
-
-            <h2 class="generator-card-title">Build a focused practice quiz</h2>
-            <p class="generator-card-copy">
-              Be specific with topics when you want targeted revision. Leave topics empty when you want broader syllabus
-              coverage.
-            </p>
+    <section class="generator-layout max-w-5xl mx-auto grid md:grid-cols-12 gap-8 px-6 mb-24">
+      <!-- FORM CARD -->
+      <div class="md:col-span-7 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-8 md:p-10" data-aos="fade-right">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-white text-2xl">auto_awesome</span>
           </div>
-
-          <div class="generator-status-pill">
-            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">lock</span>
-            Private
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Configure Your Quiz</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Personalized with Gemini AI • Syllabus-aligned</p>
           </div>
         </div>
 
-        <form id="ai-quiz-form" class="space-y-7">
-          <div class="form-grid">
-            <div>
-              <label class="form-label" for="subject">
-                <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
-                Subject
-              </label>
+        <form id="ai-quiz-form" class="space-y-8">
+          <!-- Subject -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Subject</label>
+            <select id="subject" required class="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-blue-400/30 text-base transition-all">
+              <option value="">Select a subject...</option>
+              <option value="Calculus">Calculus</option>
+              <option value="Data Structures">Data Structures</option>
+              <option value="Object Oriented Programming">Object Oriented Programming</option>
+              <option value="Computer Networks">Computer Networks</option>
+              <option value="Database Systems">Database Systems</option>
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="Linear Algebra">Linear Algebra</option>
+              <option value="Digital Logic Design">Digital Logic Design</option>
+              <option value="Operating Systems">Operating Systems</option>
+              <option value="Artificial Intelligence">Artificial Intelligence</option>
+            </select>
+            <p class="mt-1.5 text-xs text-slate-500">Choose the course you want to practice right now.</p>
+          </div>
 
-              <select id="subject" required class="custom-select" aria-describedby="subject-help">
-                <option value="">Select a subject...</option>
-                <option value="Calculus">Calculus</option>
-                <option value="Data Structures">Data Structures</option>
-                <option value="Object Oriented Programming">Object Oriented Programming</option>
-                <option value="Computer Networks">Computer Networks</option>
-                <option value="Database Systems">Database Systems</option>
-                <option value="Software Engineering">Software Engineering</option>
-                <option value="Linear Algebra">Linear Algebra</option>
-                <option value="Digital Logic Design">Digital Logic Design</option>
-                <option value="Operating Systems">Operating Systems</option>
-                <option value="Artificial Intelligence">Artificial Intelligence</option>
-              </select>
-
-              <p id="subject-help" class="field-help">
-                <span class="material-symbols-outlined" aria-hidden="true">info</span>
-                Choose the course you want to practice right now.
-              </p>
+          <!-- Exam Type (now button group for better UX) -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Exam Type</label>
+            <div class="flex gap-3" role="group">
+              <button type="button" onclick="setExamType('midterm', this)" 
+                      class="exam-type-btn flex-1 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-blue-900 font-semibold flex items-center justify-center gap-2 active:scale-[0.985] transition-all hover:bg-blue-50 dark:hover:bg-slate-800"
+                      data-active="true" style="background: var(--primary); color: white; border-color: var(--primary);">
+                <span class="material-symbols-outlined">schedule</span> Midterm
+              </button>
+              <button type="button" onclick="setExamType('final', this)" 
+                      class="exam-type-btn flex-1 py-3.5 rounded-2xl border-2 border-blue-200 dark:border-blue-900 font-semibold flex items-center justify-center gap-2 active:scale-[0.985] transition-all hover:bg-blue-50 dark:hover:bg-slate-800">
+                <span class="material-symbols-outlined">event_note</span> Final
+              </button>
             </div>
+            <input type="hidden" id="exam-type" value="midterm">
+          </div>
 
-            <fieldset>
-              <legend class="form-label">
-                <span class="material-symbols-outlined" aria-hidden="true">quiz</span>
-                Exam Type
-              </legend>
+          <!-- Topics -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Topics / Chapters (optional)</label>
+            <textarea id="topics" rows="3" placeholder="e.g., Chapter 3, Recursion, Binary Trees..." 
+                      class="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-blue-400/30 resize-y min-h-[92px] transition-all"></textarea>
+            <p class="mt-1.5 text-xs text-slate-500">Leave blank for full syllabus coverage. Add 2–5 specific topics for targeted practice.</p>
+          </div>
 
-              <div class="exam-type-grid" role="group" aria-label="Select exam type">
-                <button type="button" id="btn-midterm" class="exam-type-btn active" aria-pressed="true">
-                  Midterm
-                </button>
-
-                <button type="button" id="btn-final" class="exam-type-btn" aria-pressed="false">
-                  Final
-                </button>
-              </div>
-
-              <input type="hidden" id="exam-type" value="midterm">
-            </fieldset>
-
-            <div class="form-span-2">
-              <label class="form-label" for="topics">
-                <span class="material-symbols-outlined" aria-hidden="true">topic</span>
-                Topics / Chapters
-                <span class="optional-note">(optional)</span>
-              </label>
-
-              <textarea id="topics" rows="3" placeholder="e.g., Chapter 3, Recursion, Binary Trees, Graph Algorithms..."
-                class="custom-textarea min-h-[92px]" aria-describedby="topics-help"></textarea>
-
-              <p id="topics-help" class="field-help">
-                <span class="material-symbols-outlined" aria-hidden="true">info</span>
-                Leave blank for full syllabus coverage. Add 2–5 topics for stronger targeting.
-              </p>
+          <!-- Question Count (enhanced slider) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Number of Questions</label>
+              <span id="question-count-value" class="font-mono text-xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">10</span>
             </div>
-
-            <div class="form-span-2">
-              <div class="slider-topline">
-                <label class="form-label mb-0" for="question-count">
-                  <span class="material-symbols-outlined" aria-hidden="true">format_list_numbered</span>
-                  Number of Questions
-                </label>
-
-                <span id="question-count-value" class="slider-value gradient-text">10</span>
-              </div>
-
-              <div class="slider-wrapper">
-                <input type="range" id="question-count" min="5" max="15" step="1" value="10" class="slider"
-                  aria-describedby="question-count-help">
-              </div>
-
-              <div id="question-count-help" class="slider-scale">
-                <span>Quick · 5</span>
-                <span>Standard · 10</span>
-                <span>Full · 15</span>
-              </div>
-            </div>
-
-            <fieldset class="form-span-2">
-              <legend class="form-label">
-                <span class="material-symbols-outlined" aria-hidden="true">trending_up</span>
-                Difficulty Mix
-              </legend>
-
-              <div class="difficulty-grid" role="group" aria-label="Select difficulty mix">
-                <button type="button" data-difficulty="easy" class="difficulty-btn" aria-pressed="false">
-                  Easier
-                </button>
-
-                <button type="button" data-difficulty="balanced" class="difficulty-btn active" aria-pressed="true">
-                  Balanced
-                </button>
-
-                <button type="button" data-difficulty="hard" class="difficulty-btn" aria-pressed="false">
-                  Harder
-                </button>
-              </div>
-
-              <input type="hidden" id="difficulty" value="balanced">
-            </fieldset>
-
-            <div class="form-span-2">
-              <label class="form-label" for="notes-file">
-                <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
-                Upload Notes / PDF
-                <span class="optional-note">(Coming Soon)</span>
-              </label>
-
-              <div id="upload-area" class="upload-area" role="button" tabindex="0" aria-describedby="upload-help"
-                aria-label="Upload notes file. PDF, TXT, or DOCX. Maximum size 10MB.">
-                <input type="file" id="notes-file" accept=".pdf,.txt,.docx" class="hidden">
-
-                <div id="upload-default">
-                  <div class="upload-icon" aria-hidden="true">
-                    <span class="material-symbols-outlined">cloud_upload</span>
-                  </div>
-
-                  <p class="mt-2 text-sm font-extrabold text-[#1a1a2e] dark:text-white">Drop notes here or click to
-                    upload</p>
-                  <p id="upload-help" class="text-xs text-[#64748b] dark:text-[#94a3b8] mt-1">PDF, TXT, DOCX • Max 10MB
-                  </p>
-                </div>
-
-                <div id="upload-preview" class="hidden" aria-live="polite">
-                  <div class="upload-icon !bg-emerald-500/10 !text-emerald-600" aria-hidden="true">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </div>
-
-                  <p id="file-name" class="mt-2 text-sm font-extrabold text-green-700 dark:text-green-400"></p>
-
-                  <button type="button" id="remove-file" class="mt-2 text-xs text-red-500 hover:underline font-bold">
-                    Remove file
-                  </button>
-                </div>
+            <div class="relative">
+              <input type="range" id="question-count" min="5" max="15" step="1" value="10" 
+                     class="w-full accent-blue-600 cursor-pointer" oninput="updateSliderValue(this)">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1 px-1">
+                <span>Quick (5)</span><span>Standard</span><span>Full (15)</span>
               </div>
             </div>
           </div>
 
+          <!-- Difficulty (button group) -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Difficulty Mix</label>
+            <div class="flex gap-3" role="group">
+              <button type="button" onclick="setDifficulty('easy', this)" class="difficulty-btn flex-1 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 font-semibold transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10">Easier</button>
+              <button type="button" onclick="setDifficulty('balanced', this)" class="difficulty-btn flex-1 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 font-semibold transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10" data-active="true" style="background: #10b981; color: white; border-color: #10b981;">Balanced</button>
+              <button type="button" onclick="setDifficulty('hard', this)" class="difficulty-btn flex-1 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 font-semibold transition-all hover:bg-emerald-50 dark:hover:bg-emerald-500/10">Harder</button>
+            </div>
+            <input type="hidden" id="difficulty" value="balanced">
+          </div>
+
+          <!-- Upload (enhanced) -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Upload Notes (optional, coming soon)</label>
+            <div id="upload-area" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 text-center cursor-pointer hover:border-blue-400 transition-all group">
+              <div class="flex flex-col items-center">
+                <span class="material-symbols-outlined text-4xl text-slate-400 group-hover:text-blue-500 transition-colors">upload_file</span>
+                <p class="mt-3 font-medium">Drop PDF, TXT, or DOCX here</p>
+                <p class="text-xs text-slate-500">Max 10MB • AI will analyze your notes</p>
+              </div>
+            </div>
+            <input type="file" id="notes-file" class="hidden" accept=".pdf,.txt,.docx">
+          </div>
+
+          <!-- GENERATE CTA (prominent & interactive) -->
           <button type="submit" id="generate-btn"
-            class="generate-btn w-full py-5 text-lg flex items-center justify-center gap-3">
-            <span class="material-symbols-outlined" aria-hidden="true">auto_awesome</span>
+                  class="generate-btn w-full mt-4 py-5 text-lg font-extrabold rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl active:scale-[0.985] transition-all focus:outline-none focus:ring-4 focus:ring-blue-400/50">
+            <span class="material-symbols-outlined text-2xl">auto_awesome</span>
             <span id="btn-text">Generate Quiz with AI</span>
           </button>
-
-          <p class="privacy-note">
-            <span class="material-symbols-outlined text-sm" aria-hidden="true">lock</span>
-            Powered by Google Gemini • Free for students • Your data stays private
-          </p>
+          <p class="text-center text-xs text-slate-400">Powered by Google Gemini • ~15–25 seconds</p>
         </form>
       </div>
 
-      <aside class="generator-side-panel" aria-label="Quiz generation guidance">
-        <div class="side-panel-content">
-          <div class="side-panel-badge">
-            <span class="material-symbols-outlined text-[15px]" aria-hidden="true">psychology</span>
-            Smart strategy
+      <!-- SIDE GUIDANCE PANEL -->
+      <div class="md:col-span-5 flex flex-col gap-6" data-aos="fade-left">
+        <div class="bg-blue-50 dark:bg-blue-500/5 rounded-3xl p-8 border border-blue-100 dark:border-blue-500/10">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center mb-6">
+            <span class="material-symbols-outlined text-white">psychology</span>
           </div>
-
-          <h2 class="side-panel-title">Don’t generate random quizzes.</h2>
-          <p class="side-panel-copy">
-            Use AI like a serious student: define the subject, narrow the topics, attempt the quiz, then revise the
-            wrong answers.
+          <h3 class="text-xl font-bold mb-3">Smart Study Strategy</h3>
+          <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+            Use AI like a serious student: define specific subjects, attempt the quiz, and focus on wrong answers.
           </p>
-
-          <div class="side-check-list">
-            <div class="side-check-item">
-              <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-              <span>
-                <strong>For weak chapters</strong>
-                <span>Write exact topic names instead of vague requests.</span>
-              </span>
-            </div>
-
-            <div class="side-check-item">
-              <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-              <span>
-                <strong>For exam practice</strong>
-                <span>Use balanced or hard difficulty after basic revision.</span>
-              </span>
-            </div>
-
-            <div class="side-check-item">
-              <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-              <span>
-                <strong>For real improvement</strong>
-                <span>Read explanations after submitting. That is where marks improve.</span>
-              </span>
-            </div>
-          </div>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>
+              <span class="text-sm"><strong>Specific Topics:</strong> Use exact chapter names for better results.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>
+              <span class="text-sm"><strong>Difficulty:</strong> Start balanced, then move to hard for exams.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>
+              <span class="text-sm"><strong>Review:</strong> Always read the explanations after submission.</span>
+            </li>
+          </ul>
         </div>
-      </aside>
+
+        <div class="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-8 border border-slate-200 dark:border-slate-800">
+          <h3 class="font-bold mb-2">Did you know?</h3>
+          <p class="text-sm text-slate-500 leading-relaxed">
+            Students who practice with AI-generated quizzes improve their retention rate by up to 40% compared to passive reading.
+          </p>
+        </div>
+      </div>
     </section>
 
     <div id="skeleton-loader" class="hidden mt-8 ai-generator-card p-8" role="status" aria-live="polite"
@@ -370,6 +290,55 @@
   <script type="module" src="js/layout.js"></script>
 
   <script>
+    // ==================== REDESIGN HELPERS ====================
+    function setExamType(type, btn) {
+      const hiddenInput = document.getElementById('exam-type');
+      hiddenInput.value = type;
+      
+      document.querySelectorAll('.exam-type-btn').forEach(b => {
+        b.style.background = '';
+        b.style.color = '';
+        b.style.borderColor = '';
+        b.removeAttribute('data-active');
+      });
+      
+      btn.style.background = 'var(--primary)';
+      btn.style.color = 'white';
+      btn.style.borderColor = 'var(--primary)';
+      btn.setAttribute('data-active', 'true');
+      
+      if (typeof saveFormState === 'function') saveFormState();
+    }
+
+    function setDifficulty(level, btn) {
+      const hiddenInput = document.getElementById('difficulty');
+      hiddenInput.value = level;
+      
+      document.querySelectorAll('.difficulty-btn').forEach(b => {
+        b.style.background = '';
+        b.style.color = '';
+        b.style.borderColor = '';
+        b.removeAttribute('data-active');
+      });
+      
+      const color = '#10b981'; // emerald-500
+      btn.style.background = color;
+      btn.style.color = 'white';
+      btn.style.borderColor = color;
+      btn.setAttribute('data-active', 'true');
+      
+      if (typeof saveFormState === 'function') saveFormState();
+    }
+
+    function updateSliderValue(slider) {
+      const valueDisplay = document.getElementById('question-count-value');
+      if (valueDisplay) valueDisplay.textContent = slider.value;
+      
+      // Update existing progress if function exists
+      if (typeof updateSliderProgress === 'function') updateSliderProgress();
+      if (typeof saveFormState === 'function') saveFormState();
+    }
+
     // ==================== AI QUIZ GENERATOR - ENHANCED VERSION ====================
     let currentQuizData = null;
     let userAnswers = {};
@@ -469,12 +438,9 @@
         if (state.subject) document.getElementById('subject').value = state.subject;
 
         if (state.examType) {
-          const btnMid = document.getElementById('btn-midterm');
-          const btnFinal = document.getElementById('btn-final');
-          const target = state.examType === 'final' ? btnFinal : btnMid;
-
-          document.getElementById('exam-type').value = state.examType === 'final' ? 'final' : 'midterm';
-          setButtonPressed([btnMid, btnFinal], target);
+          const buttons = document.querySelectorAll('.exam-type-btn');
+          const target = state.examType === 'final' ? buttons[1] : buttons[0];
+          if (target) setExamType(state.examType, target);
         }
 
         if (state.topics) document.getElementById('topics').value = state.topics;
@@ -486,13 +452,10 @@
         }
 
         if (state.difficulty) {
-          const buttons = Array.from(document.querySelectorAll('.difficulty-btn'));
-          const active = buttons.find((btn) => btn.dataset.difficulty === state.difficulty);
-
-          if (active) {
-            document.getElementById('difficulty').value = state.difficulty;
-            setButtonPressed(buttons, active);
-          }
+          const buttons = document.querySelectorAll('.difficulty-btn');
+          const diffMap = { easy: buttons[0], balanced: buttons[1], hard: buttons[2] };
+          const target = diffMap[state.difficulty];
+          if (target) setDifficulty(state.difficulty, target);
         }
       } catch (e) {
         console.warn('Could not restore form state');
@@ -500,33 +463,7 @@
     }
 
     // ==================== SETUP FUNCTIONS ====================
-    function setupExamTypeToggle() {
-      const btnMid = document.getElementById('btn-midterm');
-      const btnFinal = document.getElementById('btn-final');
-      const hiddenInput = document.getElementById('exam-type');
-      const buttons = [btnMid, btnFinal];
 
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          setButtonPressed(buttons, btn);
-          hiddenInput.value = btn === btnMid ? 'midterm' : 'final';
-          saveFormState();
-        });
-      });
-    }
-
-    function setupDifficultyButtons() {
-      const buttons = Array.from(document.querySelectorAll('.difficulty-btn'));
-      const hiddenInput = document.getElementById('difficulty');
-
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          setButtonPressed(buttons, btn);
-          hiddenInput.value = btn.dataset.difficulty;
-          saveFormState();
-        });
-      });
-    }
 
     function updateSliderProgress() {
       const slider = document.getElementById('question-count');
@@ -1062,8 +999,7 @@
       if (aiQuizInitialized) return;
       aiQuizInitialized = true;
 
-      setupExamTypeToggle();
-      setupDifficultyButtons();
+      // setupExamTypeToggle and setupDifficultyButtons are now handled by onclick
       setupQuestionSlider();
       setupFileUpload();
       setupFormSubmission();

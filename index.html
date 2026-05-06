@@ -276,8 +276,32 @@
           built by students, for students.
         </p>
 
+        <!-- Quick Subject Access (Hero filter buttons) -->
+        <div class="mt-8 flex flex-wrap justify-center gap-2.5" id="hero-subject-filters" data-aos="fade-up" data-aos-delay="200">
+          <button onclick="selectHeroSubject(this, 'Calculus')" 
+                  class="hero-subject-btn px-5 py-2 rounded-2xl text-sm font-semibold border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5">
+            <span>Calculus</span>
+          </button>
+          <button onclick="selectHeroSubject(this, 'Data Structures')" 
+                  class="hero-subject-btn px-5 py-2 rounded-2xl text-sm font-semibold border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5">
+            <span>Data Structures</span>
+          </button>
+          <button onclick="selectHeroSubject(this, 'OOP')" 
+                  class="hero-subject-btn px-5 py-2 rounded-2xl text-sm font-semibold border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5">
+            <span>OOP</span>
+          </button>
+          <button onclick="selectHeroSubject(this, 'Networks')" 
+                  class="hero-subject-btn px-5 py-2 rounded-2xl text-sm font-semibold border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5">
+            <span>Networks</span>
+          </button>
+          <button onclick="selectHeroSubject(this, 'AI')" 
+                  class="hero-subject-btn px-5 py-2 rounded-2xl text-sm font-semibold border border-gray-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5">
+            <span>AI</span>
+          </button>
+        </div>
+
         <!-- CTA Buttons (with footer-style smooth hover) -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8">
           <a href="subjects.html"
             class="ui-button-primary w-full sm:w-auto text-[15px] px-8 py-3.5 rounded-full shadow-md">
             <span class="material-symbols-outlined text-[18px] mr-2">auto_stories</span>
@@ -549,6 +573,12 @@
 
 
   <script>
+    function selectHeroSubject(btn, subject) {
+      document.querySelectorAll('.hero-subject-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Optional: window.location.href = `subjects.html?subject=${subject}`;
+    }
+
     // Show real stats after page loads (removes skeleton)
     window.addEventListener('load', function () {
       const skeleton = document.getElementById('stats-skeleton');

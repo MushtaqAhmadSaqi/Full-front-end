@@ -223,80 +223,107 @@ function _injectHeaderCriticalCSS() {
   style.id = 'header-critical-css';
 
   style.textContent = `
-    .desktop-nav-force {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      background: rgba(243, 244, 246, 0.65);
-      border: 1px solid rgba(229, 231, 235, 0.75);
-      border-radius: 999px;
-      padding: 4px;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-    }
+  .desktop-nav-force {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: rgba(243, 244, 246, 0.65);
+    border: 1px solid rgba(229, 231, 235, 0.75);
+    border-radius: 9999px;
+    padding: 4px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  }
 
+  .desktop-nav-force a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 22px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === ACTIVE STATE (distinct & prominent) === */
+  .desktop-nav-force a.nav-active {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    color: #1e40af;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid #bfdbfe;
+    font-weight: 800;
+  }
+
+  .desktop-nav-force a.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 3px;
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    border-radius: 9999px;
+  }
+
+  /* Hover on inactive */
+  .desktop-nav-force a.nav-normal:hover {
+    background: rgba(255,255,255,0.85);
+    color: #1e3a8a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  }
+
+  /* Dark mode */
+  .dark .desktop-nav-force {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(148, 163, 184, 0.15);
+  }
+  .dark .desktop-nav-force a.nav-active {
+    background: rgba(30, 64, 175, 0.25);
+    color: #bae6fd;
+    border-color: #60a5fa;
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+  }
+  .dark .desktop-nav-force a.nav-active::after {
+    background: linear-gradient(to right, #60a5fa, #bae6fd);
+  }
+  .dark .desktop-nav-force a.nav-normal:hover {
+    background: rgba(148, 163, 184, 0.12);
+    color: #e0f2fe;
+  }
+
+  /* Focus ring for accessibility */
+  .desktop-nav-force a:focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desktop-nav-force a { transition: none !important; }
+  }
+
+  @media (max-width: 767px) {
+    .desktop-nav-force { display: none !important; }
+  }
+
+  @media (max-width: 1024px) {
     .desktop-nav-force a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 20px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
+      padding: 8px 14px;
+      font-size: 13px;
     }
-
-    .desktop-nav-force a.nav-active {
-      background: #ffffff;
-      color: #2563eb;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
-    }
-
-    .desktop-nav-force a.nav-normal {
-      color: #4b5563;
-    }
-
-    .desktop-nav-force a.nav-normal:hover {
-      background: rgba(255, 255, 255, 0.75);
-      color: #111827;
-    }
-
-    .dark .desktop-nav-force {
-      background: rgba(0, 0, 0, 0.25);
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .dark .desktop-nav-force a.nav-active {
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-    }
-
-    .dark .desktop-nav-force a.nav-normal {
-      color: #cbd5e1;
-    }
-
-    .dark .desktop-nav-force a.nav-normal:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-
-    @media (max-width: 767px) {
-      .desktop-nav-force {
-        display: none !important;
-      }
-    }
-
-    @media (max-width: 1024px) {
-      .desktop-nav-force a {
-        padding: 8px 14px;
-        font-size: 13px;
-      }
-    }
+  }
   `;
 
   document.head.appendChild(style);
