@@ -287,6 +287,7 @@
 
   <div id="app-footer"></div>
 
+  <script type="module" src="js/core.js"></script>
   <script type="module" src="js/layout.js"></script>
 
   <script>
@@ -604,29 +605,31 @@
       document.getElementById('progress-bar').style.width = `${percent}%`;
     }
 
-    // ==================== FORM SUBMISSION ====================
+    // ==================== FORM SUBMISSION (FIXED) ====================
     function setupFormSubmission() {
       const form = document.getElementById('ai-quiz-form');
       const generateBtn = document.getElementById('generate-btn');
-      const btnText = document.getElementById('btn-text');
+      const btnText = document.getElementById('btn-text') || document.getElementById('generate-text');
       const skeletonLoader = document.getElementById('skeleton-loader');
       const preview = document.getElementById('quiz-preview');
 
-      if (!form || !generateBtn || !btnText || !skeletonLoader || !preview) return;
+      if (!form || !generateBtn || !btnText || !skeletonLoader || !preview) {
+        console.error('❌ Missing form elements. Check IDs in HTML.');
+        return;
+      }
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         if (isGeneratingQuiz) {
-          showToast('Quiz is already generating. Wait a few seconds.', 'info');
+          showToast('Quiz is already generating. Please wait.', 'info');
           return;
         }
 
-        const subject = document.getElementById('subject');
-
-        if (!subject.value) {
+        const subjectSelect = document.getElementById('subject');
+        if (!subjectSelect || !subjectSelect.value) {
           showToast('Please select a subject first.', 'error');
-          subject.focus();
+          subjectSelect?.focus();
           return;
         }
 
@@ -636,23 +639,22 @@
         generateBtn.disabled = true;
         generateBtn.setAttribute('aria-busy', 'true');
 
+        const originalText = btnText.textContent || 'Generate Quiz with AI';
         btnText.innerHTML = `
-          <span class="animate-spin material-symbols-outlined mr-2" aria-hidden="true">autorenew</span>
+          <span class="animate-spin material-symbols-outlined mr-2">autorenew</span>
           Generating...
         `;
 
         skeletonLoader.classList.remove('hidden');
         preview.classList.add('hidden');
 
-        if (typeof stopTimer === 'function') {
-          stopTimer();
-        }
+        if (typeof stopTimer === 'function') stopTimer();
 
         const formData = {
-          subject: document.getElementById('subject').value,
+          subject: subjectSelect.value,
           examType: document.getElementById('exam-type').value,
-          topics: document.getElementById('topics').value,
-          questionCount: document.getElementById('question-count').value,
+          topics: document.getElementById('topics').value.trim(),
+          questionCount: parseInt(document.getElementById('question-count').value, 10),
           difficulty: document.getElementById('difficulty').value
         };
 
@@ -668,30 +670,30 @@
           const result = await response.json();
 
           if (!response.ok) {
-            throw new Error(result.error || 'Failed to generate quiz.');
+            throw new Error(result.error || `Server error (${response.status})`);
           }
 
           if (!result || !Array.isArray(result.questions) || result.questions.length === 0) {
-            throw new Error('AI did not return valid quiz questions. Try again with clearer topics.');
+            throw new Error('AI did not return valid questions. Try again with different topics.');
           }
 
           currentQuizData = result;
           skeletonLoader.classList.add('hidden');
-
           displayQuizForTaking(result);
-          showToast('Quiz generated successfully.');
+          showToast('Quiz generated successfully! 🎉');
+
         } catch (error) {
           if (requestId === activeQuizRequestId) {
             skeletonLoader.classList.add('hidden');
-            console.error("Quiz generation error:", error);
-            showToast(error.message, 'error');
+            console.error('Quiz generation error:', error);
+            showToast(error.message || 'Failed to generate quiz. Please try again.', 'error');
           }
         } finally {
           if (requestId === activeQuizRequestId) {
             isGeneratingQuiz = false;
             generateBtn.disabled = false;
             generateBtn.removeAttribute('aria-busy');
-            btnText.textContent = 'Generate Quiz with AI';
+            btnText.textContent = originalText;
           }
         }
       });
@@ -994,10 +996,80 @@
       });
     }
 
+    // ==================== DYNAMIC SUBJECTS FROM SUPABASE ====================
+    async function loadSubjectsFromSupabase() {
+      const select = document.getElementById('subject');
+      if (!select) return;
+
+      select.innerHTML = '<option value="">Loading subjects from database...</option>';
+      select.disabled = true;
+
+      try {
+        // Load Supabase client (from core.js)
+        const { supabase } = await import('./js/core.js');
+
+        const { data, error } = await supabase
+          .from('past_papers')
+          .select('subject_name')
+          .order('subject_name', { ascending: true });
+
+        if (error) throw error;
+
+        // Get unique subject names
+        const uniqueSubjects = [...new Set(
+          data.map(row => row.subject_name).filter(Boolean)
+        )];
+
+        // Rebuild dropdown
+        select.innerHTML = '<option value="">Select a subject...</option>';
+
+        uniqueSubjects.forEach(subject => {
+          const option = document.createElement('option');
+          option.value = subject;
+          option.textContent = subject;
+          select.appendChild(option);
+        });
+
+        select.disabled = false;
+
+        // Restore previously selected subject (if any)
+        const savedState = localStorage.getItem('quizFormState');
+        if (savedState) {
+          const state = JSON.parse(savedState);
+          if (state.subject && uniqueSubjects.includes(state.subject)) {
+            select.value = state.subject;
+          }
+        }
+
+      } catch (err) {
+        console.error('Failed to load subjects:', err);
+        
+        // Fallback to original hardcoded list
+        select.innerHTML = `
+          <option value="">Select a subject...</option>
+          <option value="Calculus">Calculus</option>
+          <option value="Data Structures">Data Structures</option>
+          <option value="Object Oriented Programming">Object Oriented Programming</option>
+          <option value="Computer Networks">Computer Networks</option>
+          <option value="Database Systems">Database Systems</option>
+          <option value="Software Engineering">Software Engineering</option>
+          <option value="Linear Algebra">Linear Algebra</option>
+          <option value="Digital Logic Design">Digital Logic Design</option>
+          <option value="Operating Systems">Operating Systems</option>
+          <option value="Artificial Intelligence">Artificial Intelligence</option>
+        `;
+        select.disabled = false;
+        showToast('Could not load subjects from database. Using default list.', 'info');
+      }
+    }
+
     // ==================== INITIALIZE ====================
-    function initAIQuizGenerator() {
+    async function initAIQuizGenerator() {
       if (aiQuizInitialized) return;
       aiQuizInitialized = true;
+
+      // Load subjects FIRST (important)
+      await loadSubjectsFromSupabase();
 
       // setupExamTypeToggle and setupDifficultyButtons are now handled by onclick
       setupQuestionSlider();
