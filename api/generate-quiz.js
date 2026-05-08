@@ -1,7 +1,4 @@
 // api/generate-quiz.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,97 +12,113 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Subject is required' });
     }
 
-    // Choose model (stable version)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const apiKey = process.env.YOU_API_KEY;
+    if (!apiKey) {
+      return res.status(401).json({ error: 'YOU_API_KEY is missing in environment variables. Please check your configuration.' });
+    }
 
-    // Build smart prompt with instructions embedded (more stable than systemInstruction parameter)
-    let prompt = `You are an expert COMSATS University Islamabad exam setter.
-Create a high-quality, realistic exam-style quiz in JSON format.
+    // Build the research prompt
+    const prompt = `You are an expert COMSATS University Islamabad exam setter.
+Generate a high-quality, undergraduate-level quiz for the following:
+- Subject: "${subject}"
+- Exam Type: ${examType} (${examType === 'midterm' ? 'First half of syllabus' : 'Full syllabus coverage'})
+- Topics: ${topics || "All major chapters/full course"}
+- Difficulty: ${difficulty}
+- Number of Questions: ${questionCount}
+
+Context/Notes: ${notes || 'None provided'}
 
 RULES:
-- Return ONLY valid JSON.
-- Questions must be syllabus-aligned and undergraduate level.
-- Include 1-2 lines explanation for each correct answer.
+1. Ensure questions are challenging, conceptual, and fair for COMSATS students.
+2. Provide exactly 4 distinct options per question.
+3. Include a helpful 1-2 line explanation for the correct answer.
+4. Output the result in the exact JSON structure requested.`;
 
-QUIZ SPECS:
-- Subject: "${subject}"
-- Exam Type: ${examType}
-- Number of Questions: ${questionCount}
-- Difficulty: ${difficulty}
-- Topics: ${topics || "Full syllabus"}
-
-${examType === 'midterm' 
-  ? 'Focus on the first half of the syllabus. Conceptual and application questions.' 
-  : 'Comprehensive coverage of the full syllabus. High-order thinking (analysis, evaluation).'}
-
-${notes ? `Context from notes: ${notes}` : ''}
-
-JSON FORMAT:
-{
-  "title": "${subject} - ${examType.toUpperCase()} Quiz",
-  "questions": [
-    {
-      "id": 1,
-      "question": "Question text here?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": 0,
-      "explanation": "Brief explanation"
-    }
-  ]
-}`;
-
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-      }
+    const response = await fetch('https://api.you.com/v1/research', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        input: prompt,
+        research_effort: 'standard',
+        output_schema: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            questions: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number" },
+                  question: { type: "string" },
+                  options: { type: "array", items: { type: "string" }, minItems: 4, maxItems: 4 },
+                  correctAnswer: { type: "number", minimum: 0, maximum: 3 },
+                  explanation: { type: "string" }
+                },
+                required: ["id", "question", "options", "correctAnswer", "explanation"],
+                additionalProperties: false
+              }
+            }
+          },
+          required: ["title", "questions"],
+          additionalProperties: false
+        }
+      }),
     });
 
-    const response = await result.response;
-    let text = response.text();
-
-    // Parse JSON safely
-    let quizData;
-    try {
-      quizData = JSON.parse(text);
-    } catch (parseError) {
-      console.error("JSON Parse Error. Raw text:", text);
-      return res.status(500).json({ 
-        error: "AI returned invalid format. Please try again with simpler topics." 
-      });
+    if (!response.ok) {
+      let errorMessage = `You.com API Error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch (e) {}
+      throw new Error(errorMessage);
     }
 
-    // Add metadata
+    const data = await response.json();
+    
+    // The Research API returns structured data in data.output when output_schema is used.
+    // If output_schema is not yet fully returning the object directly, we might need to parse.
+    let quizData = data.output;
+    
+    if (!quizData || !quizData.questions) {
+      // Fallback if it returns JSON as a string in content
+      if (data.output && data.output.content) {
+        try {
+          quizData = JSON.parse(data.output.content);
+        } catch (e) {
+          throw new Error("AI returned invalid format. Please try again.");
+        }
+      } else {
+        throw new Error("Failed to receive valid quiz data from AI.");
+      }
+    }
+
+    // Add metadata for the frontend
     quizData.metadata = {
       subject,
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,
-      model: "gemini-2.0-flash"
+      model: "you-research"
     };
 
     return res.status(200).json(quizData);
 
   } catch (error) {
-    console.error("Gemini API Error details:", error);
+    console.error("Quiz Generation Error:", error);
 
-    // Specific error handling
-    if (error.message.includes("API key")) {
-      return res.status(401).json({ error: "Invalid or missing GEMINI_API_KEY. Check your environment variables." });
-    }
-
+    // Provide user-friendly error messages
     if (error.message.includes("quota") || error.message.includes("429")) {
-      return res.status(429).json({ 
-        error: "Daily limit reached. Please try again in an hour or use pre-generated quizzes." 
-      });
-    }
-
-    if (error.message.includes("safety") || error.message.includes("blocked")) {
-      return res.status(400).json({ error: "The request was blocked by AI safety filters. Try changing the topics." });
+      return res.status(429).json({ error: "API limit reached. Please try again later." });
     }
 
     return res.status(500).json({ 
-      error: `Generation failed: ${error.message}` 
+      error: error.message || "Failed to generate quiz. Please try again." 
     });
   }
 }
+
