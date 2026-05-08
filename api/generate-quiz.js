@@ -41,7 +41,7 @@ RULES:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: prompt,
+        input: prompt + "\n\nCRITICAL: Return ONLY the raw JSON object. Do not include any markdown formatting, backticks, or introductory text.",
         research_effort: 'standard',
         output_schema: {
           type: "object",
@@ -80,25 +80,39 @@ RULES:
 
     const data = await response.json();
     
-    // 1. Try to get data from data.output (if output_schema worked directly)
-    let quizData = data.output;
-    
-    // 2. If it's missing or doesn't look like our quiz, check data.output.content (common for Beta features)
-    if (!quizData || !quizData.questions) {
-      const rawContent = data.output?.content || '';
-      
-      try {
-        // Attempt to extract JSON if it's wrapped in text or markdown backticks
-        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          quizData = JSON.parse(jsonMatch[0]);
-        } else {
-          quizData = JSON.parse(rawContent);
-        }
-      } catch (e) {
-        console.error("Failed to parse AI content as JSON:", rawContent);
-        throw new Error("AI returned a non-standard format. Please try again with a simpler topic.");
+    // Attempt to find the quiz data in various possible fields
+    let rawContent = "";
+    if (data.output && typeof data.output === 'object') {
+      if (data.output.questions) {
+        // Already structured
+        rawContent = JSON.stringify(data.output);
+      } else {
+        rawContent = data.output.content || JSON.stringify(data.output);
       }
+    } else {
+      rawContent = String(data.output || "");
+    }
+
+    let quizData = null;
+    try {
+      // Clean content: remove markdown backticks and find first { and last }
+      let cleaned = rawContent.trim();
+      
+      // Remove ```json and ``` blocks
+      cleaned = cleaned.replace(/```json/g, '').replace(/```/g, '');
+      
+      const startIdx = cleaned.indexOf('{');
+      const endIdx = cleaned.lastIndexOf('}');
+      
+      if (startIdx !== -1 && endIdx !== -1) {
+        cleaned = cleaned.substring(startIdx, endIdx + 1);
+        quizData = JSON.parse(cleaned);
+      } else {
+        throw new Error("No JSON object found in response");
+      }
+    } catch (e) {
+      console.error("Parse failure. Raw output:", rawContent);
+      throw new Error("AI returned an incompatible format. Please try again.");
     }
 
     // Double check we have questions
