@@ -89,11 +89,11 @@ Ensure the output is strictly valid JSON and nothing else.`;
     return res.status(200).json(quizData);
 
   } catch (error) {
+    console.error('Quiz Generation Error:', error);
+    return res.status(500).json({
+      error: `Generation failed: ${error.message}`
+    });
   }
-
-  return res.status(500).json({
-    error: `Generation failed: ${error.message}`
-  });
 }
 
 
