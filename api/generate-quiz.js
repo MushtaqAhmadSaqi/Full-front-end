@@ -18,34 +18,12 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'You.com API key (YOU_API_KEY) not configured' });
     }
 
-    // Build the agentic prompt
-    const prompt = `Act as a senior COMSATS University Islamabad exam setter.
-Research and create a high-quality, realistic exam-style quiz for the subject: "${subject}".
-Exam Type: ${examType}
-Difficulty: ${difficulty}
-Topics: ${topics || "Full syllabus"}
-Number of Questions: ${questionCount}
+    // Build a more direct prompt for the Smart endpoint
+    const prompt = `Create a ${questionCount}-question multiple choice quiz for "${subject}" (${examType} level). 
+Return ONLY a JSON object: {"title": "Quiz", "questions": [{"question": "...", "options": ["A","B","C","D"], "correctAnswer": 0, "explanation": "..."}]}`;
 
-INSTRUCTIONS:
-1. Research the latest undergraduate syllabus for this subject.
-2. Create ${questionCount} multiple choice questions.
-3. Return ONLY a JSON object with this structure:
-{
-  "title": "Quiz Title",
-  "questions": [
-    {
-      "question": "Question text?",
-      "options": ["A", "B", "C", "D"],
-      "correctAnswer": 0,
-      "explanation": "Brief explanation"
-    }
-  ]
-}
-
-Ensure the output is strictly valid JSON and nothing else.`;
-
-    // Call You.com Research API
-    const response = await axios.get('https://api.ydc-index.io/research', {
+    // Call You.com Smart API (Faster and more stable)
+    const response = await axios.get('https://api.ydc-index.io/smart', {
       params: { q: prompt },
       headers: { 'X-API-Key': apiKey }
     });
