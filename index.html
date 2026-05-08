@@ -574,9 +574,13 @@
 
   <script>
     function selectHeroSubject(btn, subject) {
-      document.querySelectorAll('.hero-subject-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.hero-subject-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
-      // Optional: window.location.href = `subjects.html?subject=${subject}`;
+      btn.setAttribute('aria-pressed', 'true');
+      // Optional: window.location.href = `subjects.html?subject=${encodeURIComponent(subject)}`;
     }
 
     // Show real stats after page loads (removes skeleton)
