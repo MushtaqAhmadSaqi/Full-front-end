@@ -80,21 +80,30 @@ RULES:
 
     const data = await response.json();
     
-    // The Research API returns structured data in data.output when output_schema is used.
-    // If output_schema is not yet fully returning the object directly, we might need to parse.
+    // 1. Try to get data from data.output (if output_schema worked directly)
     let quizData = data.output;
     
+    // 2. If it's missing or doesn't look like our quiz, check data.output.content (common for Beta features)
     if (!quizData || !quizData.questions) {
-      // Fallback if it returns JSON as a string in content
-      if (data.output && data.output.content) {
-        try {
-          quizData = JSON.parse(data.output.content);
-        } catch (e) {
-          throw new Error("AI returned invalid format. Please try again.");
+      const rawContent = data.output?.content || '';
+      
+      try {
+        // Attempt to extract JSON if it's wrapped in text or markdown backticks
+        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          quizData = JSON.parse(jsonMatch[0]);
+        } else {
+          quizData = JSON.parse(rawContent);
         }
-      } else {
-        throw new Error("Failed to receive valid quiz data from AI.");
+      } catch (e) {
+        console.error("Failed to parse AI content as JSON:", rawContent);
+        throw new Error("AI returned a non-standard format. Please try again with a simpler topic.");
       }
+    }
+
+    // Double check we have questions
+    if (!quizData || !Array.isArray(quizData.questions)) {
+      throw new Error("AI failed to generate questions. Please try again.");
     }
 
     // Add metadata for the frontend
