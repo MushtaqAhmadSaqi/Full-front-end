@@ -58,19 +58,25 @@ JSON FORMAT:
 }`;
 
     const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-      }
+      contents: [{ role: 'user', parts: [{ text: prompt }] }]
     });
 
     const response = await result.response;
     let text = response.text();
 
-    // Parse JSON safely
+    // Parse JSON safely - handles cases where AI wraps JSON in markdown backticks
     let quizData;
     try {
-      quizData = JSON.parse(text);
+      // Find the first '{' and last '}' to strip any conversational filler
+      const startIdx = text.indexOf('{');
+      const endIdx = text.lastIndexOf('}');
+      
+      if (startIdx !== -1 && endIdx !== -1) {
+        const jsonContent = text.substring(startIdx, endIdx + 1);
+        quizData = JSON.parse(jsonContent);
+      } else {
+        quizData = JSON.parse(text);
+      }
     } catch (parseError) {
       console.error("JSON Parse Error. Raw text:", text);
       return res.status(500).json({ 
