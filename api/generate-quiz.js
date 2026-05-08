@@ -1,7 +1,5 @@
 // api/generate-quiz.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+import axios from 'axios';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,72 +13,67 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Subject is required' });
     }
 
-    // Choose model (Most compatible setup)
-    const model = genAI.getGenerativeModel(
-      { model: "gemini-pro" },
-      { apiVersion: "v1" }
-    );
+    const apiKey = process.env.YOU_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'You.com API key (YOU_API_KEY) not configured' });
+    }
 
-    // Build smart prompt with instructions embedded
-    let prompt = `You are an expert COMSATS University Islamabad exam setter.
-Create a high-quality, realistic exam-style quiz in JSON format.
+    // Build the agentic prompt
+    const prompt = `Act as a senior COMSATS University Islamabad exam setter.
+Research and create a high-quality, realistic exam-style quiz for the subject: "${subject}".
+Exam Type: ${examType}
+Difficulty: ${difficulty}
+Topics: ${topics || "Full syllabus"}
+Number of Questions: ${questionCount}
 
-RULES:
-- Return ONLY valid JSON.
-- Questions must be syllabus-aligned and undergraduate level.
-- Include 1-2 lines explanation for each correct answer.
-
-QUIZ SPECS:
-- Subject: "${subject}"
-- Exam Type: ${examType}
-- Number of Questions: ${questionCount}
-- Difficulty: ${difficulty}
-- Topics: ${topics || "Full syllabus"}
-
-${examType === 'midterm' 
-  ? 'Focus on the first half of the syllabus. Conceptual and application questions.' 
-  : 'Comprehensive coverage of the full syllabus. High-order thinking (analysis, evaluation).'}
-
-${notes ? `Context from notes: ${notes}` : ''}
-
-JSON FORMAT:
+INSTRUCTIONS:
+1. Research the latest undergraduate syllabus for this subject.
+2. Create ${questionCount} multiple choice questions.
+3. Return ONLY a JSON object with this structure:
 {
-  "title": "${subject} - ${examType.toUpperCase()} Quiz",
+  "title": "Quiz Title",
   "questions": [
     {
-      "id": 1,
-      "question": "Question text here?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "question": "Question text?",
+      "options": ["A", "B", "C", "D"],
       "correctAnswer": 0,
       "explanation": "Brief explanation"
     }
   ]
-}`;
+}
 
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }]
+Ensure the output is strictly valid JSON and nothing else.`;
+
+    // Call You.com Research API
+    const response = await axios.get('https://api.ydc-index.io/research', {
+      params: { q: prompt },
+      headers: { 'X-API-Key': apiKey }
     });
 
-    const response = await result.response;
-    let text = response.text();
+    // You.com returns an array of hits or a research summary. 
+    // We look for the model's generated text in the response.
+    const rawText = response.data.answer || response.data.content || "";
 
-    // Parse JSON safely - handles cases where AI wraps JSON in markdown backticks
+    if (!rawText) {
+      throw new Error("No response from You.com API");
+    }
+
+    // Parse JSON safely
     let quizData;
     try {
-      // Find the first '{' and last '}' to strip any conversational filler
-      const startIdx = text.indexOf('{');
-      const endIdx = text.lastIndexOf('}');
-      
+      const startIdx = rawText.indexOf('{');
+      const endIdx = rawText.lastIndexOf('}');
+
       if (startIdx !== -1 && endIdx !== -1) {
-        const jsonContent = text.substring(startIdx, endIdx + 1);
+        const jsonContent = rawText.substring(startIdx, endIdx + 1);
         quizData = JSON.parse(jsonContent);
       } else {
-        quizData = JSON.parse(text);
+        quizData = JSON.parse(rawText);
       }
     } catch (parseError) {
-      console.error("JSON Parse Error. Raw text:", text);
-      return res.status(500).json({ 
-        error: "AI returned invalid format. Please try again with simpler topics." 
+      console.error("JSON Parse Error. Raw text:", rawText);
+      return res.status(500).json({
+        error: "AI returned invalid format. Please try again with simpler topics."
       });
     }
 
@@ -90,33 +83,18 @@ JSON FORMAT:
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,
-      model: "gemini-1.5-flash"
+      provider: "You.com Research"
     };
 
     return res.status(200).json(quizData);
 
   } catch (error) {
-    console.error("Gemini API Error details:", error);
-
-    // Specific error handling
-    if (error.message.includes("API key")) {
-      return res.status(401).json({ error: "Invalid or missing GEMINI_API_KEY. Check your environment variables." });
-    }
-
-    if (error.message.includes("quota") || error.message.includes("429")) {
-      return res.status(429).json({ 
-        error: "Daily limit reached. Please try again in an hour or use pre-generated quizzes." 
-      });
-    }
-
-    if (error.message.includes("safety") || error.message.includes("blocked")) {
-      return res.status(400).json({ error: "The request was blocked by AI safety filters. Try changing the topics." });
-    }
-
-    return res.status(500).json({ 
-      error: `Generation failed: ${error.message}` 
-    });
   }
+
+  return res.status(500).json({
+    error: `Generation failed: ${error.message}`
+  });
 }
+
 
 
