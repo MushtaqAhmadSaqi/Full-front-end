@@ -15,8 +15,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Subject is required' });
     }
 
-    // Choose model (stable version)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    // Choose model (stable version with higher quota)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Build smart prompt with instructions embedded
     let prompt = `You are an expert COMSATS University Islamabad exam setter.
@@ -81,7 +81,7 @@ JSON FORMAT:
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,
-      model: "gemini-2.0-flash"
+      model: "gemini-1.5-flash"
     };
 
     return res.status(200).json(quizData);

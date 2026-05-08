@@ -642,6 +642,7 @@
         const requestId = ++activeQuizRequestId;
 
         generateBtn.disabled = true;
+        generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
         generateBtn.setAttribute('aria-busy', 'true');
 
         const originalText = btnText.textContent || 'Generate Quiz with AI';
@@ -697,6 +698,7 @@
           if (requestId === activeQuizRequestId) {
             isGeneratingQuiz = false;
             generateBtn.disabled = false;
+            generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             generateBtn.removeAttribute('aria-busy');
             btnText.textContent = originalText;
           }
