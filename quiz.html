@@ -586,6 +586,46 @@
         }
       }
 
+      function getCorrectOptionIndex(question) {
+        const rawValue =
+          question.correct_option_index ??
+          question.correctAnswer ??
+          question.correct_answer ??
+          question.answer_index ??
+          question.answer;
+
+        if (rawValue === undefined || rawValue === null) {
+          return -1;
+        }
+
+        if (typeof rawValue === 'number') {
+          return rawValue;
+        }
+
+        const value = String(rawValue).trim();
+
+        // Supports answers like A, B, C, D
+        const letterMap = {
+          A: 0,
+          B: 1,
+          C: 2,
+          D: 3,
+        };
+
+        if (letterMap[value.toUpperCase()] !== undefined) {
+          return letterMap[value.toUpperCase()];
+        }
+
+        // Supports answers stored as "0", "1", "2", "3"
+        const numberValue = Number(value);
+
+        if (Number.isInteger(numberValue)) {
+          return numberValue;
+        }
+
+        return -1;
+      }
+
       // â”€â”€ Render Current Question â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function renderQuestion() {
         const q = questions[currentQuestionIndex];
@@ -606,18 +646,26 @@
 
         q.options.forEach((optText, index) => {
           const label = document.createElement('label');
-          label.className = 'quiz-option';
 
-          const isSelected = selectedAnswers[currentQuestionIndex] === index;
+          // Important: use qz-option because qz-styles.css uses .qz-option.qz-correct and .qz-option.qz-wrong
+          label.className = 'qz-option';
+
+          const selectedIndex = Number(selectedAnswers[currentQuestionIndex]);
+          const correctIndex = getCorrectOptionIndex(q);
+          const isSelected = selectedAnswers[currentQuestionIndex] !== undefined && selectedIndex === index;
 
           if (hasAnswered) {
             label.classList.add('qz-opt-answered');
-            if (index === q.correct_option_index) {
+
+            if (index === correctIndex) {
               label.classList.add('qz-correct');
-            } else if (isSelected) {
+            }
+
+            if (isSelected && selectedIndex !== correctIndex) {
               label.classList.add('qz-wrong');
             }
           } else if (isSelected) {
+            label.classList.add('qz-selected');
             label.setAttribute('aria-selected', 'true');
           }
 
@@ -698,7 +746,12 @@
 
         let correctCount = 0;
         questions.forEach((q, i) => {
-          if (selectedAnswers[i] === q.correct_option_index) correctCount++;
+          const selectedIndex = Number(selectedAnswers[i]);
+          const correctIndex = getCorrectOptionIndex(q);
+
+          if (selectedIndex === correctIndex) {
+            correctCount++;
+          }
         });
 
         const total = questions.length;
