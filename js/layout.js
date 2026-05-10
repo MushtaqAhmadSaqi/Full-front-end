@@ -475,12 +475,14 @@ function _injectHeader(currentPage, session, userName) {
                 </div>
               </div>
             ` : `
-              <button id="open-auth-modal"
-                      class="flex items-center gap-2 bg-blue-600 dark:bg-white hover:bg-blue-700 dark:hover:bg-gray-100 text-white dark:text-[#1e1e2e] px-3 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs font-bold transition-all active:scale-95 shadow-md"
-                      type="button"
-                      aria-label="Open sign in dialog">
-                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">person</span>
-                <span class="hidden sm:inline">Sign In</span>
+              <button
+                type="button"
+                id="open-auth-modal"
+                class="auth-nav-btn"
+                aria-label="Open sign in modal"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                <span>Sign In</span>
               </button>
             `}
           </div>

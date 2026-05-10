@@ -9805,3 +9805,58 @@ main, section, .hero, .hero-section {
   }
 }
 
+/* =========================================================
+   SIGN IN BUTTON + AUTH MODAL FIX
+   Front-end only. No API/backend logic changed.
+   ========================================================= */
+
+.auth-nav-btn {
+  min-height: 46px;
+  padding: 0 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(14, 165, 233, 0.18);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.22);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.auth-nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(14, 165, 233, 0.32);
+}
+
+.auth-nav-btn .material-symbols-outlined {
+  font-size: 1.2rem;
+}
+
+.dark .auth-nav-btn {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border-color: rgba(125, 211, 252, 0.28);
+}
+
+/* Make sure auth modal appears above all sections */
+#auth-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+}
+
+/* Prevent header/hero from covering modal */
+#app-header,
+header {
+  z-index: 9990 !important;
+}
+
+
