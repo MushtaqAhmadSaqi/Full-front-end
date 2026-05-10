@@ -28,11 +28,44 @@ const runIdle = (callback, timeout = 1200) => {
   }
 };
 
+function _getCurrentPage() {
+  const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+  const lastSegment = path.split('/').pop() || 'index';
+
+  const cleanName = decodeURIComponent(lastSegment).replace(/\.html$/, '');
+
+  const routeMap = {
+    '': 'index.html',
+    'index': 'index.html',
+    'home': 'index.html',
+
+    'subjects': 'subjects.html',
+    'subject-papers': 'subject-papers.html',
+    'paper-view': 'paper-view.html',
+
+    'quiz': 'quiz.html',
+    'ai-quiz-generator': 'ai-quiz-generator.html',
+    'take-ai-quiz': 'take-ai-quiz.html',
+
+    'about': 'about-us.html',
+    'about-us': 'about-us.html',
+    'team': 'team.html',
+
+    'dashboard': 'dashboard.html',
+  };
+
+  if (routeMap[cleanName]) {
+    return routeMap[cleanName];
+  }
+
+  return cleanName.endsWith('.html') ? cleanName : `${cleanName}.html`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   let session = null;
   let userName = null;
 
-  const currentPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const currentPage = _getCurrentPage();
 
   try {
     session = await auth.getSession();
@@ -255,7 +288,8 @@ function _injectHeaderCriticalCSS() {
   }
 
   /* === ACTIVE STATE (distinct & prominent) === */
-  .desktop-nav-force a.nav-active {
+  .desktop-nav-force a.nav-active,
+  .desktop-nav-force a[aria-current="page"] {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     color: #1e40af;
     box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18),
@@ -264,7 +298,8 @@ function _injectHeaderCriticalCSS() {
     font-weight: 800;
   }
 
-  .desktop-nav-force a.nav-active::after {
+  .desktop-nav-force a.nav-active::after,
+  .desktop-nav-force a[aria-current="page"]::after {
     content: '';
     position: absolute;
     bottom: 2px;
@@ -335,10 +370,24 @@ function _injectHeader(currentPage, session, userName) {
   const isLoggedIn = !!session;
   const initial = userName ? userName.charAt(0).toUpperCase() : '?';
 
-  const isHomeActive = currentPage === 'index.html' || currentPage === '';
-  const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
-  const isQuizActive = currentPage === 'quiz.html';
-  const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
+  const isHomeActive = currentPage === 'index.html';
+
+  const isSubjectsActive = [
+    'subjects.html',
+    'subject-papers.html',
+    'paper-view.html',
+  ].includes(currentPage);
+
+  const isQuizActive = [
+    'quiz.html',
+    'ai-quiz-generator.html',
+    'take-ai-quiz.html',
+  ].includes(currentPage);
+
+  const isTeamActive = [
+    'about-us.html',
+    'team.html',
+  ].includes(currentPage);
 
   const base = _getBasePath();
   const isDark = document.documentElement.classList.contains('dark');
@@ -458,10 +507,24 @@ function _injectMobileNav(currentPage) {
   const container = document.getElementById('app-mobile-nav');
   if (!container && document.getElementById('mobileBottomNav')) return;
 
-  const isHomeActive = currentPage === 'index.html' || currentPage === '';
-  const isSubjectsActive = ['subjects.html', 'subject-papers.html', 'paper-view.html'].includes(currentPage);
-  const isQuizActive = currentPage === 'quiz.html';
-  const isTeamActive = ['about-us.html', 'team.html'].includes(currentPage);
+  const isHomeActive = currentPage === 'index.html';
+
+  const isSubjectsActive = [
+    'subjects.html',
+    'subject-papers.html',
+    'paper-view.html',
+  ].includes(currentPage);
+
+  const isQuizActive = [
+    'quiz.html',
+    'ai-quiz-generator.html',
+    'take-ai-quiz.html',
+  ].includes(currentPage);
+
+  const isTeamActive = [
+    'about-us.html',
+    'team.html',
+  ].includes(currentPage);
 
   const base = _getBasePath();
   const isDark = document.documentElement.classList.contains('dark');
