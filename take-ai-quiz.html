@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Take AI Quiz — COMSATSPrepHub</title>
+
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="styles/tailwind-built.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="qz-styles.css" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 30%),
+        #f8fafc;
+      color: #0f172a;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .quiz-shell {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    .quiz-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 28px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      padding: 26px;
+    }
+
+    .question-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .option-label {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      background: #fff;
+    }
+
+    .option-label:hover {
+      border-color: #38bdf8;
+      background: #f0f9ff;
+    }
+
+    .option-label.selected {
+      border-color: #0ea5e9;
+      background: #e0f2fe;
+    }
+
+    .option-label.correct {
+      border-color: #22c55e;
+      background: #dcfce7;
+    }
+
+    .option-label.wrong {
+      border-color: #ef4444;
+      background: #fee2e2;
+    }
+
+    .option-label.locked {
+      cursor: default;
+    }
+
+    .explanation-box {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .explanation-box.show {
+      display: block;
+    }
+
+    .submit-wrap {
+      position: sticky;
+      bottom: 18px;
+      z-index: 30;
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      border-radius: 999px;
+      padding: 15px 28px;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.25);
+      cursor: pointer;
+    }
+
+    .submit-btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .result-card {
+      display: none;
+      margin-top: 28px;
+      text-align: center;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 34px 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .result-card.show {
+      display: block;
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      transition: width 0.25s ease;
+    }
+
+    @media (max-width: 640px) {
+      .quiz-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .quiz-card,
+      .question-card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="quiz-shell">
+    <div class="quiz-topbar">
+      <a href="ai-quiz-generator.html" class="inline-flex items-center gap-2 text-sm font-bold text-sky-700 hover:text-sky-900">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to Generator
+      </a>
+
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-sm font-bold text-slate-600">
+        <span class="material-symbols-outlined text-[18px]">timer</span>
+        <span id="timer">00:00</span>
+      </div>
+    </div>
+
+    <section class="quiz-card">
+      <p class="text-xs font-black uppercase tracking-widest text-sky-600 mb-2">AI Generated Quiz</p>
+
+      <h1 id="quiz-title" class="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mb-3">
+        Loading quiz...
+      </h1>
+
+      <p id="quiz-meta" class="text-slate-500 text-sm mb-6">
+        Answer all questions. The correct answers will appear only after final submission.
+      </p>
+
+      <div class="flex items-center justify-between gap-4 mb-2">
+        <p id="progress-text" class="text-sm font-bold text-slate-600">0 / 0 answered</p>
+        <p id="progress-percent" class="text-sm font-black text-sky-700">0%</p>
+      </div>
+
+      <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <section id="questions-container" class="mt-7"></section>
+
+    <div class="submit-wrap">
+      <button id="submit-btn" class="submit-btn" type="button" disabled>
+        <span class="material-symbols-outlined">lock</span>
+        Answer all questions to submit
+      </button>
+    </div>
+
+    <section id="result-card" class="result-card">
+      <p class="text-xs font-black uppercase tracking-widest text-sky-600 mb-2">Final Result</p>
+
+      <h2 class="text-3xl font-black text-slate-950 mb-2">Quiz Completed</h2>
+
+      <p id="result-score" class="text-5xl font-black text-sky-600 my-6">0%</p>
+
+      <p id="result-details" class="text-slate-600 font-semibold mb-6"></p>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="ai-quiz-generator.html" class="submit-btn no-underline">
+          <span class="material-symbols-outlined">refresh</span>
+          Generate New Quiz
+        </a>
+
+        <a href="dashboard.html" class="submit-btn no-underline" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <span class="material-symbols-outlined">dashboard</span>
+          View Dashboard
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let quizData = null;
+    let userAnswers = {};
+    let startTime = Date.now();
+    let timerInterval = null;
+    let submitted = false;
+
+    const quizTitle = document.getElementById('quiz-title');
+    const quizMeta = document.getElementById('quiz-meta');
+    const questionsContainer = document.getElementById('questions-container');
+    const progressText = document.getElementById('progress-text');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressFill = document.getElementById('progress-fill');
+    const submitBtn = document.getElementById('submit-btn');
+    const resultCard = document.getElementById('result-card');
+    const resultScore = document.getElementById('result-score');
+    const resultDetails = document.getElementById('result-details');
+    const timerEl = document.getElementById('timer');
+
+    function escapeHTML(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatTime(seconds) {
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timerEl.textContent = formatTime(elapsed);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function loadQuiz() {
+      try {
+        quizData = JSON.parse(sessionStorage.getItem('currentAIQuiz') || 'null');
+      } catch {
+        quizData = null;
+      }
+
+      if (!quizData || !Array.isArray(quizData.questions) || quizData.questions.length === 0) {
+        quizTitle.textContent = 'No quiz found';
+        quizMeta.textContent = 'Please generate a quiz first.';
+        questionsContainer.innerHTML = `
+          <div class="question-card text-center">
+            <p class="text-slate-600 mb-4">Your quiz session was not found or expired.</p>
+            <a href="ai-quiz-generator.html" class="submit-btn no-underline">
+              Generate Quiz Again
+            </a>
+          </div>
+        `;
+        submitBtn.style.display = 'none';
+        return;
+      }
+
+      renderQuiz();
+      startTimer();
+    }
+
+    function renderQuiz() {
+      quizTitle.textContent = quizData.title || 'AI Generated Quiz';
+
+      const subject = quizData.metadata?.subject || quizData.subject || 'Subject';
+      const examType = quizData.metadata?.examType || quizData.examType || 'Exam';
+
+      quizMeta.textContent = `${subject} • ${examType} • ${quizData.questions.length} questions`;
+
+      questionsContainer.innerHTML = '';
+
+      quizData.questions.forEach((question, questionIndex) => {
+        const options = Array.isArray(question.options) ? question.options : [];
+
+        const card = document.createElement('article');
+        card.className = 'question-card';
+        card.dataset.questionIndex = questionIndex;
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3 mb-5">
+            <div class="w-10 h-10 rounded-2xl bg-sky-100 text-sky-700 grid place-items-center font-black shrink-0">
+              ${questionIndex + 1}
+            </div>
+
+            <h2 class="text-lg sm:text-xl font-black text-slate-950 leading-snug">
+              ${escapeHTML(question.question)}
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            ${options.map((option, optionIndex) => `
+              <label class="option-label" data-question-index="${questionIndex}" data-option-index="${optionIndex}">
+                <input
+                  type="radio"
+                  name="question-${questionIndex}"
+                  value="${optionIndex}"
+                  class="mt-1"
+                />
+                <span class="font-black text-slate-400">${String.fromCharCode(65 + optionIndex)}.</span>
+                <span class="text-slate-700 font-semibold leading-relaxed">${escapeHTML(option)}</span>
+              </label>
+            `).join('')}
+          </div>
+
+          <div class="explanation-box" id="explanation-${questionIndex}">
+            <strong>Explanation:</strong>
+            ${escapeHTML(question.explanation || 'No explanation provided.')}
+          </div>
+        `;
+
+        questionsContainer.appendChild(card);
+      });
+
+      document.querySelectorAll('.option-label input').forEach((input) => {
+        input.addEventListener('change', handleOptionChange);
+      });
+
+      updateProgress();
+    }
+
+    function handleOptionChange(event) {
+      if (submitted) return;
+
+      const input = event.target;
+      const questionIndex = Number(input.name.replace('question-', ''));
+      const optionIndex = Number(input.value);
+
+      userAnswers[questionIndex] = optionIndex;
+
+      const card = document.querySelector(`[data-question-index="${questionIndex}"]`);
+
+      card.querySelectorAll('.option-label').forEach((label) => {
+        label.classList.remove('selected');
+      });
+
+      input.closest('.option-label').classList.add('selected');
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = quizData?.questions?.length || 0;
+      const answered = Object.keys(userAnswers).length;
+      const percentage = total ? Math.round((answered / total) * 100) : 0;
+
+      progressText.textContent = `${answered} / ${total} answered`;
+      progressPercent.textContent = `${percentage}%`;
+      progressFill.style.width = `${percentage}%`;
+
+      if (answered === total && total > 0 && !submitted) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined">check_circle</span>
+          Submit Quiz
+        `;
+      } else if (!submitted) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined">lock</span>
+          Answer all questions to submit
+        `;
+      }
+    }
+
+    function submitQuiz() {
+      if (!quizData || submitted) return;
+
+      const total = quizData.questions.length;
+      const answered = Object.keys(userAnswers).length;
+
+      if (answered < total) {
+        alert('Please answer all questions before submitting.');
+        return;
+      }
+
+      submitted = true;
+      stopTimer();
+
+      let score = 0;
+
+      quizData.questions.forEach((question, questionIndex) => {
+        const correctAnswer = Number(question.correctAnswer);
+        const selectedAnswer = Number(userAnswers[questionIndex]);
+
+        if (selectedAnswer === correctAnswer) {
+          score++;
+        }
+
+        const card = document.querySelector(`[data-question-index="${questionIndex}"]`);
+        const labels = card.querySelectorAll('.option-label');
+
+        labels.forEach((label) => {
+          const optionIndex = Number(label.dataset.optionIndex);
+
+          label.classList.add('locked');
+
+          const input = label.querySelector('input');
+          if (input) input.disabled = true;
+
+          if (optionIndex === correctAnswer) {
+            label.classList.add('correct');
+          }
+
+          if (optionIndex === selectedAnswer && selectedAnswer !== correctAnswer) {
+            label.classList.add('wrong');
+          }
+        });
+
+        const explanation = document.getElementById(`explanation-${questionIndex}`);
+        if (explanation) explanation.classList.add('show');
+      });
+
+      const percentage = Math.round((score / total) * 100);
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+      submitBtn.style.display = 'none';
+
+      resultScore.textContent = `${percentage}%`;
+      resultDetails.textContent = `${score} / ${total} correct • Time: ${formatTime(elapsedSeconds)}`;
+
+      resultCard.classList.add('show');
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      saveResultToDashboard({
+        score,
+        total,
+        percentage,
+        elapsedSeconds,
+      });
+    }
+
+    function saveResultToDashboard(result) {
+      const subject = quizData.metadata?.subject || quizData.subject || 'AI Quiz';
+      const examType = quizData.metadata?.examType || quizData.examType || 'exam';
+
+      const savedResult = {
+        id: quizData.attemptId || `ai-quiz-${Date.now()}`,
+        title: quizData.title || `${subject} Quiz`,
+        subject,
+        examType,
+        score: result.score,
+        total: result.total,
+        percentage: result.percentage,
+        elapsedSeconds: result.elapsedSeconds,
+        completedAt: new Date().toISOString(),
+        userAnswers,
+        questions: quizData.questions,
+      };
+
+      const previousResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
+      previousResults.unshift(savedResult);
+      localStorage.setItem('quizResults', JSON.stringify(previousResults.slice(0, 50)));
+
+      const savedQuizzes = JSON.parse(localStorage.getItem('savedQuizzes') || '[]');
+      savedQuizzes.unshift({
+        ...quizData,
+        savedAt: new Date().toISOString(),
+        userAnswers,
+        result: {
+          score: result.score,
+          total: result.total,
+          percentage: result.percentage,
+          elapsedSeconds: result.elapsedSeconds,
+        },
+      });
+      localStorage.setItem('savedQuizzes', JSON.stringify(savedQuizzes.slice(0, 50)));
+    }
+
+    submitBtn.addEventListener('click', submitQuiz);
+
+    loadQuiz();
+  </script>
+</body>
+</html>

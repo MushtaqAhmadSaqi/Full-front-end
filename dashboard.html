@@ -1755,6 +1755,120 @@
     });
   })();
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const results = JSON.parse(localStorage.getItem('quizResults') || '[]');
+
+      const target =
+        document.querySelector('.dashboard-content-grid') ||
+        document.querySelector('main') ||
+        document.body;
+
+      const panel = document.createElement('section');
+      panel.className = 'dashboard-panel ai-quiz-results-panel';
+      panel.style.marginBottom = '24px';
+
+      if (!results.length) {
+        panel.innerHTML = `
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">AI Quiz Results</p>
+              <h2 class="panel-title">No AI quiz attempts yet</h2>
+              <p class="panel-subtitle">Generate and submit an AI quiz to see your result here.</p>
+            </div>
+            <a href="ai-quiz-generator.html" class="panel-link">
+              Generate Quiz
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+        `;
+      } else {
+        const totalAttempts = results.length;
+        const averageScore = Math.round(
+          results.reduce((sum, item) => sum + Number(item.percentage || 0), 0) / totalAttempts
+        );
+        const bestScore = Math.max(...results.map((item) => Number(item.percentage || 0)));
+        const latest = results[0];
+
+        panel.innerHTML = `
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">AI Quiz Results</p>
+              <h2 class="panel-title">Your AI Quiz Performance</h2>
+              <p class="panel-subtitle">Latest quiz attempts saved automatically after submission.</p>
+            </div>
+
+            <a href="ai-quiz-generator.html" class="panel-link">
+              New Quiz
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+            <div class="kpi-card">
+              <p class="kpi-label">Attempts</p>
+              <p class="kpi-value">${totalAttempts}</p>
+              <p class="kpi-meta">Total AI quizzes submitted</p>
+            </div>
+
+            <div class="kpi-card">
+              <p class="kpi-label">Average Score</p>
+              <p class="kpi-value">${averageScore}%</p>
+              <p class="kpi-meta">Across saved AI quizzes</p>
+            </div>
+
+            <div class="kpi-card">
+              <p class="kpi-label">Best Score</p>
+              <p class="kpi-value">${bestScore}%</p>
+              <p class="kpi-meta">Highest AI quiz result</p>
+            </div>
+          </div>
+
+          <div class="activity-list">
+            ${results.slice(0, 5).map((item) => {
+              const date = item.completedAt
+                ? new Date(item.completedAt).toLocaleDateString()
+                : 'Recent';
+
+              return `
+                <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  gap: 14px;
+                  padding: 14px 16px;
+                  border: 1px solid var(--border, #e2e8f0);
+                  border-radius: 16px;
+                  background: var(--surface, #fff);
+                ">
+                  <div>
+                    <p style="font-weight: 900; color: var(--text, #0f172a); margin-bottom: 3px;">
+                      ${item.title || item.subject || 'AI Quiz'}
+                    </p>
+
+                    <p style="font-size: 13px; color: var(--text-subtle, #64748b);">
+                      ${item.subject || 'Subject'} • ${item.examType || 'Exam'} • ${date}
+                    </p>
+                  </div>
+
+                  <div style="text-align: right;">
+                    <p style="font-weight: 950; font-size: 22px; color: #0284c7;">
+                      ${item.percentage || 0}%
+                    </p>
+
+                    <p style="font-size: 12px; color: var(--text-subtle, #64748b);">
+                      ${item.score || 0}/${item.total || 0}
+                    </p>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      target.prepend(panel);
+    });
+  </script>
 </body>
 
 </html>

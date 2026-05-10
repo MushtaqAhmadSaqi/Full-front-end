@@ -687,10 +687,22 @@
             throw new Error('AI did not return valid questions. Try again with different topics.');
           }
 
-          currentQuizData = result;
+          const attemptId =
+            crypto?.randomUUID?.() ||
+            `ai-quiz-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+          const quizSession = {
+            ...result,
+            attemptId,
+            generatedAt: new Date().toISOString(),
+          };
+
+          sessionStorage.setItem('currentAIQuiz', JSON.stringify(quizSession));
+
           skeletonLoader.classList.add('hidden');
-          displayQuizForTaking(result);
-          showToast('Quiz generated successfully! 🎉');
+          showToast('Quiz generated successfully! Opening quiz page...');
+
+          window.location.href = `take-ai-quiz.html?id=${encodeURIComponent(attemptId)}`;
 
         } catch (error) {
           if (requestId === activeQuizRequestId) {
