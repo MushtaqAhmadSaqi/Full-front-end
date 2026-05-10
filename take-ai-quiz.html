@@ -496,7 +496,7 @@
 
     function saveResultToDashboard(result) {
       const subject = quizData.metadata?.subject || quizData.subject || 'AI Quiz';
-      const examType = quizData.metadata?.examType || quizData.examType || 'exam';
+      const examType = quizData.metadata?.examType || quizData.examType || 'Practice';
 
       const savedResult = {
         id: quizData.attemptId || `ai-quiz-${Date.now()}`,
@@ -513,22 +513,31 @@
       };
 
       const previousResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
-      previousResults.unshift(savedResult);
-      localStorage.setItem('quizResults', JSON.stringify(previousResults.slice(0, 50)));
 
+      const updatedResults = [
+        savedResult,
+        ...previousResults.filter((item) => item.id !== savedResult.id),
+      ];
+
+      localStorage.setItem('quizResults', JSON.stringify(updatedResults.slice(0, 50)));
+
+      // Optional: Also save to savedQuizzes for historical backup
       const savedQuizzes = JSON.parse(localStorage.getItem('savedQuizzes') || '[]');
-      savedQuizzes.unshift({
-        ...quizData,
-        savedAt: new Date().toISOString(),
-        userAnswers,
-        result: {
-          score: result.score,
-          total: result.total,
-          percentage: result.percentage,
-          elapsedSeconds: result.elapsedSeconds,
+      const updatedQuizzes = [
+        {
+          ...quizData,
+          savedAt: new Date().toISOString(),
+          userAnswers,
+          result: {
+            score: result.score,
+            total: result.total,
+            percentage: result.percentage,
+            elapsedSeconds: result.elapsedSeconds,
+          }
         },
-      });
-      localStorage.setItem('savedQuizzes', JSON.stringify(savedQuizzes.slice(0, 50)));
+        ...savedQuizzes.filter(q => (q.attemptId || q.id) !== (quizData.attemptId || quizData.id))
+      ];
+      localStorage.setItem('savedQuizzes', JSON.stringify(updatedQuizzes.slice(0, 50)));
     }
 
     submitBtn.addEventListener('click', submitQuiz);

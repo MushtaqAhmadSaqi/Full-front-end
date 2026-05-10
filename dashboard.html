@@ -1397,7 +1397,7 @@
           <div class="dashboard-hero-copy">
             <h2 id="dashboardTitle" class="dashboard-hero-title">
               Welcome back,<br>
-              <span id="userFirstName" class="dashboard-gradient-text">Student</span>
+              <span id="dashboardStudentName" class="dashboard-gradient-text">Student</span>
             </h2>
 
             <p id="welcomeSubtext" class="dashboard-hero-text">
@@ -1447,7 +1447,7 @@
             <div class="pulse-card-header">
               <div>
                 <p class="pulse-label">Average Score</p>
-                <p id="pulseAverageScore" class="pulse-score">0%</p>
+                <p id="heroAverageScore" class="pulse-score">0%</p>
               </div>
 
               <div class="pulse-ring" aria-hidden="true">
@@ -1457,19 +1457,19 @@
 
             <div class="pulse-grid">
               <div class="pulse-mini-card">
-                <p class="pulse-mini-label">Quizzes</p>
-                <p id="pulseQuizCount" class="pulse-mini-value">0</p>
+                <p class="pulse-label">Quizzes</p>
+                <p id="heroQuizCount" class="pulse-mini-value">0</p>
               </div>
 
               <div class="pulse-mini-card">
-                <p class="pulse-mini-label">Subjects</p>
-                <p id="pulseSubjectsStudied" class="pulse-mini-value">0</p>
+                <p class="pulse-label">Subjects</p>
+                <p id="heroSubjectCount" class="pulse-mini-value">0</p>
               </div>
             </div>
 
             <p class="pulse-status">
               <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
-              <span id="averageScoreStatus">No score yet</span>
+              <span id="heroScoreLabel">No score yet</span>
             </p>
           </aside>
         </div>
@@ -1486,7 +1486,7 @@
           </div>
 
           <p class="kpi-label">Quizzes Completed</p>
-          <h3 id="statQuizCount" class="kpi-value" aria-live="polite">0</h3>
+          <h3 id="completedQuizzes" class="kpi-value" aria-live="polite">0</h3>
           <p class="kpi-meta">Completed attempts from your account.</p>
         </article>
 
@@ -1499,7 +1499,7 @@
           </div>
 
           <p class="kpi-label">Average Score</p>
-          <h3 id="statAverageScore" class="kpi-value" aria-live="polite">0%</h3>
+          <h3 id="averageScore" class="kpi-value" aria-live="polite">0%</h3>
           <p class="kpi-meta">Mean score across quizzes.</p>
         </article>
 
@@ -1512,7 +1512,7 @@
           </div>
 
           <p class="kpi-label">Subjects Studied</p>
-          <h3 id="statSubjectsStudied" class="kpi-value" aria-live="polite">0</h3>
+          <h3 id="subjectsStudied" class="kpi-value" aria-live="polite">0</h3>
           <p class="kpi-meta">Unique subjects with progress.</p>
         </article>
 
@@ -1525,7 +1525,7 @@
           </div>
 
           <p class="kpi-label">Study Sessions</p>
-          <h3 id="statStudySessions" class="kpi-value" aria-live="polite">0</h3>
+          <h3 id="studySessions" class="kpi-value" aria-live="polite">0</h3>
           <p class="kpi-meta">Tracked study sessions.</p>
         </article>
       </section>
@@ -1546,25 +1546,8 @@
               </a>
             </div>
 
-            <div class="chart-shell">
-              <canvas id="learningChart" aria-label="Recent quiz score trend" role="img"></canvas>
-
-              <div id="learningChartEmpty" class="dashboard-empty-state hidden">
-                <div class="dashboard-empty-icon" aria-hidden="true">
-                  <span class="material-symbols-outlined">insights</span>
-                </div>
-
-                <p class="dashboard-empty-title">No score trend yet</p>
-                <p class="dashboard-empty-text">
-                  Complete 2–3 quizzes and your progress chart will start showing real patterns. Guessing randomly is
-                  not strategy.
-                </p>
-
-                <a href="quiz.html" class="btn-primary empty-state-cta">
-                  <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
-                  Take your first quiz
-                </a>
-              </div>
+            <div id="learningProgressBody" class="chart-shell min-h-[200px]">
+              <!-- Trend chart content injected here -->
             </div>
           </article>
 
@@ -1582,22 +1565,7 @@
               </a>
             </div>
 
-            <div id="weakTopicsList" class="weak-topics-list" aria-live="polite">
-              <div class="dashboard-empty-state">
-                <div class="dashboard-empty-icon" aria-hidden="true">
-                  <span class="material-symbols-outlined">psychology_alt</span>
-                </div>
-
-                <p class="dashboard-empty-title">No weak topics yet</p>
-                <p class="dashboard-empty-text">
-                  Complete a few quizzes first, then this section will show what needs revision.
-                </p>
-
-                <a href="quiz.html" class="btn-secondary empty-state-cta">
-                  Start diagnosis
-                </a>
-              </div>
-            </div>
+            <div id="weakTopicsBody" class="weak-topics-list" aria-live="polite"></div>
           </article>
         </div>
 
@@ -1611,18 +1579,7 @@
               </div>
             </div>
 
-            <div id="recentActivityList" class="activity-list" aria-live="polite">
-              <div class="dashboard-empty-state">
-                <div class="dashboard-empty-icon" aria-hidden="true">
-                  <span class="material-symbols-outlined">history</span>
-                </div>
-
-                <p class="dashboard-empty-title">No activity yet</p>
-                <p class="dashboard-empty-text">
-                  Start a quiz or browse subjects to begin building your study history.
-                </p>
-              </div>
-            </div>
+            <div id="recentActivityBody" class="activity-list" aria-live="polite"></div>
           </article>
 
           <article class="dashboard-panel subject-mastery-panel ui-card">
@@ -1634,22 +1591,7 @@
               </div>
             </div>
 
-            <div id="subjectMasteryList" class="subject-mastery-list" aria-live="polite">
-              <div class="dashboard-empty-state">
-                <div class="dashboard-empty-icon" aria-hidden="true">
-                  <span class="material-symbols-outlined">workspace_premium</span>
-                </div>
-
-                <p class="dashboard-empty-title">No subject progress yet</p>
-                <p class="dashboard-empty-text">
-                  Study at least one subject and attempt related quizzes to unlock mastery tracking.
-                </p>
-
-                <a href="subjects.html" class="btn-secondary empty-state-cta">
-                  Browse subjects
-                </a>
-              </div>
-            </div>
+            <div id="subjectMasteryBody" class="subject-mastery-list" aria-live="polite"></div>
           </article>
         </div>
 
@@ -1755,118 +1697,398 @@
     });
   })();
   </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const results = JSON.parse(localStorage.getItem('quizResults') || '[]');
+  <script type="module">
+    import { getUserSession } from './user-state.js';
 
-      const target =
-        document.querySelector('.dashboard-content-grid') ||
-        document.querySelector('main') ||
-        document.body;
+    const $ = (id) => document.getElementById(id);
 
-      const panel = document.createElement('section');
-      panel.className = 'dashboard-panel ai-quiz-results-panel';
-      panel.style.marginBottom = '24px';
+    function escapeHTML(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function setText(id, value) {
+      const element = $(id);
+      if (element) {
+        element.textContent = value;
+      }
+    }
+
+    function getJSON(key, fallback = []) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || 'null');
+        return Array.isArray(value) ? value : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function normalizeResult(item) {
+      const nestedResult = item.result || {};
+
+      const score = Number(item.score ?? nestedResult.score ?? 0);
+      const total = Number(item.total ?? nestedResult.total ?? item.questions?.length ?? 0);
+
+      const percentage = Number(
+        item.percentage ??
+        nestedResult.percentage ??
+        (total > 0 ? Math.round((score / total) * 100) : 0)
+      );
+
+      return {
+        id: item.id || item.attemptId || `quiz-${Date.now()}-${Math.random()}`,
+        title: item.title || item.quizTitle || item.metadata?.title || 'AI Quiz',
+        subject: item.subject || item.metadata?.subject || 'AI Quiz',
+        examType: item.examType || item.metadata?.examType || 'Practice',
+        score,
+        total,
+        percentage,
+        completedAt: item.completedAt || item.savedAt || item.generatedAt || new Date().toISOString(),
+        elapsedSeconds: Number(item.elapsedSeconds ?? nestedResult.elapsedSeconds ?? 0),
+        questions: Array.isArray(item.questions) ? item.questions : [],
+        userAnswers: item.userAnswers || {},
+      };
+    }
+
+    function getDashboardResults() {
+      const quizResults = getJSON('quizResults');
+      const savedQuizzes = getJSON('savedQuizzes');
+
+      const completedSavedQuizzes = savedQuizzes
+        .filter((item) => item.result || item.score !== undefined || item.percentage !== undefined)
+        .map(normalizeResult);
+
+      const normalizedResults = [
+        ...quizResults.map(normalizeResult),
+        ...completedSavedQuizzes,
+      ];
+
+      const unique = new Map();
+
+      normalizedResults.forEach((item) => {
+        if (!unique.has(item.id)) {
+          unique.set(item.id, item);
+        }
+      });
+
+      return Array.from(unique.values()).sort((a, b) => {
+        return new Date(b.completedAt) - new Date(a.completedAt);
+      });
+    }
+
+    async function loadStudentName() {
+      try {
+        const session = await getUserSession();
+        const user = session?.user;
+        const metadata = user?.user_metadata || {};
+
+        const savedName =
+          localStorage.getItem('studentName') ||
+          localStorage.getItem('userName') ||
+          '';
+
+        const displayName =
+          metadata.full_name ||
+          metadata.name ||
+          savedName ||
+          user?.email?.split('@')[0] ||
+          'Student';
+
+        setText('dashboardStudentName', displayName);
+
+        // Fallback if you forgot to add the ID.
+        const studentText = Array.from(document.querySelectorAll('span, h1, h2, h3, p, div'))
+          .find((el) => el.textContent.trim() === 'Student');
+
+        if (studentText) {
+          studentText.textContent = displayName;
+        }
+      } catch (error) {
+        console.error('Dashboard name load failed:', error);
+        setText('dashboardStudentName', 'Student');
+      }
+    }
+
+    function calculateDashboardStats(results) {
+      const totalQuizzes = results.length;
+
+      const averageScore = totalQuizzes
+        ? Math.round(results.reduce((sum, item) => sum + Number(item.percentage || 0), 0) / totalQuizzes)
+        : 0;
+
+      const uniqueSubjects = new Set(
+        results
+          .map((item) => item.subject)
+          .filter(Boolean)
+      );
+
+      const latestScore = results[0]?.percentage ?? null;
+
+      return {
+        totalQuizzes,
+        averageScore,
+        subjectsStudied: uniqueSubjects.size,
+        studySessions: totalQuizzes,
+        latestScore,
+      };
+    }
+
+    function renderStats(results) {
+      const stats = calculateDashboardStats(results);
+
+      setText('heroAverageScore', `${stats.averageScore}%`);
+      setText('heroQuizCount', stats.totalQuizzes);
+      setText('heroSubjectCount', stats.subjectsStudied);
+      setText(
+        'heroScoreLabel',
+        stats.latestScore === null ? 'No score yet' : `Latest score ${stats.latestScore}%`
+      );
+
+      setText('completedQuizzes', stats.totalQuizzes);
+      setText('averageScore', `${stats.averageScore}%`);
+      setText('subjectsStudied', stats.subjectsStudied);
+      setText('studySessions', stats.studySessions);
+    }
+
+    function renderLearningProgress(results) {
+      const target = $('learningProgressBody');
+      if (!target) return;
 
       if (!results.length) {
-        panel.innerHTML = `
-          <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">AI Quiz Results</p>
-              <h2 class="panel-title">No AI quiz attempts yet</h2>
-              <p class="panel-subtitle">Generate and submit an AI quiz to see your result here.</p>
-            </div>
-            <a href="ai-quiz-generator.html" class="panel-link">
-              Generate Quiz
-              <span class="material-symbols-outlined">arrow_forward</span>
+        target.innerHTML = `
+          <div class="empty-state">
+            <span class="material-symbols-outlined">insights</span>
+            <h3>No score trend yet</h3>
+            <p>Complete 2–3 quizzes and your progress chart will start showing real patterns.</p>
+            <a href="quiz.html" class="btn-primary">
+              <span class="material-symbols-outlined">play_arrow</span>
+              Take your first quiz
             </a>
           </div>
         `;
-      } else {
-        const totalAttempts = results.length;
-        const averageScore = Math.round(
-          results.reduce((sum, item) => sum + Number(item.percentage || 0), 0) / totalAttempts
-        );
-        const bestScore = Math.max(...results.map((item) => Number(item.percentage || 0)));
-        const latest = results[0];
-
-        panel.innerHTML = `
-          <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">AI Quiz Results</p>
-              <h2 class="panel-title">Your AI Quiz Performance</h2>
-              <p class="panel-subtitle">Latest quiz attempts saved automatically after submission.</p>
-            </div>
-
-            <a href="ai-quiz-generator.html" class="panel-link">
-              New Quiz
-              <span class="material-symbols-outlined">arrow_forward</span>
-            </a>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-            <div class="kpi-card">
-              <p class="kpi-label">Attempts</p>
-              <p class="kpi-value">${totalAttempts}</p>
-              <p class="kpi-meta">Total AI quizzes submitted</p>
-            </div>
-
-            <div class="kpi-card">
-              <p class="kpi-label">Average Score</p>
-              <p class="kpi-value">${averageScore}%</p>
-              <p class="kpi-meta">Across saved AI quizzes</p>
-            </div>
-
-            <div class="kpi-card">
-              <p class="kpi-label">Best Score</p>
-              <p class="kpi-value">${bestScore}%</p>
-              <p class="kpi-meta">Highest AI quiz result</p>
-            </div>
-          </div>
-
-          <div class="activity-list">
-            ${results.slice(0, 5).map((item) => {
-              const date = item.completedAt
-                ? new Date(item.completedAt).toLocaleDateString()
-                : 'Recent';
-
-              return `
-                <div style="
-                  display: flex;
-                  justify-content: space-between;
-                  gap: 14px;
-                  padding: 14px 16px;
-                  border: 1px solid var(--border, #e2e8f0);
-                  border-radius: 16px;
-                  background: var(--surface, #fff);
-                ">
-                  <div>
-                    <p style="font-weight: 900; color: var(--text, #0f172a); margin-bottom: 3px;">
-                      ${item.title || item.subject || 'AI Quiz'}
-                    </p>
-
-                    <p style="font-size: 13px; color: var(--text-subtle, #64748b);">
-                      ${item.subject || 'Subject'} • ${item.examType || 'Exam'} • ${date}
-                    </p>
-                  </div>
-
-                  <div style="text-align: right;">
-                    <p style="font-weight: 950; font-size: 22px; color: #0284c7;">
-                      ${item.percentage || 0}%
-                    </p>
-
-                    <p style="font-size: 12px; color: var(--text-subtle, #64748b);">
-                      ${item.score || 0}/${item.total || 0}
-                    </p>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
+        return;
       }
 
-      target.prepend(panel);
+      target.innerHTML = `
+        <div style="display: grid; gap: 14px;">
+          ${results.slice(0, 5).map((item, index) => `
+            <div style="
+              display: grid;
+              grid-template-columns: 90px 1fr 60px;
+              gap: 12px;
+              align-items: center;
+            ">
+              <strong style="font-size: 13px;">Quiz ${index + 1}</strong>
+
+              <div style="
+                height: 12px;
+                border-radius: 999px;
+                background: #e2e8f0;
+                overflow: hidden;
+              ">
+                <div style="
+                  height: 100%;
+                  width: ${Number(item.percentage || 0)}%;
+                  border-radius: 999px;
+                  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+                "></div>
+              </div>
+
+              <strong style="text-align: right;">${Number(item.percentage || 0)}%</strong>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderRecentActivity(results) {
+      const target = $('recentActivityBody');
+      if (!target) return;
+
+      if (!results.length) {
+        target.innerHTML = `
+          <div class="empty-state">
+            <span class="material-symbols-outlined">history</span>
+            <h3>No activity yet</h3>
+            <p>Start a quiz or browse subjects to begin building your study history.</p>
+          </div>
+        `;
+        return;
+      }
+
+      target.innerHTML = `
+        <div style="display: grid; gap: 12px;">
+          ${results.slice(0, 6).map((item) => {
+            const date = item.completedAt
+              ? new Date(item.completedAt).toLocaleDateString()
+              : 'Recent';
+
+            return `
+              <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 14px;
+                padding: 14px 16px;
+                border: 1px solid #e2e8f0;
+                border-radius: 18px;
+                background: #ffffff;
+              ">
+                <div>
+                  <p style="font-weight: 900; margin: 0 0 4px;">
+                    ${escapeHTML(item.title)}
+                  </p>
+                  <p style="font-size: 13px; color: #64748b; margin: 0;">
+                    ${escapeHTML(item.subject)} • ${escapeHTML(item.examType)} • ${date}
+                  </p>
+                </div>
+
+                <div style="text-align: right;">
+                  <p style="font-weight: 950; font-size: 22px; color: #0284c7; margin: 0;">
+                    ${Number(item.percentage || 0)}%
+                  </p>
+                  <p style="font-size: 12px; color: #64748b; margin: 0;">
+                    ${Number(item.score || 0)}/${Number(item.total || 0)}
+                  </p>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderSubjectMastery(results) {
+      const target = $('subjectMasteryBody');
+      if (!target) return;
+
+      if (!results.length) {
+        target.innerHTML = `
+          <div class="empty-state">
+            <span class="material-symbols-outlined">workspace_premium</span>
+            <h3>No subject progress yet</h3>
+            <p>Study at least one subject and attempt related quizzes to unlock mastery tracking.</p>
+            <a href="subjects.html" class="btn-primary">
+              <span class="material-symbols-outlined">menu_book</span>
+              Browse subjects
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const subjectMap = new Map();
+
+      results.forEach((item) => {
+        const subject = item.subject || 'AI Quiz';
+
+        if (!subjectMap.has(subject)) {
+          subjectMap.set(subject, []);
+        }
+
+        subjectMap.get(subject).push(Number(item.percentage || 0));
+      });
+
+      const subjects = Array.from(subjectMap.entries()).map(([subject, scores]) => {
+        const average = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+
+        return {
+          subject,
+          average,
+          attempts: scores.length,
+        };
+      }).sort((a, b) => b.average - a.average);
+
+      target.innerHTML = `
+        <div style="display: grid; gap: 12px;">
+          ${subjects.map((item) => `
+            <div style="
+              padding: 14px 16px;
+              border: 1px solid #e2e8f0;
+              border-radius: 18px;
+              background: #ffffff;
+            ">
+              <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+                <strong>${escapeHTML(item.subject)}</strong>
+                <strong style="color: #0284c7;">${item.average}%</strong>
+              </div>
+
+              <div style="
+                height: 10px;
+                border-radius: 999px;
+                background: #e2e8f0;
+                overflow: hidden;
+              ">
+                <div style="
+                  width: ${item.average}%;
+                  height: 100%;
+                  border-radius: 999px;
+                  background: linear-gradient(135deg, #10b981, #0284c7);
+                "></div>
+              </div>
+
+              <p style="font-size: 12px; color: #64748b; margin: 8px 0 0;">
+                ${item.attempts} attempt${item.attempts > 1 ? 's' : ''}
+              </p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderWeakTopics(results) {
+      const target = $('weakTopicsBody');
+      if (!target) return;
+
+      const weakResults = results.filter((item) => Number(item.percentage || 0) < 60);
+
+      if (!weakResults.length) {
+        target.innerHTML = `
+          <div class="empty-state">
+            <span class="material-symbols-outlined">psychology_alt</span>
+            <h3>No weak topics yet</h3>
+            <p>Low-scoring subjects will appear here after your quiz attempts.</p>
+          </div>
+        `;
+        return;
+      }
+
+      target.innerHTML = `
+        <div style="display: grid; gap: 12px;">
+          ${weakResults.slice(0, 5).map((item) => `
+            <div style="
+              padding: 14px 16px;
+              border: 1px solid #fecaca;
+              border-radius: 18px;
+              background: #fff7f7;
+            ">
+              <strong>${escapeHTML(item.subject)}</strong>
+              <p style="margin: 6px 0 0; color: #64748b; font-size: 13px;">
+                Score: ${Number(item.percentage || 0)}% — revise this subject first.
+              </p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const results = getDashboardResults();
+
+      renderStats(results);
+      renderLearningProgress(results);
+      renderRecentActivity(results);
+      renderSubjectMastery(results);
+      renderWeakTopics(results);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadStudentName();
+      renderDashboard();
     });
   </script>
 </body>
