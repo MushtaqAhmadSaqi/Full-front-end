@@ -1,516 +1,1597 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Past Paper | COMSATSPrepHub</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
-    <link rel="icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#0f172a">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Use built CSS instead -->
-    <link rel="stylesheet" href="styles/tailwind-built.css">
-    <link rel="stylesheet" href="style.css">
+  <title>Upload Past Paper | COMSATSPrepHub</title>
 
-    <script src="js/dark-mode.js" defer></script>
-  </head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <body
-    class="bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col"
-  >
-    <div id="app-header"></div>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  />
 
-    <main class="main-content container text-on-background">
-      <!-- Editorial Header Section -->
-      <div class="page-header" style="max-width: 672px">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <meta name="theme-color" content="#0f172a" />
+
+  <link rel="stylesheet" href="styles/tailwind-built.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="js/dark-mode.js" defer></script>
+
+  <style>
+    /* =========================================================
+       UPLOAD PAGE — PREMIUM UI/UX REDESIGN
+       Front-end only. Supabase/backend logic preserved.
+       ========================================================= */
+
+    .upload-page {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(14, 165, 233, 0.15), transparent 30rem),
+        radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.10), transparent 28rem),
+        #f8fafc;
+      color: #0f172a;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .dark .upload-page,
+    html.dark .upload-page {
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.14), transparent 30rem),
+        radial-gradient(circle at 90% 0%, rgba(99, 102, 241, 0.13), transparent 28rem),
+        #08111f;
+      color: #f8fafc;
+    }
+
+    .upload-page-shell {
+      width: min(100%, 1180px);
+      margin: 0 auto;
+      padding: clamp(28px, 5vw, 56px) clamp(14px, 4vw, 24px) 96px;
+    }
+
+    .upload-hero {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: clamp(28px, 5vw, 46px);
+      padding: clamp(24px, 5vw, 48px);
+      border: 1px solid rgba(186, 230, 253, 0.75);
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.18), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78));
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+    }
+
+    .dark .upload-hero,
+    html.dark .upload-hero {
+      border-color: rgba(148, 163, 184, 0.22);
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+        #111827;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44);
+    }
+
+    .upload-hero::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -90px;
+      bottom: -120px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.10);
+      pointer-events: none;
+    }
+
+    .upload-hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .upload-eyebrow {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(14, 165, 233, 0.18);
+      background: rgba(14, 165, 233, 0.09);
+      color: #0369a1;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dark .upload-eyebrow,
+    html.dark .upload-eyebrow {
+      border-color: rgba(56, 189, 248, 0.24);
+      background: rgba(56, 189, 248, 0.11);
+      color: #7dd3fc;
+    }
+
+    .upload-eyebrow .material-symbols-outlined {
+      font-size: 17px;
+    }
+
+    .upload-hero h1 {
+      margin: 0;
+      max-width: 720px;
+      color: #0f172a;
+      font-size: clamp(2.25rem, 7vw, 5rem);
+      line-height: 0.96;
+      font-weight: 950;
+      letter-spacing: -0.065em;
+    }
+
+    .dark .upload-hero h1,
+    html.dark .upload-hero h1 {
+      color: #f8fafc;
+    }
+
+    .upload-hero p {
+      max-width: 620px;
+      margin: 18px 0 0;
+      color: #475569;
+      font-size: clamp(0.98rem, 2vw, 1.12rem);
+      line-height: 1.75;
+      font-weight: 500;
+    }
+
+    .dark .upload-hero p,
+    html.dark .upload-hero p {
+      color: #cbd5e1;
+    }
+
+    .upload-hero-stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .upload-stat-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+      border-radius: 24px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+    }
+
+    .dark .upload-stat-card,
+    html.dark .upload-stat-card {
+      border-color: rgba(148, 163, 184, 0.18);
+      background: rgba(255, 255, 255, 0.045);
+      box-shadow: none;
+    }
+
+    .upload-stat-icon {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      color: #0369a1;
+    }
+
+    .dark .upload-stat-icon,
+    html.dark .upload-stat-icon {
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+    }
+
+    .upload-stat-card strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .dark .upload-stat-card strong,
+    html.dark .upload-stat-card strong {
+      color: #f8fafc;
+    }
+
+    .upload-stat-card span:last-child {
+      display: block;
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dark .upload-stat-card span:last-child,
+    html.dark .upload-stat-card span:last-child {
+      color: #94a3b8;
+    }
+
+    .upload-layout-pro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.75fr);
+      gap: clamp(18px, 4vw, 28px);
+      align-items: start;
+    }
+
+    .upload-card,
+    .upload-side-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.10), transparent 32%),
+        rgba(255, 255, 255, 0.96);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+    }
+
+    .dark .upload-card,
+    .dark .upload-side-card,
+    html.dark .upload-card,
+    html.dark .upload-side-card {
+      border-color: rgba(148, 163, 184, 0.22);
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+        #111827;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    .upload-card {
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .upload-card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .upload-card-header h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 950;
+      letter-spacing: -0.045em;
+      line-height: 1.08;
+    }
+
+    .dark .upload-card-header h2,
+    html.dark .upload-card-header h2 {
+      color: #f8fafc;
+    }
+
+    .upload-card-header p {
+      margin: 8px 0 0;
+      max-width: 520px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 550;
+    }
+
+    .dark .upload-card-header p,
+    html.dark .upload-card-header p {
+      color: #cbd5e1;
+    }
+
+    .upload-form-badge {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      background: rgba(16, 185, 129, 0.09);
+      color: #047857;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .dark .upload-form-badge,
+    html.dark .upload-form-badge {
+      border-color: rgba(16, 185, 129, 0.28);
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+    }
+
+    .upload-form-badge .material-symbols-outlined {
+      font-size: 17px;
+    }
+
+    .upload-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .form-group {
+      min-width: 0;
+    }
+
+    .form-group-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .dark .form-label,
+    html.dark .form-label {
+      color: #cbd5e1;
+    }
+
+    .form-label .material-symbols-outlined {
+      font-size: 16px;
+      color: #0ea5e9;
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 15px;
+      border: 1.5px solid #dbeafe;
+      border-radius: 18px;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 650;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease;
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .form-control:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 5px rgba(14, 165, 233, 0.16);
+    }
+
+    .dark .form-control,
+    html.dark .form-control {
+      border-color: rgba(148, 163, 184, 0.28);
+      background: rgba(15, 23, 42, 0.72);
+      color: #f8fafc;
+    }
+
+    .dark .form-control::placeholder,
+    html.dark .form-control::placeholder {
+      color: #94a3b8;
+    }
+
+    .radio-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .radio-label {
+      cursor: pointer;
+    }
+
+    .radio-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .radio-button {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1.5px solid #dbeafe;
+      border-radius: 18px;
+      background: #ffffff;
+      color: #475569;
+      font-size: 15px;
+      font-weight: 900;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .radio-button .material-symbols-outlined {
+      font-size: 19px;
+    }
+
+    .radio-input:checked + .radio-button {
+      border-color: #0ea5e9;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 14px 30px rgba(14, 165, 233, 0.24);
+    }
+
+    .radio-label:hover .radio-button {
+      transform: translateY(-2px);
+      border-color: #38bdf8;
+    }
+
+    .dark .radio-button,
+    html.dark .radio-button {
+      border-color: rgba(148, 163, 184, 0.28);
+      background: rgba(15, 23, 42, 0.72);
+      color: #cbd5e1;
+    }
+
+    .dark .radio-input:checked + .radio-button,
+    html.dark .radio-input:checked + .radio-button {
+      border-color: #38bdf8;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #ffffff;
+    }
+
+    .upload-zone {
+      position: relative;
+      min-height: 230px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      border: 2px dashed #bae6fd;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top, rgba(14, 165, 233, 0.08), transparent 38%),
+        #f8fafc;
+      text-align: center;
+      cursor: pointer;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .upload-zone:hover {
+      transform: translateY(-2px);
+      border-color: #0ea5e9;
+      box-shadow: 0 18px 44px rgba(14, 165, 233, 0.12);
+    }
+
+    .dark .upload-zone,
+    html.dark .upload-zone {
+      border-color: rgba(56, 189, 248, 0.26);
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.10), transparent 38%),
+        rgba(15, 23, 42, 0.72);
+    }
+
+    .upload-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-zone-content {
+      pointer-events: none;
+    }
+
+    .upload-zone-icon {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      color: #0369a1;
+      box-shadow: 0 16px 36px rgba(14, 165, 233, 0.18);
+    }
+
+    .upload-zone-icon .material-symbols-outlined {
+      font-size: 34px;
+    }
+
+    .dark .upload-zone-icon,
+    html.dark .upload-zone-icon {
+      background: rgba(56, 189, 248, 0.13);
+      color: #7dd3fc;
+      box-shadow: none;
+    }
+
+    .upload-zone-title {
+      margin: 0;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .dark .upload-zone-title,
+    html.dark .upload-zone-title {
+      color: #f8fafc;
+    }
+
+    .upload-zone-title span {
+      color: #0284c7;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .dark .upload-zone-title span,
+    html.dark .upload-zone-title span {
+      color: #7dd3fc;
+    }
+
+    .upload-zone-subtitle {
+      margin: 7px 0 0;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1.5;
+    }
+
+    .dark .upload-zone-subtitle,
+    html.dark .upload-zone-subtitle {
+      color: #94a3b8;
+    }
+
+    .upload-file-meta {
+      width: fit-content;
+      max-width: 100%;
+      margin: 15px auto 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-file-meta.is-ready {
+      border-color: rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.10);
+      color: #047857;
+    }
+
+    .upload-file-meta.is-warning {
+      border-color: rgba(239, 68, 68, 0.25);
+      background: rgba(239, 68, 68, 0.08);
+      color: #b91c1c;
+    }
+
+    .dark .upload-file-meta,
+    html.dark .upload-file-meta {
+      border-color: rgba(148, 163, 184, 0.22);
+      background: rgba(255, 255, 255, 0.045);
+      color: #cbd5e1;
+    }
+
+    .dark .upload-file-meta.is-ready,
+    html.dark .upload-file-meta.is-ready {
+      border-color: rgba(16, 185, 129, 0.28);
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+    }
+
+    .dark .upload-file-meta.is-warning,
+    html.dark .upload-file-meta.is-warning {
+      border-color: rgba(248, 113, 113, 0.28);
+      background: rgba(248, 113, 113, 0.12);
+      color: #fca5a5;
+    }
+
+    .submit-area {
+      padding-top: 24px;
+    }
+
+    .upload-submit-btn {
+      width: 100%;
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb, #4f46e5);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.28);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        opacity 180ms ease;
+    }
+
+    .upload-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 24px 56px rgba(37, 99, 235, 0.36);
+    }
+
+    .upload-submit-btn:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #feedbackMessage {
+      margin-top: 14px;
+    }
+
+    .upload-side-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .upload-side-card {
+      padding: 22px;
+    }
+
+    .upload-side-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .upload-side-header-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .dark .upload-side-header-icon,
+    html.dark .upload-side-header-icon {
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+    }
+
+    .upload-side-card h3,
+    .upload-side-card h4 {
+      margin: 0;
+      color: #0f172a;
+      font-weight: 950;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+    }
+
+    .upload-side-card h3 {
+      font-size: 20px;
+    }
+
+    .upload-side-card h4 {
+      font-size: 18px;
+    }
+
+    .dark .upload-side-card h3,
+    .dark .upload-side-card h4,
+    html.dark .upload-side-card h3,
+    html.dark .upload-side-card h4 {
+      color: #f8fafc;
+    }
+
+    .guide-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .guide-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      background: rgba(248, 250, 252, 0.82);
+    }
+
+    .dark .guide-item,
+    html.dark .guide-item {
+      border-color: rgba(148, 163, 184, 0.16);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .guide-number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .guide-item p {
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1.55;
+    }
+
+    .dark .guide-item p,
+    html.dark .guide-item p {
+      color: #cbd5e1;
+    }
+
+    .perk-box-pro {
+      margin-top: 16px;
+      padding: 15px;
+      border-radius: 22px;
+      border: 1px solid rgba(16, 185, 129, 0.20);
+      background:
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 34%),
+        rgba(16, 185, 129, 0.08);
+    }
+
+    .dark .perk-box-pro,
+    html.dark .perk-box-pro {
+      border-color: rgba(16, 185, 129, 0.24);
+      background: rgba(16, 185, 129, 0.10);
+    }
+
+    .perk-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #047857;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .dark .perk-title,
+    html.dark .perk-title {
+      color: #6ee7b7;
+    }
+
+    .perk-title .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    .perk-box-pro p {
+      margin: 10px 0 0;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.55;
+    }
+
+    .dark .perk-box-pro p,
+    html.dark .perk-box-pro p {
+      color: #cbd5e1;
+    }
+
+    .support-card-pro {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      border-radius: 30px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 34%),
+        linear-gradient(135deg, #0284c7, #2563eb, #4f46e5);
+      box-shadow: 0 24px 60px rgba(37, 99, 235, 0.25);
+    }
+
+    .support-card-pro::after {
+      content: "contact_support";
+      position: absolute;
+      right: -12px;
+      bottom: -22px;
+      font-family: "Material Symbols Outlined";
+      font-size: 120px;
+      line-height: 1;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .support-card-pro h4 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 8px;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing: -0.035em;
+    }
+
+    .support-card-pro p {
+      position: relative;
+      z-index: 1;
+      max-width: 280px;
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .support-card-pro a {
+      position: relative;
+      z-index: 1;
+      width: fit-content;
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform 180ms ease, background-color 180ms ease;
+    }
+
+    .support-card-pro a:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .support-card-pro .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .upload-hero-content,
+      .upload-layout-pro {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-hero-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .upload-page-shell {
+        padding-top: 22px;
+      }
+
+      .upload-hero,
+      .upload-card,
+      .upload-side-card,
+      .support-card-pro {
+        border-radius: 26px;
+      }
+
+      .upload-hero {
+        padding: 22px;
+      }
+
+      .upload-hero h1 {
+        font-size: 2.35rem;
+      }
+
+      .upload-hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-card-header {
+        flex-direction: column;
+      }
+
+      .upload-form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .upload-zone {
+        min-height: 210px;
+        padding: 20px;
+      }
+
+      .upload-submit-btn,
+      .form-control,
+      .radio-button {
+        min-height: 52px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .upload-page-shell {
+        padding-inline: 10px;
+      }
+
+      .upload-hero,
+      .upload-card,
+      .upload-side-card,
+      .support-card-pro {
+        border-radius: 22px;
+      }
+
+      .upload-card {
+        padding: 18px;
+      }
+
+      .radio-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="upload-page transition-colors duration-300 min-h-screen flex flex-col">
+  <div id="app-header"></div>
+
+  <main id="main-content" class="upload-page-shell">
+    <section class="upload-hero" aria-labelledby="upload-page-title">
+      <div class="upload-hero-content">
         <div>
-          <span
-            class="section-label"
-            style="display: block; color: var(--primary)"
-            >Community Repository</span
-          >
-          <h1 class="main-title text-on-surface">Upload Past Paper</h1>
-          <p class="question-desc" style="margin-top: 16px; font-size: 18px">
-            Your contribution helps fellow students master their courses. Join
-            our network of academic curators by sharing high-quality resources.
+          <span class="upload-eyebrow">
+            <span class="material-symbols-outlined" aria-hidden="true">volunteer_activism</span>
+            Community Repository
+          </span>
+
+          <h1 id="upload-page-title">Upload Past Paper</h1>
+
+          <p>
+            Share a clean paper with the COMSATS community. Your upload helps students revise faster,
+            prepare smarter, and find useful academic resources in one place.
           </p>
         </div>
+
+        <div class="upload-hero-stats" aria-label="Upload benefits">
+          <div class="upload-stat-card">
+            <span class="upload-stat-icon material-symbols-outlined" aria-hidden="true">rule</span>
+            <span>
+              <strong>Reviewed first</strong>
+              <span>Every file goes through moderation.</span>
+            </span>
+          </div>
+
+          <div class="upload-stat-card">
+            <span class="upload-stat-icon material-symbols-outlined" aria-hidden="true">description</span>
+            <span>
+              <strong>PDF or image</strong>
+              <span>Upload PDF, JPG, PNG, or WebP.</span>
+            </span>
+          </div>
+
+          <div class="upload-stat-card">
+            <span class="upload-stat-icon material-symbols-outlined" aria-hidden="true">workspace_premium</span>
+            <span>
+              <strong>Contributor badge</strong>
+              <span>Verified contributors get recognition.</span>
+            </span>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="upload-layout">
-        <!-- Form Section -->
-        <div class="upload-main">
-          <div class="upload-form-card">
-            <form id="uploadForm">
-              <div class="upload-form-grid">
-                <!-- Subject Name -->
-                <div class="form-group">
-                  <label class="form-label" for="subject">Subject Name</label>
-                  <input class="form-control" id="subject" type="text" list="subjectList" placeholder="e.g. Data Structures" required>
-                  <datalist id="subjectList">
-                    <option value="Loading subjects..."></option>
-                  </datalist>
-                </div>
+    <section class="upload-layout-pro" aria-label="Upload form and guidelines">
+      <div class="upload-card">
+        <div class="upload-card-header">
+          <div>
+            <h2>Paper details</h2>
+            <p>
+              Fill in the subject, year, exam type, semester, and attach a readable file.
+            </p>
+          </div>
 
-                <!-- Academic Year -->
-                <div class="form-group">
-                  <label class="form-label" for="year">Academic Year</label>
-                  <input class="form-control" id="year" min="2010" placeholder="e.g. 2024" type="number" required>
-                </div>
+          <span class="upload-form-badge">
+            <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+            Sign in required
+          </span>
+        </div>
 
-                <!-- Exam Type -->
-                <div class="form-group">
-                  <label class="form-label">Exam Type</label>
-                  <div class="radio-group">
-                    <label class="radio-label">
-                        <input checked class="radio-input" id="exam-mid" name="exam_type" type="radio" value="Mid Term">
-                      <div class="radio-button">Mid</div>
-                    </label>
-                    <label class="radio-label">
-                        <input class="radio-input" id="exam-final" name="exam_type" type="radio" value="Final Term">
-                      <div class="radio-button">Final</div>
-                    </label>
+        <form id="uploadForm">
+          <div class="upload-form-grid">
+            <div class="form-group">
+              <label class="form-label" for="subject">
+                <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
+                Subject Name
+              </label>
+
+              <input
+                class="form-control"
+                id="subject"
+                type="text"
+                list="subjectList"
+                placeholder="e.g. Data Structures"
+                required
+              />
+
+              <datalist id="subjectList">
+                <option value="Loading subjects..."></option>
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="year">
+                <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+                Academic Year
+              </label>
+
+              <input
+                class="form-control"
+                id="year"
+                min="2010"
+                placeholder="e.g. 2024"
+                type="number"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="material-symbols-outlined" aria-hidden="true">assignment</span>
+                Exam Type
+              </label>
+
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input
+                    checked
+                    class="radio-input"
+                    id="exam-mid"
+                    name="exam_type"
+                    type="radio"
+                    value="Mid Term"
+                  />
+                  <span class="radio-button">
+                    <span class="material-symbols-outlined" aria-hidden="true">stylus_note</span>
+                    Mid
+                  </span>
+                </label>
+
+                <label class="radio-label">
+                  <input
+                    class="radio-input"
+                    id="exam-final"
+                    name="exam_type"
+                    type="radio"
+                    value="Final Term"
+                  />
+                  <span class="radio-button">
+                    <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
+                    Final
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="semester">
+                <span class="material-symbols-outlined" aria-hidden="true">school</span>
+                Semester
+              </label>
+
+              <select class="form-control" id="semester">
+                <option>Spring</option>
+                <option>Fall</option>
+                <option>Summer</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label class="form-label" for="fileInput">
+                <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
+                Upload Document
+              </label>
+
+              <div id="uploadZone" class="upload-zone border-dashed">
+                <input
+                  class="upload-input"
+                  type="file"
+                  id="fileInput"
+                  accept=".pdf,image/*"
+                />
+
+                <div class="upload-zone-content">
+                  <div class="upload-zone-icon">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud_upload</span>
                   </div>
-                </div>
 
-                <!-- Semester -->
-                <div class="form-group">
-                  <label class="form-label" for="semester">Semester</label>
-                  <select class="form-control" id="semester">
-                    <option>Spring</option>
-                    <option>Fall</option>
-                    <option>Summer</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Upload Zone -->
-              <div class="form-group">
-                <label class="form-label" for="fileInput">Upload Document (PDF/Image)</label>
-                <div id="uploadZone" class="upload-zone text-on-surface transition-all duration-200">
-                    <input class="upload-input" type="file" id="fileInput" accept=".pdf,image/*">
-                  <span
-                    class="material-symbols-outlined"
-                    style="
-                      font-size: 36px;
-                      color: var(--primary);
-                      margin-bottom: 16px;
-                    "
-                    >upload_file</span
-                  >
-                  <p style="font-weight: 500">
-                    Drag and drop file here, or
-                    <span
-                      style="color: var(--primary); text-decoration: underline"
-                      >browse</span
-                    >
+                  <p class="upload-zone-title">
+                    Drag and drop your file here, or <span>browse</span>
                   </p>
-                  <p
-                    class="question-desc"
-                    style="font-size: 14px; margin-top: 8px"
-                  >
-                    Maximum file size 5MB
+
+                  <p class="upload-zone-subtitle">
+                    Accepted formats: PDF, JPG, PNG, WebP. Maximum file size: 5MB.
                   </p>
-                  <p id="selectedFileName" class="upload-file-meta" aria-live="polite">No file selected</p>
+
+                  <p id="selectedFileName" class="upload-file-meta" aria-live="polite">
+                    No file selected
+                  </p>
                 </div>
               </div>
-
-              <div style="padding-top: 24px">
-                <button
-                  id="submitBtn"
-                  class="btn-primary"
-                  style="
-                    width: 100%;
-                    padding: 16px 40px;
-                    border-radius: 999px;
-                    box-shadow: var(--shadow-sm);
-                    font-size: 16px;
-                  "
-                  type="submit"
-                >
-                  Submit Contribution
-                </button>
-                <div
-                  id="feedbackMessage"
-                  class="hidden text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in text-center"
-                  role="status"
-                  aria-live="polite"
-                  aria-atomic="true"
-                ></div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Guidelines Sidebar -->
-        <div class="upload-sidebar">
-          <div class="guidelines-card">
-            <h3 style="font-size: 20px; font-weight: 700">Submission Guide</h3>
-            <div style="display: flex; flex-direction: column; gap: 16px">
-              <div class="guideline-item">
-                <div class="guideline-number">1</div>
-                <p
-                  class="question-desc"
-                  style="font-size: 14px; line-height: 1.6"
-                >
-                  Ensure the document is clear and readable without digital
-                  noise.
-                </p>
-              </div>
-              <div class="guideline-item">
-                <div class="guideline-number">2</div>
-                <p
-                  class="question-desc"
-                  style="font-size: 14px; line-height: 1.6"
-                >
-                  Include all pages of the question paper in sequential order.
-                </p>
-              </div>
-              <div class="guideline-item">
-                <div class="guideline-number">3</div>
-                <p
-                  class="question-desc"
-                  style="font-size: 14px; line-height: 1.6"
-                >
-                  Redact any personal handwritten notes if necessary.
-                </p>
-              </div>
-            </div>
-
-            <div class="perk-box">
-              <div class="perk-header">
-                <span class="material-symbols-outlined">verified</span>
-                <span
-                  style="
-                    font-size: 12px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                  "
-                  >Top Contributor Perk</span
-                >
-              </div>
-              <p
-                class="question-desc"
-                style="
-                  font-size: 11px;
-                  margin-top: 12px;
-                  font-style: italic;
-                  line-height: 1.25;
-                "
-              >
-                Contributors with over 10 verified uploads receive a special
-                "Archive Master" badge and priority leaderboard placement.
-              </p>
             </div>
           </div>
 
-          <!-- Preview Card -->
-          <div class="support-card">
-            <div style="position: relative; z-index: 10">
-              <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px">
-                Need Help?
-              </h4>
-              <p
-                style="
-                  color: rgba(255, 255, 255, 0.7);
-                  font-size: 14px;
-                  margin-bottom: 16px;
-                "
-              >
-                Contact the moderation team for issues regarding file
-                formatting.
-              </p>
-              <a
-                href="feedback.html"
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  text-transform: uppercase;
-                  letter-spacing: 1px;
-                  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-                  padding-bottom: 4px;
-                  text-decoration: none;
-                "
-                >Support Desk</a
-              >
-            </div>
-            <span class="material-symbols-outlined support-bg-icon"
-              >contact_support</span
-            >
+          <div class="submit-area">
+            <button id="submitBtn" class="upload-submit-btn" type="submit">
+              <span class="material-symbols-outlined" aria-hidden="true">send</span>
+              Submit Contribution
+            </button>
+
+            <div
+              id="feedbackMessage"
+              class="hidden text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in text-center"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></div>
           </div>
-        </div>
+        </form>
       </div>
-    </main>
 
-    <div id="app-footer"></div>
-    <div id="app-mobile-nav"></div>
+      <aside class="upload-side-stack" aria-label="Submission guidance">
+        <div class="upload-side-card">
+          <div class="upload-side-header">
+            <div class="upload-side-header-icon">
+              <span class="material-symbols-outlined" aria-hidden="true">checklist</span>
+            </div>
 
-    <script type="module">
-      import { supabase, escapeHtml } from './js/core.js';
+            <h3>Submission Guide</h3>
+          </div>
 
-      const STORAGE_BUCKET = 'paper-submissions';
-      const SUBMISSIONS_TABLE = 'paper_submissions';
-      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-      const ALLOWED_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']);
+          <div class="guide-list">
+            <div class="guide-item">
+              <div class="guide-number">1</div>
+              <p>Upload a clear, readable paper without blur, cuts, or digital noise.</p>
+            </div>
 
-      const form = document.getElementById('uploadForm');
-      const subjectInput = document.getElementById('subject');
-      const yearInput = document.getElementById('year');
-      const semesterSelect = document.getElementById('semester');
-      const fileInput = document.getElementById('fileInput');
-      const selectedFileName = document.getElementById('selectedFileName');
-      const submitBtn = document.getElementById('submitBtn');
-      const uploadZone = document.getElementById('uploadZone');
+            <div class="guide-item">
+              <div class="guide-number">2</div>
+              <p>Include all pages of the question paper in the correct order.</p>
+            </div>
 
-      fileInput?.addEventListener('change', updateSelectedFileStatus);
-      updateSelectedFileStatus();
+            <div class="guide-item">
+              <div class="guide-number">3</div>
+              <p>Remove personal notes, roll numbers, or anything private before uploading.</p>
+            </div>
+          </div>
 
-      // Drag and drop styles
-      if (uploadZone && fileInput) {
-          uploadZone.addEventListener('dragover', (e) => {
-              e.preventDefault();
-              uploadZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
-              uploadZone.classList.remove('border-dashed');
-          });
-          uploadZone.addEventListener('dragleave', (e) => {
-              e.preventDefault();
-              uploadZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
-              uploadZone.classList.add('border-dashed');
-          });
-          uploadZone.addEventListener('drop', (e) => {
-              e.preventDefault();
-              uploadZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:border-blue-500', 'dark:bg-blue-900/20', 'border-solid');
-              uploadZone.classList.add('border-dashed');
-              
-              if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                  fileInput.files = e.dataTransfer.files;
-                  updateSelectedFileStatus();
-              }
-          });
-      }
+          <div class="perk-box-pro">
+            <div class="perk-title">
+              <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+              Top Contributor Perk
+            </div>
 
-      form.addEventListener('submit', async event => {
-          event.preventDefault();
-          clearMessages();
+            <p>
+              Contributors with over 10 verified uploads receive an “Archive Master”
+              badge and priority leaderboard placement.
+            </p>
+          </div>
+        </div>
 
-          const validation = validateForm();
-          if (!validation.ok) {
-              showError(validation.message);
-              return;
-          }
+        <div class="support-card-pro">
+          <h4>Need help?</h4>
 
-          const { file, subjectCode, subjectName, year, examType, semester } = validation.values;
-          const originalHtml = submitBtn.innerHTML;
-          setButtonLoading('Uploading...');
+          <p>
+            Contact the moderation team if your file format is not working or your upload fails.
+          </p>
 
-          let uploadedPath = null;
+          <a href="feedback.html">
+            Support Desk
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </a>
+        </div>
+      </aside>
+    </section>
+  </main>
 
-          try {
-              const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-              if (sessionError) throw sessionError;
+  <div id="app-footer"></div>
+  <div id="app-mobile-nav"></div>
 
-              const session = sessionData?.session ?? null;
-              if (!session) {
-                  throw new Error('Please sign in before uploading a paper.');
-              }
+  <script type="module">
+    import { supabase, escapeHtml } from './js/core.js';
 
-              const userId = session.user.id;
-              const fileExt = getFileExtension(file.name);
-              const safeExt = fileExt || inferExtensionFromMime(file.type) || 'bin';
+    const STORAGE_BUCKET = 'paper-submissions';
+    const SUBMISSIONS_TABLE = 'paper_submissions';
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    const ALLOWED_TYPES = new Set([
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ]);
 
-              const safeSubjectCode = slugify(subjectCode || subjectName || 'subject');
-              const safeSemester = slugify(semester || 'semester');
-              const safeExamType = slugify(examType || 'exam');
-              const timestamp = Date.now();
+    const form = document.getElementById('uploadForm');
+    const subjectInput = document.getElementById('subject');
+    const yearInput = document.getElementById('year');
+    const semesterSelect = document.getElementById('semester');
+    const fileInput = document.getElementById('fileInput');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const submitBtn = document.getElementById('submitBtn');
+    const uploadZone = document.getElementById('uploadZone');
 
-              uploadedPath = [
-                  'pending',
-                  safeSubjectCode,
-                  `${year}`,
-                  `${safeExamType}-${safeSemester}-${timestamp}.${safeExt}`
-              ].join('/');
+    fileInput?.addEventListener('change', updateSelectedFileStatus);
+    updateSelectedFileStatus();
 
-              const { error: uploadError } = await supabase.storage
-                  .from(STORAGE_BUCKET)
-                  .upload(uploadedPath, file, {
-                      cacheControl: '3600',
-                      upsert: false,
-                      contentType: file.type
-                  });
-
-              if (uploadError) throw uploadError;
-
-              const submissionPayload = {
-                  subject_code: subjectCode || null,
-                  subject_name: subjectName,
-                  year,
-                  exam_type: examType,
-                  semester,
-                  file_name: file.name,
-                  file_size: file.size,
-                  mime_type: file.type,
-                  storage_bucket: STORAGE_BUCKET,
-                  storage_path: uploadedPath,
-                  status: 'pending_review',
-                  uploaded_by: userId
-              };
-
-              const { error: insertError } = await supabase
-                  .from(SUBMISSIONS_TABLE)
-                  .insert([submissionPayload]);
-
-              if (insertError) {
-                  await safeDeleteUploadedFile(uploadedPath);
-                  throw insertError;
-              }
-
-              form.reset();
-              updateSelectedFileStatus();
-              showSuccess('Thank you! Your paper has been submitted for review.');
-          } catch (error) {
-              console.error('Upload failed:', error);
-              showError(getReadableUploadError(error));
-          } finally {
-              restoreButton(originalHtml);
-          }
+    if (uploadZone && fileInput) {
+      uploadZone.addEventListener('dragover', event => {
+        event.preventDefault();
+        uploadZone.classList.add(
+          'border-blue-500',
+          'bg-blue-50',
+          'dark:border-blue-500',
+          'dark:bg-blue-900/20',
+          'border-solid'
+        );
+        uploadZone.classList.remove('border-dashed');
       });
 
-      function updateSelectedFileStatus() {
-        if (!selectedFileName || !fileInput) return;
+      uploadZone.addEventListener('dragleave', event => {
+        event.preventDefault();
+        uploadZone.classList.remove(
+          'border-blue-500',
+          'bg-blue-50',
+          'dark:border-blue-500',
+          'dark:bg-blue-900/20',
+          'border-solid'
+        );
+        uploadZone.classList.add('border-dashed');
+      });
 
-        const file = fileInput.files?.[0];
+      uploadZone.addEventListener('drop', event => {
+        event.preventDefault();
 
-        if (!file) {
-          selectedFileName.textContent = 'No file selected';
-          selectedFileName.classList.remove('is-ready', 'is-warning');
-          return;
+        uploadZone.classList.remove(
+          'border-blue-500',
+          'bg-blue-50',
+          'dark:border-blue-500',
+          'dark:bg-blue-900/20',
+          'border-solid'
+        );
+        uploadZone.classList.add('border-dashed');
+
+        if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+          fileInput.files = event.dataTransfer.files;
+          updateSelectedFileStatus();
+        }
+      });
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      clearMessages();
+
+      const validation = validateForm();
+
+      if (!validation.ok) {
+        showError(validation.message);
+        return;
+      }
+
+      const { file, subjectCode, subjectName, year, examType, semester } = validation.values;
+      const originalHtml = submitBtn.innerHTML;
+
+      setButtonLoading('Uploading...');
+
+      let uploadedPath = null;
+
+      try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        const session = sessionData?.session ?? null;
+
+        if (!session) {
+          throw new Error('Please sign in before uploading a paper.');
         }
 
-        const fileSize = formatFileSize(file.size);
-        const isAllowed = ALLOWED_TYPES.has(file.type);
-        const isTooLarge = file.size > MAX_FILE_SIZE;
+        const userId = session.user.id;
+        const fileExt = getFileExtension(file.name);
+        const safeExt = fileExt || inferExtensionFromMime(file.type) || 'bin';
+        const safeSubjectCode = slugify(subjectCode || subjectName || 'subject');
+        const safeSemester = slugify(semester || 'semester');
+        const safeExamType = slugify(examType || 'exam');
+        const timestamp = Date.now();
 
-        selectedFileName.textContent = `${file.name} · ${fileSize}`;
+        uploadedPath = [
+          'pending',
+          safeSubjectCode,
+          `${year}`,
+          `${safeExamType}-${safeSemester}-${timestamp}.${safeExt}`
+        ].join('/');
 
-        selectedFileName.classList.toggle('is-ready', isAllowed && !isTooLarge);
-        selectedFileName.classList.toggle('is-warning', !isAllowed || isTooLarge);
+        const { error: uploadError } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .upload(uploadedPath, file, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: file.type
+          });
+
+        if (uploadError) throw uploadError;
+
+        const submissionPayload = {
+          subject_code: subjectCode || null,
+          subject_name: subjectName,
+          year,
+          exam_type: examType,
+          semester,
+          file_name: file.name,
+          file_size: file.size,
+          mime_type: file.type,
+          storage_bucket: STORAGE_BUCKET,
+          storage_path: uploadedPath,
+          status: 'pending_review',
+          uploaded_by: userId
+        };
+
+        const { error: insertError } = await supabase
+          .from(SUBMISSIONS_TABLE)
+          .insert([submissionPayload]);
+
+        if (insertError) {
+          await safeDeleteUploadedFile(uploadedPath);
+          throw insertError;
+        }
+
+        form.reset();
+        updateSelectedFileStatus();
+        showSuccess('Thank you! Your paper has been submitted for review.');
+      } catch (error) {
+        console.error('Upload failed:', error);
+        showError(getReadableUploadError(error));
+      } finally {
+        restoreButton(originalHtml);
+      }
+    });
+
+    function updateSelectedFileStatus() {
+      if (!selectedFileName || !fileInput) return;
+
+      const file = fileInput.files?.[0];
+
+      if (!file) {
+        selectedFileName.textContent = 'No file selected';
+        selectedFileName.classList.remove('is-ready', 'is-warning');
+        return;
       }
 
-      function formatFileSize(bytes) {
-        const size = Number(bytes) || 0;
+      const fileSize = formatFileSize(file.size);
+      const isAllowed = ALLOWED_TYPES.has(file.type);
+      const isTooLarge = file.size > MAX_FILE_SIZE;
 
-        if (size < 1024) return `${size} B`;
-        if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      selectedFileName.textContent = `${file.name} · ${fileSize}`;
+      selectedFileName.classList.toggle('is-ready', isAllowed && !isTooLarge);
+      selectedFileName.classList.toggle('is-warning', !isAllowed || isTooLarge);
+    }
 
-        return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+    function formatFileSize(bytes) {
+      const size = Number(bytes) || 0;
+
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+
+      return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function validateForm() {
+      const subjectValue = String(subjectInput.value || '').trim();
+      const subjectCode = '';
+      const subjectName = subjectValue;
+      const year = Number(yearInput.value);
+      const examType = String(document.querySelector('input[name="exam_type"]:checked')?.value || '').trim();
+      const semester = String(semesterSelect.value || '').trim();
+
+      if (!subjectValue) {
+        return { ok: false, message: 'Please enter a subject name.' };
       }
 
-      function validateForm() {
-          const subjectValue = String(subjectInput.value || '').trim();
-          const subjectCode = '';
-          const subjectName = subjectValue;
-          const year = Number(yearInput.value);
-          const examType = String(document.querySelector('input[name="exam_type"]:checked')?.value || '').trim();
-          const semester = String(semesterSelect.value || '').trim();
-
-          if (!subjectValue) return { ok: false, message: 'Please enter a subject name.' };
-          if (!Number.isInteger(year) || year < 2010 || year > (new Date().getFullYear() + 1)) return { ok: false, message: 'Please enter a valid academic year.' };
-          if (!examType) return { ok: false, message: 'Please select an exam type.' };
-          if (!semester) return { ok: false, message: 'Please select a semester.' };
-          if (!fileInput.files || fileInput.files.length === 0) return { ok: false, message: 'Please select a file to upload.' };
-
-          const file = fileInput.files[0];
-          if (file.size > MAX_FILE_SIZE) return { ok: false, message: 'File is too large (max 5MB).' };
-          if (!ALLOWED_TYPES.has(file.type)) return { ok: false, message: 'Only PDF and images allowed.' };
-
-          return { ok: true, values: { file, subjectCode, subjectName, year, examType, semester } };
+      if (!Number.isInteger(year) || year < 2010 || year > (new Date().getFullYear() + 1)) {
+        return { ok: false, message: 'Please enter a valid academic year.' };
       }
 
-      async function safeDeleteUploadedFile(path) {
-          if (!path) return;
-          try { await supabase.storage.from(STORAGE_BUCKET).remove([path]); } catch (e) {}
+      if (!examType) {
+        return { ok: false, message: 'Please select an exam type.' };
       }
 
-      function setButtonLoading(label) {
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = `
-              <span class="flex items-center justify-center gap-2">
-                  <span class="animate-spin text-xl">⟳</span>
-                  <span>${escapeHtml(label)}</span>
-              </span>
-          `;
+      if (!semester) {
+        return { ok: false, message: 'Please select a semester.' };
       }
 
-      function restoreButton(html) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = html;
+      if (!fileInput.files || fileInput.files.length === 0) {
+        return { ok: false, message: 'Please select a file to upload.' };
       }
 
-      function showError(message) {
-          if (window.updateGlobalFeedback) {
-              window.updateGlobalFeedback({ type: 'error', message: `Upload Failed: ${message}`, duration: 8000 });
-          }
-          const fb = document.getElementById('feedbackMessage');
-          if (fb) {
-              fb.textContent = message;
-              fb.className = 'text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in bg-red-50 border-red-200 text-red-700 text-center';
-              fb.classList.remove('hidden');
-              setTimeout(() => fb.classList.add('hidden'), 8000);
-          }
+      const file = fileInput.files[0];
+
+      if (file.size > MAX_FILE_SIZE) {
+        return { ok: false, message: 'File is too large (max 5MB).' };
       }
 
-      function showSuccess(message) {
-          if (window.showFeedbackStatus) {
-              window.showFeedbackStatus({ type: 'success', message: 'File shared successfully!', duration: 6000 });
-          }
-          if (window.updateGlobalFeedback) {
-              window.updateGlobalFeedback({ type: 'success', message: message, duration: 10000 });
-          }
-          const fb = document.getElementById('feedbackMessage');
-          if (fb) {
-              fb.textContent = message;
-              fb.className = 'text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in bg-emerald-50 border-emerald-200 text-emerald-700 text-center';
-              fb.classList.remove('hidden');
-              setTimeout(() => fb.classList.add('hidden'), 10000);
-          }
+      if (!ALLOWED_TYPES.has(file.type)) {
+        return { ok: false, message: 'Only PDF and images allowed.' };
       }
 
-      function clearMessages() {
-          const fb = document.getElementById('feedbackMessage');
-          if (fb) fb.classList.add('hidden');
+      return {
+        ok: true,
+        values: {
+          file,
+          subjectCode,
+          subjectName,
+          year,
+          examType,
+          semester
+        }
+      };
+    }
+
+    async function safeDeleteUploadedFile(path) {
+      if (!path) return;
+
+      try {
+        await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+      } catch (error) {
+        console.warn('Could not remove uploaded file after failed insert:', error);
+      }
+    }
+
+    function setButtonLoading(label) {
+      submitBtn.disabled = true;
+
+      submitBtn.innerHTML = `
+        <span class="flex items-center justify-center gap-2">
+          <span class="animate-spin text-xl">⟳</span>
+          <span>${escapeHtml(label)}</span>
+        </span>
+      `;
+    }
+
+    function restoreButton(html) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = html;
+    }
+
+    function showError(message) {
+      if (window.updateGlobalFeedback) {
+        window.updateGlobalFeedback({
+          type: 'error',
+          message: `Upload Failed: ${message}`,
+          duration: 8000
+        });
       }
 
-      function getReadableUploadError(error) {
-          const raw = String(error?.message || error || '').trim();
-          const lower = raw.toLowerCase();
-          if (lower.includes('sign in')) return 'Please sign in first.';
-          if (lower.includes('duplicate')) return 'File already exists.';
-          return raw || 'Upload failed.';
+      const feedback = document.getElementById('feedbackMessage');
+
+      if (feedback) {
+        feedback.textContent = message;
+        feedback.className =
+          'text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in bg-red-50 border-red-200 text-red-700 text-center';
+        feedback.classList.remove('hidden');
+
+        setTimeout(() => feedback.classList.add('hidden'), 8000);
+      }
+    }
+
+    function showSuccess(message) {
+      if (window.showFeedbackStatus) {
+        window.showFeedbackStatus({
+          type: 'success',
+          message: 'File shared successfully!',
+          duration: 6000
+        });
       }
 
-      function getFileExtension(fileName) {
-          const parts = String(fileName || '').split('.');
-          return parts.length > 1 ? parts.pop().toLowerCase() : '';
+      if (window.updateGlobalFeedback) {
+        window.updateGlobalFeedback({
+          type: 'success',
+          message,
+          duration: 10000
+        });
       }
 
-      function inferExtensionFromMime(mime) {
-          if (mime === 'application/pdf') return 'pdf';
-          if (mime === 'image/jpeg') return 'jpg';
-          return 'bin';
-      }
+      const feedback = document.getElementById('feedbackMessage');
 
-      function slugify(value) {
-          return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item';
-      }
-    </script>
+      if (feedback) {
+        feedback.textContent = message;
+        feedback.className =
+          'text-sm mt-3 px-4 py-3 rounded-xl border animate-fade-in bg-emerald-50 border-emerald-200 text-emerald-700 text-center';
+        feedback.classList.remove('hidden');
 
-    <script type="module" src="js/layout.js"></script>
-  </body>
+        setTimeout(() => feedback.classList.add('hidden'), 10000);
+      }
+    }
+
+    function clearMessages() {
+      const feedback = document.getElementById('feedbackMessage');
+
+      if (feedback) feedback.classList.add('hidden');
+    }
+
+    function getReadableUploadError(error) {
+      const raw = String(error?.message || error || '').trim();
+      const lower = raw.toLowerCase();
+
+      if (lower.includes('sign in')) return 'Please sign in first.';
+      if (lower.includes('duplicate')) return 'File already exists.';
+
+      return raw || 'Upload failed.';
+    }
+
+    function getFileExtension(fileName) {
+      const parts = String(fileName || '').split('.');
+
+      return parts.length > 1 ? parts.pop().toLowerCase() : '';
+    }
+
+    function inferExtensionFromMime(mime) {
+      if (mime === 'application/pdf') return 'pdf';
+      if (mime === 'image/jpeg') return 'jpg';
+      if (mime === 'image/png') return 'png';
+      if (mime === 'image/webp') return 'webp';
+
+      return 'bin';
+    }
+
+    function slugify(value) {
+      return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'item';
+    }
+  </script>
+
+  <script type="module" src="js/layout.js"></script>
+</body>
 </html>
