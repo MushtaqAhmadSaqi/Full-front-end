@@ -177,32 +177,16 @@
   }
 
   function buildSubjects(rows = []) {
-    const subjectMap = new Map();
-
-    rows.forEach(row => {
-      const subjectName = String(row.subject_name || 'Untitled Subject').trim();
-      const subjectCode = String(row.subject_code || '').trim();
-      const key = subjectCode || subjectName;
-      const year = Number(row.year || 0);
-
-      if (!subjectMap.has(key)) {
-        subjectMap.set(key, {
-          subject_name: subjectName,
-          subject_code: subjectCode,
-          count: 0,
-          latestYear: 0,
-          searchText: `${subjectName} ${subjectCode}`.toLowerCase()
-        });
-      }
-
-      const subject = subjectMap.get(key);
-      subject.count += 1;
-      if (year > subject.latestYear) subject.latestYear = year;
-    });
-
-    return [...subjectMap.values()].sort((a, b) =>
-      a.subject_name.localeCompare(b.subject_name)
-    );
+    // With canonical catalog, each row is already a unique subject
+    return rows.map(row => ({
+      subject_name: String(row.subject_name || 'Untitled Subject').trim(),
+      subject_code: String(row.subject_code || '').trim(),
+      // We'll set placeholders for count/year since catalog doesn't have them
+      // but we could join them if needed. For now, let's keep it simple.
+      count: 0, 
+      latestYear: 0,
+      searchText: `${row.subject_name} ${row.subject_code}`.toLowerCase()
+    })).sort((a, b) => a.subject_name.localeCompare(b.subject_name));
   }
 
   function renderSubjects(subjects = []) {
@@ -228,11 +212,6 @@
                  style="background:${p.bg}; color:${p.color};">
               <span class="material-symbols-outlined text-[22px]">${p.icon}</span>
             </div>
-            ${subject.latestYear ? `
-              <span class="meta-chip">
-                ${subject.latestYear}
-              </span>
-            ` : ''}
           </div>
 
           <div class="mb-5 min-w-0">
@@ -245,8 +224,8 @@
           </div>
 
           <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/10">
-            <div class="meta-chip">
-              ${subject.count} Paper${subject.count === 1 ? '' : 's'}
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:text-brand-500 transition-colors">
+              Explore Papers
             </div>
             <div class="text-brand-600 dark:text-brand-400 group-hover:translate-x-1 transition-transform">
               <span class="material-symbols-outlined">arrow_forward</span>
@@ -292,8 +271,8 @@
       );
 
       const fetchPromise = supabase
-        .from('past_papers')
-        .select('id, subject_code, subject_name, year')
+        .from('subject_catalog')
+        .select('subject_code, subject_name')
         .order('subject_name', { ascending: true });
 
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);

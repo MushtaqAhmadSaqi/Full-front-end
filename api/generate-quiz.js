@@ -49,6 +49,7 @@ export default async function handler(req, res) {
   // 3. Validate request body
   const {
     subject,
+    subjectCode = "",
     examType = "midterm",
     topics = "",
     questionCount = 10,
@@ -126,12 +127,14 @@ export default async function handler(req, res) {
       20
     );
 
+    const subjectLabel = subjectCode ? `${subject} (${subjectCode})` : subject;
+
     const prompt = `
 You are an expert COMSATS University exam coach.
 
 Create a high-quality ${safeQuestionCount}-question multiple-choice quiz for:
 
-Subject: ${subject}
+Subject: ${subjectLabel}
 Exam Type: ${examType}
 Difficulty: ${difficulty}
 ${topics ? `Focus Topics: ${topics}` : ""}
@@ -140,7 +143,7 @@ Return ONLY valid JSON. No markdown. No explanation outside JSON.
 
 Use this exact format:
 {
-  "title": "COMSATS ${subject} ${String(examType).charAt(0).toUpperCase() + String(examType).slice(1)} Quiz",
+  "title": "COMSATS ${subjectLabel} ${String(examType).charAt(0).toUpperCase() + String(examType).slice(1)} Quiz",
   "questions": [
     {
       "question": "Clear question text here?",
@@ -205,6 +208,7 @@ Use this exact format:
 
     quizData.metadata = {
       subject,
+      subjectCode,
       examType,
       generatedAt: new Date().toISOString(),
       isAIGenerated: true,

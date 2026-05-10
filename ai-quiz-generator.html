@@ -100,18 +100,8 @@
           <!-- Subject -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Subject</label>
-            <select id="subject" required class="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-blue-400/30 text-base transition-all">
-              <option value="">Select a subject...</option>
-              <option value="Calculus">Calculus</option>
-              <option value="Data Structures">Data Structures</option>
-              <option value="Object Oriented Programming">Object Oriented Programming</option>
-              <option value="Computer Networks">Computer Networks</option>
-              <option value="Database Systems">Database Systems</option>
-              <option value="Software Engineering">Software Engineering</option>
-              <option value="Linear Algebra">Linear Algebra</option>
-              <option value="Digital Logic Design">Digital Logic Design</option>
-              <option value="Operating Systems">Operating Systems</option>
-              <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <select id="subject" name="subject" required class="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-blue-400/30 text-base transition-all">
+              <option value="">Loading subjects...</option>
             </select>
             <p class="mt-1.5 text-xs text-slate-500">Choose the course you want to practice right now.</p>
           </div>
@@ -689,8 +679,11 @@
 
         if (typeof stopTimer === 'function') stopTimer();
 
+        const selectedSubjectOption = subjectSelect.selectedOptions?.[0];
+
         const formData = {
           subject: subjectSelect.value,
+          subjectCode: selectedSubjectOption?.dataset?.code || '',
           examType: document.getElementById('exam-type').value,
           topics: document.getElementById('topics').value.trim(),
           questionCount: parseInt(document.getElementById('question-count').value, 10),
@@ -1065,8 +1058,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('%c[AI Quiz] Page loaded - initializing...', 'color:#3b82f6');
 
-  // 1. Load subjects from Supabase (dynamic)
-  await loadSubjectsFromSupabase();
+  // 1. Load subjects from Canonical Catalog (dynamic)
+  await loadCanonicalSubjects();
 
   // 2. Setup all form handlers
   setupFormSubmission();
@@ -1085,61 +1078,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('%c[AI Quiz] All handlers initialized successfully', 'color:#22c55e');
 });
 
-// ==================== DYNAMIC SUBJECTS (Updated) ====================
-async function loadSubjectsFromSupabase() {
-  const select = document.getElementById('subject');
-  if (!select) return;
+// ==================== DYNAMIC SUBJECTS (Canonical) ====================
+async function loadCanonicalSubjects() {
+  const subjectSelect = document.getElementById('subject');
+  if (!subjectSelect) return;
 
-  select.innerHTML = '<option value="">Loading subjects...</option>';
-  select.disabled = true;
+  subjectSelect.innerHTML = '<option value="">Loading subjects...</option>';
+  subjectSelect.disabled = true;
 
   try {
     const { supabase } = await import('./js/core.js');
 
     const { data, error } = await supabase
-      .from('past_papers')
-      .select('subject_name')
+      .from('subject_catalog')
+      .select('subject_code, subject_name')
       .order('subject_name', { ascending: true });
 
     if (error) throw error;
 
-    const uniqueSubjects = [...new Set(data.map(r => r.subject_name).filter(Boolean))];
+    subjectSelect.innerHTML = '<option value="">Select a subject...</option>';
 
-    select.innerHTML = '<option value="">Select a subject...</option>';
-    uniqueSubjects.forEach(subject => {
-      const opt = document.createElement('option');
-      opt.value = subject;
-      opt.textContent = subject;
-      select.appendChild(opt);
+    if (!data || data.length === 0) {
+      subjectSelect.innerHTML = '<option value="">No subjects found</option>';
+      return;
+    }
+
+    data.forEach(subject => {
+      const option = document.createElement('option');
+      option.value = subject.subject_name;
+      option.dataset.code = subject.subject_code;
+      option.textContent = `${subject.subject_name} (${subject.subject_code})`;
+      subjectSelect.appendChild(option);
     });
 
-    select.disabled = false;
+    subjectSelect.disabled = false;
 
     // Restore saved value
     const saved = localStorage.getItem('quizFormState');
     if (saved) {
       const state = JSON.parse(saved);
-      if (state.subject && uniqueSubjects.includes(state.subject)) {
-        select.value = state.subject;
+      if (state.subject) {
+        // Try to match by name
+        const options = Array.from(subjectSelect.options);
+        const match = options.find(opt => opt.value === state.subject);
+        if (match) subjectSelect.value = state.subject;
       }
     }
   } catch (err) {
-    console.error('Supabase subjects failed:', err);
+    console.error('Canonical subjects failed:', err);
     // Fallback
-    select.innerHTML = `
+    subjectSelect.innerHTML = `
       <option value="">Select a subject...</option>
-      <option value="Calculus">Calculus</option>
-      <option value="Data Structures">Data Structures</option>
-      <option value="Object Oriented Programming">Object Oriented Programming</option>
-      <option value="Computer Networks">Computer Networks</option>
-      <option value="Database Systems">Database Systems</option>
-      <option value="Software Engineering">Software Engineering</option>
-      <option value="Linear Algebra">Linear Algebra</option>
-      <option value="Digital Logic Design">Digital Logic Design</option>
-      <option value="Operating Systems">Operating Systems</option>
-      <option value="Artificial Intelligence">Artificial Intelligence</option>
+      <option value="Calculus" data-code="MTH101">Calculus (MTH101)</option>
+      <option value="Data Structures" data-code="CSC211">Data Structures (CSC211)</option>
+      <option value="Object Oriented Programming" data-code="CSC241">Object Oriented Programming (CSC241)</option>
     `;
-    select.disabled = false;
+    subjectSelect.disabled = false;
   }
 }
   </script>

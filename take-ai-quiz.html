@@ -722,9 +722,11 @@
       quizTitle.textContent = quizData.title || 'AI Generated Quiz';
 
       const subject = quizData.metadata?.subject || quizData.subject || 'Subject';
+      const code = quizData.metadata?.subjectCode || '';
       const examType = quizData.metadata?.examType || quizData.examType || 'Exam';
 
-      quizMeta.textContent = `${subject} • ${examType} • ${quizData.questions.length} questions`;
+      const subjectLabel = code ? `${subject} (${code})` : subject;
+      quizMeta.textContent = `${subjectLabel} • ${examType} • ${quizData.questions.length} questions`;
 
       questionsContainer.innerHTML = '';
 

@@ -1307,6 +1307,32 @@
       });
     }
 
+    async function loadSubjectCatalog() {
+      const subjectList = document.getElementById('subjectList');
+      if (!subjectList) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('subject_catalog')
+          .select('subject_code, subject_name')
+          .order('subject_name', { ascending: true });
+
+        if (error) throw error;
+
+        subjectList.innerHTML = '';
+        (data || []).forEach(subject => {
+          const option = document.createElement('option');
+          option.value = subject.subject_name;
+          option.textContent = subject.subject_code ? `${subject.subject_name} (${subject.subject_code})` : subject.subject_name;
+          subjectList.appendChild(option);
+        });
+      } catch (err) {
+        console.warn('Could not load subject catalog for datalist:', err);
+      }
+    }
+
+    loadSubjectCatalog();
+
     form.addEventListener('submit', async event => {
       event.preventDefault();
       clearMessages();
