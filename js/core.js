@@ -166,3 +166,54 @@ export function debounce(fn, wait) {
         timeout = setTimeout(() => fn.apply(this, args), wait);
     };
 }
+
+// ── Standard UI Messages ──────────────────────────────────────────────────────
+export const UI_MESSAGES = {
+  loginRequiredAI: {
+    title: "Sign in to generate AI quizzes",
+    message: "Login is required so we can save your usage limit and protect the AI system from spam.",
+    button: "Sign In to Continue"
+  },
+
+  aiLimitReached: {
+    title: "AI quiz limit reached",
+    message: "You have used your 10 free AI quiz generations. You can still use saved quizzes and past papers.",
+    button: "Back to Quizzes"
+  },
+
+  loginRequiredUpload: {
+    title: "Sign in before uploading",
+    message: "Please login first so your paper submission can be reviewed safely.",
+    button: "Sign In to Upload"
+  },
+
+  uploadSuccess: {
+    title: "Paper submitted for review",
+    message: "Thanks for helping other students. Your paper will appear after approval."
+  },
+
+  noSubjects: {
+    title: "No papers uploaded yet",
+    message: "Approved papers will appear here once they are added to the library."
+  },
+
+  noSearchResults: {
+    title: "No matching subject found",
+    message: "Try searching by subject name, subject code, or a different spelling."
+  },
+
+  quizNotFound: {
+    title: "Quiz not found",
+    message: "This quiz may have expired. Please generate a new quiz or return to the quiz page."
+  },
+
+  gpaSyncLogin: {
+    title: "Sign in to sync GPA data",
+    message: "You can calculate without login, but signing in saves your GPA data across devices.",
+    button: "Sign In to Sync"
+  }
+};
+
+if (typeof window !== 'undefined') {
+    window.UI_MESSAGES = UI_MESSAGES;
+}

@@ -983,14 +983,13 @@
         <div>
           <span class="upload-eyebrow">
             <span class="material-symbols-outlined" aria-hidden="true">volunteer_activism</span>
-            Community Repository
+            Help Other Students
           </span>
 
-          <h1 id="upload-page-title">Upload Past Paper</h1>
+          <h1 id="upload-page-title">Upload a Past Paper</h1>
 
           <p>
-            Share a clean paper with the COMSATS community. Your upload helps students revise faster,
-            prepare smarter, and find useful academic resources in one place.
+            Share a clear past paper so other COMSATS students can prepare more easily.
           </p>
         </div>
 
@@ -1043,7 +1042,7 @@
             <div class="form-group">
               <label class="form-label" for="subject">
                 <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
-                Subject Name
+                Subject
               </label>
 
               <input
@@ -1063,7 +1062,7 @@
             <div class="form-group">
               <label class="form-label" for="year">
                 <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
-                Academic Year
+                Year
               </label>
 
               <input
@@ -1130,7 +1129,7 @@
             <div class="form-group form-group-full">
               <label class="form-label" for="fileInput">
                 <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
-                Upload Document
+                Upload File
               </label>
 
               <div id="uploadZone" class="upload-zone border-dashed">
@@ -1147,7 +1146,7 @@
                   </div>
 
                   <p class="upload-zone-title">
-                    Drag and drop your file here, or <span>browse</span>
+                    Drop your file here or <span>browse</span>
                   </p>
 
                   <p class="upload-zone-subtitle">
@@ -1163,9 +1162,19 @@
           </div>
 
           <div class="submit-area">
+            <div id="login-warning" class="mb-5 p-4 rounded-xl border hidden" style="background: rgba(14, 165, 233, 0.05); border-color: rgba(14, 165, 233, 0.2); color: #0369a1;">
+              <div class="flex gap-3">
+                <span class="material-symbols-outlined mt-0.5">lock</span>
+                <div>
+                  <strong class="block text-[13px] uppercase tracking-wider mb-1" id="login-warning-title">Sign in before uploading</strong>
+                  <span class="text-sm" id="login-warning-desc">Please login first so your paper submission can be reviewed safely.</span>
+                </div>
+              </div>
+            </div>
+
             <button id="submitBtn" class="upload-submit-btn" type="submit">
               <span class="material-symbols-outlined" aria-hidden="true">send</span>
-              Submit Contribution
+              Submit for Review
             </button>
 
             <div
@@ -1186,30 +1195,30 @@
               <span class="material-symbols-outlined" aria-hidden="true">checklist</span>
             </div>
 
-            <h3>Submission Guide</h3>
+            <h3>Before You Upload</h3>
           </div>
 
           <div class="guide-list">
             <div class="guide-item">
               <div class="guide-number">1</div>
-              <p>Upload a clear, readable paper without blur, cuts, or digital noise.</p>
+              <p>Make sure the paper is clear, readable, and not blurry.</p>
             </div>
 
             <div class="guide-item">
               <div class="guide-number">2</div>
-              <p>Include all pages of the question paper in the correct order.</p>
+              <p>Upload all pages in the correct order.</p>
             </div>
 
             <div class="guide-item">
               <div class="guide-number">3</div>
-              <p>Remove personal notes, roll numbers, or anything private before uploading.</p>
+              <p>Remove roll numbers, personal notes, or private information.</p>
             </div>
           </div>
 
           <div class="perk-box-pro">
             <div class="perk-title">
               <span class="material-symbols-outlined" aria-hidden="true">verified</span>
-              Top Contributor Perk
+              Contributor Badge
             </div>
 
             <p>
@@ -1220,10 +1229,10 @@
         </div>
 
         <div class="support-card-pro">
-          <h4>Need help?</h4>
+          <h4>Having Upload Issues?</h4>
 
           <p>
-            Contact the moderation team if your file format is not working or your upload fails.
+            Contact us if your file is not uploading or the format is not accepted.
           </p>
 
           <a href="feedback.html">
@@ -1239,7 +1248,7 @@
   <div id="app-mobile-nav"></div>
 
   <script type="module">
-    import { supabase, escapeHtml } from './js/core.js';
+    import { supabase, escapeHtml, UI_MESSAGES } from './js/core.js';
 
     const STORAGE_BUCKET = 'paper-submissions';
     const SUBMISSIONS_TABLE = 'paper_submissions';
@@ -1333,6 +1342,20 @@
 
     loadSubjectCatalog();
 
+    // Check auth state on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const loginWarning = document.getElementById('login-warning');
+      const title = document.getElementById('login-warning-title');
+      const desc = document.getElementById('login-warning-desc');
+      if (!session && loginWarning) {
+        if (UI_MESSAGES?.loginRequiredUpload) {
+           title.textContent = UI_MESSAGES.loginRequiredUpload.title;
+           desc.textContent = UI_MESSAGES.loginRequiredUpload.message;
+        }
+        loginWarning.classList.remove('hidden');
+      }
+    });
+
     form.addEventListener('submit', async event => {
       event.preventDefault();
       clearMessages();
@@ -1359,7 +1382,7 @@
         const session = sessionData?.session ?? null;
 
         if (!session) {
-          throw new Error('Please sign in before uploading a paper.');
+          throw new Error(UI_MESSAGES?.loginRequiredUpload?.message || 'Please sign in before uploading a paper.');
         }
 
         const userId = session.user.id;
