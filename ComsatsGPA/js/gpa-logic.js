@@ -36,17 +36,17 @@
 
   const DEFAULT_SCHEME = Object.freeze({
     theory: {
-      assignmentMax: 12.5,
-      assignmentWeight: 12.5,
+      assignmentMax: 10,
+      assignmentWeight: 10,
       quizMax: 10,
-      quizWeight: 12.5,
+      quizWeight: 15,
       midMax: 25,
       midWeight: 25,
       finalMax: 50,
       finalWeight: 50,
     },
     lab: {
-      assignmentMax: 12.5,
+      assignmentMax: 10,
       assignmentWeight: 25,
       midMax: 25,
       midWeight: 25,

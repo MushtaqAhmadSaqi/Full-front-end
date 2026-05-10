@@ -83,7 +83,7 @@ import { supabase, auth } from '../../js/core.js';
         },
         a: {
           obt: Number(subject?.raw?.a?.obt) || 0,
-          tot: Number(subject?.raw?.a?.tot) || 12.5,
+          tot: Number(subject?.raw?.a?.tot) || 10,
         },
         m: {
           obtained: Number(subject?.raw?.m?.obtained) || 0,
@@ -270,8 +270,8 @@ import { supabase, auth } from '../../js/core.js';
   function readMarkScheme() {
     return {
       theory: {
-        assignmentWeight: readNumberInput('assignment-weight') || 12.5,
-        quizWeight: readNumberInput('quiz-weight') || 12.5,
+        assignmentWeight: readNumberInput('assignment-weight') || 10,
+        quizWeight: readNumberInput('quiz-weight') || 15,
         midWeight: readNumberInput('theory-mid-weight') || 25,
         finalWeight: readNumberInput('theory-final-weight') || 50,
       },
@@ -301,7 +301,7 @@ import { supabase, auth } from '../../js/core.js';
       assignment: {
         obtainedClass: 'assignment-obtained',
         totalClass: 'assignment-total',
-        defaultTotal: '12.5',
+        defaultTotal: '10',
         label: 'Assignment',
       },
       quiz: {
@@ -313,7 +313,7 @@ import { supabase, auth } from '../../js/core.js';
       lab: {
         obtainedClass: 'lab-obtained',
         totalClass: 'lab-total',
-        defaultTotal: '12.5',
+        defaultTotal: '10',
         label: 'Lab Item',
       },
     };
@@ -648,7 +648,7 @@ import { supabase, auth } from '../../js/core.js';
     editQuizObt.value = subject.raw.q.obt;
     editQuizTot.value = subject.raw.q.tot || 10;
     editAssignObt.value = subject.raw.a.obt;
-    editAssignTot.value = subject.raw.a.tot || 12.5;
+    editAssignTot.value = subject.raw.a.tot || 10;
     editMidObt.value = subject.raw.m.obtained;
     editMidTot.value = subject.raw.m.total || 25;
     editFinalObt.value = subject.raw.f.obtained;

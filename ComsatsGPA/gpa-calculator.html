@@ -17,9 +17,560 @@
   <link rel="stylesheet" href="styles/gpa-calculator.css">
 
   <script src="../js/dark-mode.js" defer></script>
+  <style>
+    /* =========================================================
+       GPA CALCULATOR UI/UX PATCH
+       Fixes light-mode missing text + improves dark/mobile UI
+       Front-end only. No API/backend logic touched.
+       ========================================================= */
+
+    body.gpa-page {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 8% 0%, rgba(14, 165, 233, 0.14), transparent 28rem),
+        radial-gradient(circle at 92% 0%, rgba(99, 102, 241, 0.10), transparent 26rem),
+        #f8fafc !important;
+      color: #0f172a !important;
+    }
+
+    /* Main wrapper safety */
+    body.gpa-page main,
+    body.gpa-page #calculator,
+    body.gpa-page .calculator-shell,
+    body.gpa-page .gpa-shell,
+    body.gpa-page .gpa-container {
+      position: relative;
+      z-index: 1;
+      color: #0f172a !important;
+    }
+
+    /* Fix the invisible/washed-out light mode hero text */
+    body.gpa-page h1,
+    body.gpa-page h2,
+    body.gpa-page h3,
+    body.gpa-page h4,
+    body.gpa-page label,
+    body.gpa-page strong {
+      color: #0f172a !important;
+    }
+
+    body.gpa-page p,
+    body.gpa-page span,
+    body.gpa-page small,
+    body.gpa-page li {
+      color: inherit;
+    }
+
+    body.gpa-page .text-white {
+      color: #0f172a !important;
+    }
+
+    /* Keep white text only on real colored buttons/badges */
+    body.gpa-page button.text-white,
+    body.gpa-page .btn-primary,
+    body.gpa-page .gpa-primary-btn,
+    body.gpa-page .bg-blue-500,
+    body.gpa-page .bg-blue-600,
+    body.gpa-page .bg-sky-500,
+    body.gpa-page .bg-sky-600,
+    body.gpa-page .bg-cyan-500,
+    body.gpa-page .bg-cyan-600 {
+      color: #ffffff !important;
+    }
+
+    /* Premium page title section */
+    body.gpa-page h1 {
+      font-size: clamp(2.1rem, 6vw, 4.25rem) !important;
+      line-height: 1.02 !important;
+      letter-spacing: -0.055em !important;
+      font-weight: 900 !important;
+      text-shadow: none !important;
+    }
+
+    body.gpa-page h1 + p,
+    body.gpa-page .hero-subtitle,
+    body.gpa-page .gpa-subtitle {
+      max-width: 760px;
+      color: #475569 !important;
+      font-size: clamp(0.98rem, 2vw, 1.12rem) !important;
+      line-height: 1.75 !important;
+    }
+
+    /* Fix generic light text utility classes */
+    body.gpa-page .text-gray-400,
+    body.gpa-page .text-gray-500,
+    body.gpa-page .text-slate-400,
+    body.gpa-page .text-slate-500 {
+      color: #64748b !important;
+    }
+
+    body.gpa-page .text-gray-600,
+    body.gpa-page .text-gray-700,
+    body.gpa-page .text-slate-600,
+    body.gpa-page .text-slate-700 {
+      color: #475569 !important;
+    }
+
+    body.gpa-page .text-gray-800,
+    body.gpa-page .text-gray-900,
+    body.gpa-page .text-slate-800,
+    body.gpa-page .text-slate-900 {
+      color: #0f172a !important;
+    }
+
+    /* Cards: Subject Entry, Added Subjects, Grade Scale, Overall GPA */
+    body.gpa-page .card,
+    body.gpa-page .gpa-card,
+    body.gpa-page .subject-entry-card,
+    body.gpa-page .subjects-card,
+    body.gpa-page .grade-scale-card,
+    body.gpa-page .overall-gpa-card,
+    body.gpa-page section,
+    body.gpa-page aside {
+      color: #0f172a;
+    }
+
+    body.gpa-page .card,
+    body.gpa-page .gpa-card,
+    body.gpa-page .subject-entry-card,
+    body.gpa-page .subjects-card,
+    body.gpa-page .grade-scale-card,
+    body.gpa-page .overall-gpa-card,
+    body.gpa-page .rounded-2xl,
+    body.gpa-page .rounded-3xl {
+      border-color: #dbeafe !important;
+      background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.10), transparent 34%),
+        rgba(255, 255, 255, 0.96) !important;
+      box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    /* Make section headings more elegant */
+    body.gpa-page h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: clamp(1.2rem, 3vw, 1.65rem) !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.035em !important;
+    }
+
+    body.gpa-page h2 .material-symbols-outlined,
+    body.gpa-page h3 .material-symbols-outlined {
+      color: #0ea5e9 !important;
+    }
+
+    /* GPA score badge */
+    body.gpa-page .gpa-score,
+    body.gpa-page .score-badge,
+    body.gpa-page [class*="score"],
+    body.gpa-page [class*="gpa-badge"] {
+      border: 1px solid rgba(14, 165, 233, 0.18) !important;
+      background: linear-gradient(135deg, #eff6ff, #e0f2fe) !important;
+      color: #0369a1 !important;
+    }
+
+    /* Forms */
+    body.gpa-page input,
+    body.gpa-page select,
+    body.gpa-page textarea {
+      min-height: 46px;
+      border-radius: 15px !important;
+      border: 1.5px solid #dbeafe !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    body.gpa-page input::placeholder,
+    body.gpa-page textarea::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    body.gpa-page input:focus,
+    body.gpa-page select:focus,
+    body.gpa-page textarea:focus {
+      outline: none !important;
+      border-color: #0ea5e9 !important;
+      box-shadow: 0 0 0 5px rgba(14, 165, 233, 0.18) !important;
+    }
+
+    /* Inputs inside mark rows */
+    body.gpa-page .marks-row,
+    body.gpa-page .input-row,
+    body.gpa-page [class*="mark"],
+    body.gpa-page [class*="quiz"],
+    body.gpa-page [class*="assignment"] {
+      color: #0f172a !important;
+    }
+
+    /* Buttons */
+    body.gpa-page button,
+    body.gpa-page .button,
+    body.gpa-page .btn {
+      min-height: 44px;
+      border-radius: 14px !important;
+      font-weight: 800;
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+    }
+
+    body.gpa-page button:hover,
+    body.gpa-page .button:hover,
+    body.gpa-page .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Primary actions */
+    body.gpa-page button[type="submit"],
+    body.gpa-page .calculate-btn,
+    body.gpa-page .add-subject-btn,
+    body.gpa-page .save-btn {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+      color: #ffffff !important;
+      border-color: transparent !important;
+      box-shadow: 0 14px 34px rgba(37, 99, 235, 0.25) !important;
+    }
+
+    /* Secondary / reset / clear actions */
+    body.gpa-page .reset-btn,
+    body.gpa-page .clear-btn,
+    body.gpa-page button[type="button"] {
+      border: 1px solid #dbeafe;
+    }
+
+    /* Added subjects table/list */
+    body.gpa-page table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 0.6rem;
+      color: #0f172a !important;
+    }
+
+    body.gpa-page th {
+      color: #475569 !important;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    body.gpa-page td {
+      color: #0f172a !important;
+    }
+
+    body.gpa-page tbody tr,
+    body.gpa-page .subject-row,
+    body.gpa-page [class*="subject-item"] {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Empty state */
+    body.gpa-page .empty-state,
+    body.gpa-page [class*="empty"],
+    body.gpa-page [class*="no-subject"] {
+      border: 1.5px dashed #bae6fd !important;
+      background: #f0f9ff !important;
+      color: #475569 !important;
+      border-radius: 24px !important;
+    }
+
+    body.gpa-page .empty-state h3,
+    body.gpa-page [class*="empty"] h3 {
+      color: #0f172a !important;
+    }
+
+    body.gpa-page .empty-state p,
+    body.gpa-page [class*="empty"] p {
+      color: #64748b !important;
+    }
+
+    /* Grade scale table/list */
+    body.gpa-page .grade-scale,
+    body.gpa-page [class*="grade"] {
+      color: #0f172a;
+    }
+
+    body.gpa-page .grade-scale table,
+    body.gpa-page [class*="grade"] table {
+      font-size: 0.92rem;
+    }
+
+    /* Overall GPA card */
+    body.gpa-page .overall-gpa-card,
+    body.gpa-page [class*="overall"],
+    body.gpa-page [class*="cumulative"] {
+      color: #0f172a !important;
+    }
+
+    body.gpa-page [class*="cumulative"] strong,
+    body.gpa-page [class*="overall"] strong {
+      color: #0ea5e9 !important;
+    }
+
+    /* Dark mode */
+    html.dark body.gpa-page,
+    body.gpa-page.dark,
+    .dark body.gpa-page {
+      background:
+        radial-gradient(circle at 8% 0%, rgba(56, 189, 248, 0.16), transparent 28rem),
+        radial-gradient(circle at 92% 0%, rgba(129, 140, 248, 0.12), transparent 26rem),
+        #08111f !important;
+      color: #f8fafc !important;
+    }
+
+    html.dark body.gpa-page main,
+    .dark body.gpa-page main,
+    html.dark body.gpa-page #calculator,
+    .dark body.gpa-page #calculator {
+      color: #f8fafc !important;
+    }
+
+    html.dark body.gpa-page h1,
+    html.dark body.gpa-page h2,
+    html.dark body.gpa-page h3,
+    html.dark body.gpa-page h4,
+    html.dark body.gpa-page label,
+    html.dark body.gpa-page strong,
+    .dark body.gpa-page h1,
+    .dark body.gpa-page h2,
+    .dark body.gpa-page h3,
+    .dark body.gpa-page h4,
+    .dark body.gpa-page label,
+    .dark body.gpa-page strong {
+      color: #f8fafc !important;
+    }
+
+    html.dark body.gpa-page p,
+    html.dark body.gpa-page small,
+    html.dark body.gpa-page li,
+    .dark body.gpa-page p,
+    .dark body.gpa-page small,
+    .dark body.gpa-page li {
+      color: #cbd5e1 !important;
+    }
+
+    html.dark body.gpa-page .card,
+    html.dark body.gpa-page .gpa-card,
+    html.dark body.gpa-page .subject-entry-card,
+    html.dark body.gpa-page .subjects-card,
+    html.dark body.gpa-page .grade-scale-card,
+    html.dark body.gpa-page .overall-gpa-card,
+    html.dark body.gpa-page .rounded-2xl,
+    html.dark body.gpa-page .rounded-3xl,
+    .dark body.gpa-page .card,
+    .dark body.gpa-page .gpa-card,
+    .dark body.gpa-page .subject-entry-card,
+    .dark body.gpa-page .subjects-card,
+    .dark body.gpa-page .grade-scale-card,
+    .dark body.gpa-page .overall-gpa-card,
+    .dark body.gpa-page .rounded-2xl,
+    .dark body.gpa-page .rounded-3xl {
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
+        #111827 !important;
+      border-color: rgba(148, 163, 184, 0.22) !important;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42) !important;
+      color: #f8fafc !important;
+    }
+
+    html.dark body.gpa-page input,
+    html.dark body.gpa-page select,
+    html.dark body.gpa-page textarea,
+    .dark body.gpa-page input,
+    .dark body.gpa-page select,
+    .dark body.gpa-page textarea {
+      background: #172033 !important;
+      color: #f8fafc !important;
+      border-color: rgba(148, 163, 184, 0.28) !important;
+    }
+
+    html.dark body.gpa-page input::placeholder,
+    html.dark body.gpa-page textarea::placeholder,
+    .dark body.gpa-page input::placeholder,
+    .dark body.gpa-page textarea::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    html.dark body.gpa-page select option,
+    .dark body.gpa-page select option {
+      background: #111827;
+      color: #f8fafc;
+    }
+
+    html.dark body.gpa-page .text-gray-400,
+    html.dark body.gpa-page .text-gray-500,
+    html.dark body.gpa-page .text-slate-400,
+    html.dark body.gpa-page .text-slate-500,
+    .dark body.gpa-page .text-gray-400,
+    .dark body.gpa-page .text-gray-500,
+    .dark body.gpa-page .text-slate-400,
+    .dark body.gpa-page .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    html.dark body.gpa-page .text-gray-600,
+    html.dark body.gpa-page .text-gray-700,
+    html.dark body.gpa-page .text-slate-600,
+    html.dark body.gpa-page .text-slate-700,
+    .dark body.gpa-page .text-gray-600,
+    .dark body.gpa-page .text-gray-700,
+    .dark body.gpa-page .text-slate-600,
+    .dark body.gpa-page .text-slate-700 {
+      color: #cbd5e1 !important;
+    }
+
+    html.dark body.gpa-page .gpa-score,
+    html.dark body.gpa-page .score-badge,
+    html.dark body.gpa-page [class*="score"],
+    html.dark body.gpa-page [class*="gpa-badge"],
+    .dark body.gpa-page .gpa-score,
+    .dark body.gpa-page .score-badge,
+    .dark body.gpa-page [class*="score"],
+    .dark body.gpa-page [class*="gpa-badge"] {
+      background: rgba(56, 189, 248, 0.12) !important;
+      border-color: rgba(56, 189, 248, 0.24) !important;
+      color: #7dd3fc !important;
+    }
+
+    html.dark body.gpa-page tbody tr,
+    html.dark body.gpa-page .subject-row,
+    html.dark body.gpa-page [class*="subject-item"],
+    .dark body.gpa-page tbody tr,
+    .dark body.gpa-page .subject-row,
+    .dark body.gpa-page [class*="subject-item"] {
+      background: rgba(255, 255, 255, 0.045) !important;
+      border-color: rgba(148, 163, 184, 0.18) !important;
+      color: #f8fafc !important;
+    }
+
+    html.dark body.gpa-page th,
+    .dark body.gpa-page th {
+      color: #94a3b8 !important;
+    }
+
+    html.dark body.gpa-page td,
+    .dark body.gpa-page td {
+      color: #e2e8f0 !important;
+    }
+
+    html.dark body.gpa-page .empty-state,
+    html.dark body.gpa-page [class*="empty"],
+    html.dark body.gpa-page [class*="no-subject"],
+    .dark body.gpa-page .empty-state,
+    .dark body.gpa-page [class*="empty"],
+    .dark body.gpa-page [class*="no-subject"] {
+      background: rgba(56, 189, 248, 0.075) !important;
+      border-color: rgba(56, 189, 248, 0.24) !important;
+      color: #cbd5e1 !important;
+    }
+
+    /* Mobile polish */
+    @media (max-width: 900px) {
+      body.gpa-page main,
+      body.gpa-page #calculator,
+      body.gpa-page .calculator-shell,
+      body.gpa-page .gpa-shell {
+        padding-inline: 12px !important;
+      }
+
+      body.gpa-page .grid,
+      body.gpa-page [class*="grid-cols"] {
+        gap: 1rem !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body.gpa-page {
+        background:
+          radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12), transparent 22rem),
+          #f8fafc !important;
+      }
+
+      body.gpa-page h1 {
+        text-align: left !important;
+        font-size: 2rem !important;
+      }
+
+      body.gpa-page h1 + p,
+      body.gpa-page .hero-subtitle,
+      body.gpa-page .gpa-subtitle {
+        text-align: left !important;
+        font-size: 0.95rem !important;
+      }
+
+      body.gpa-page .card,
+      body.gpa-page .gpa-card,
+      body.gpa-page .subject-entry-card,
+      body.gpa-page .subjects-card,
+      body.gpa-page .grade-scale-card,
+      body.gpa-page .overall-gpa-card,
+      body.gpa-page .rounded-2xl,
+      body.gpa-page .rounded-3xl {
+        border-radius: 22px !important;
+        padding: 1rem !important;
+      }
+
+      body.gpa-page input,
+      body.gpa-page select,
+      body.gpa-page textarea {
+        min-height: 48px;
+        font-size: 16px !important;
+      }
+
+      body.gpa-page button,
+      body.gpa-page .button,
+      body.gpa-page .btn {
+        width: 100%;
+        min-height: 48px;
+        justify-content: center;
+      }
+
+      body.gpa-page table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+
+    body.gpa-page > * {
+      color: #0f172a;
+    }
+
+    html.dark body.gpa-page > *,
+    .dark body.gpa-page > * {
+      color: #f8fafc;
+    }
+
+    .gpa-scheme-note {
+      margin: 0.35rem 0 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 16px;
+      background: rgba(14, 165, 233, 0.08);
+      border: 1px solid rgba(14, 165, 233, 0.16);
+      color: #475569;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      grid-column: span 2;
+    }
+
+    .dark .gpa-scheme-note {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.2);
+      color: #cbd5e1;
+    }
+  </style>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 gpa-page">
   <a class="skip-link" href="#main-content">Skip to calculator</a>
 
   <div id="app-header"></div>
@@ -96,15 +647,19 @@
           <div class="mt-4 space-y-5">
             <fieldset class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <legend class="section-title mb-3 col-span-full">Theory Marks Scheme</legend>
+              <p class="gpa-scheme-note">
+                Default COMSATS scheme used here: Assignment 10%, Quiz 15%, Midterm 25%, and Final 50%.
+                You can change these weights only if your teacher follows a different scheme.
+              </p>
 
               <div>
                 <label for="assignment-weight" class="gpa-label">Assignment Weight</label>
-                <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
+                <input id="assignment-weight" type="number" min="0" max="100" step="0.1" value="10" class="gpa-input">
               </div>
 
               <div>
                 <label for="quiz-weight" class="gpa-label">Quiz Weight</label>
-                <input id="quiz-weight" type="number" min="0" max="100" step="0.1" value="12.5" class="gpa-input">
+                <input id="quiz-weight" type="number" min="0" max="100" step="0.1" value="15" class="gpa-input">
               </div>
 
               <div>
@@ -165,7 +720,7 @@
               <!-- Initial row -->
               <div class="dynamic-row">
                 <div><label class="text-[10px] font-bold text-slate-400 uppercase">Obtained</label><input type="number" step="0.5" class="gpa-input assignment-obtained" placeholder="0"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input assignment-total" value="12.5"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input assignment-total" value="10"></div>
                 <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
               </div>
             </div>
@@ -224,7 +779,7 @@
               <!-- Initial row -->
               <div class="dynamic-row">
                 <div><label class="text-[10px] font-bold text-slate-400 uppercase">Obtained</label><input type="number" step="0.5" class="gpa-input lab-obtained" placeholder="0"></div>
-                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input lab-total" value="12.5"></div>
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Total</label><input type="number" step="0.5" class="gpa-input lab-total" value="10"></div>
                 <button type="button" class="remove-row-btn" title="Remove"><span class="material-symbols-outlined text-lg">delete</span></button>
               </div>
             </div>
