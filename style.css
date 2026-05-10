@@ -9628,3 +9628,68 @@ button:disabled,
 
 
 
+
+
+/* =========================================================
+   FIX: Profile dropdown going behind next section
+   Front-end only. No API/backend logic changed.
+   ========================================================= */
+
+/* Keep the injected header above all page sections */
+#app-header,
+#site-header,
+header {
+  position: sticky;
+  top: 0;
+  z-index: 9990 !important;
+  overflow: visible !important;
+}
+
+/* Make sure the navbar wrapper does not clip the dropdown */
+#app-header *,
+#site-header *,
+header * {
+  overflow: visible;
+}
+
+/* Logged-in avatar/profile dropdown */
+#dashboard-dropdown {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  overflow: visible !important;
+}
+
+/* Make the avatar button parent work as dropdown anchor */
+#open-auth-modal {
+  position: relative;
+  z-index: 9999 !important;
+}
+
+/* If dropdown is inside a parent wrapper, keep that wrapper above sections */
+#open-auth-modal,
+#open-auth-modal.parent,
+#open-auth-modal-wrapper,
+.auth-actions,
+.user-menu,
+.profile-menu {
+  position: relative;
+  z-index: 9999 !important;
+  overflow: visible !important;
+}
+
+/* Prevent hero/sections from covering the dropdown */
+main, section, .hero, .hero-section {
+  position: relative;
+  z-index: 1;
+}
+
+/* Stronger fix for dropdown clipping */
+#dashboard-dropdown:not(.hidden) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}

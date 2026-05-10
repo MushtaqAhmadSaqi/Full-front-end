@@ -178,10 +178,404 @@
         padding: 18px;
       }
     }
+
+    /* =========================================================
+       TAKE AI QUIZ — RESPONSIVE PREMIUM PATCH
+       Front-end only. Quiz JS logic untouched.
+       ========================================================= */
+
+    .ai-take-page,
+    body.ai-take-page {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(14, 165, 233, 0.16), transparent 28rem),
+        radial-gradient(circle at 90% 0%, rgba(99, 102, 241, 0.12), transparent 26rem),
+        #f8fafc;
+    }
+
+    .ai-take-page .quiz-shell {
+      width: min(100%, 980px);
+      padding: clamp(18px, 4vw, 34px) clamp(12px, 4vw, 22px) 78px;
+    }
+
+    .ai-take-page .quiz-topbar {
+      position: sticky;
+      top: 12px;
+      z-index: 30;
+      padding: 10px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .ai-take-page .quiz-topbar a {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: #0369a1 !important;
+      text-decoration: none;
+    }
+
+    .ai-take-page .quiz-topbar a:hover {
+      background: #e0f2fe;
+    }
+
+    .ai-take-page .quiz-topbar > div {
+      min-height: 42px;
+      background: #f8fafc !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    }
+
+    /* Hero quiz summary card */
+    .ai-take-page .quiz-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.13), transparent 34%),
+        rgba(255, 255, 255, 0.94);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.1);
+    }
+
+    .ai-take-page .quiz-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: linear-gradient(90deg, #0ea5e9, #2563eb, #4f46e5);
+    }
+
+    .ai-take-page #quiz-title {
+      max-width: 760px;
+      font-size: clamp(1.85rem, 6vw, 3rem);
+      line-height: 1.04;
+      letter-spacing: -0.055em;
+    }
+
+    .ai-take-page #quiz-meta {
+      max-width: 720px;
+      line-height: 1.65;
+    }
+
+    .ai-take-page .progress-track {
+      height: 11px;
+      background: #e2e8f0;
+    }
+
+    .ai-take-page .progress-fill {
+      background: linear-gradient(90deg, #0ea5e9, #2563eb, #4f46e5);
+    }
+
+    /* Question cards */
+    .ai-take-page #questions-container {
+      display: grid;
+      gap: 18px;
+    }
+
+    .ai-take-page .question-card {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0;
+      padding: clamp(18px, 4vw, 28px);
+      border-radius: 28px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.07);
+    }
+
+    .ai-take-page .question-card::after {
+      content: "";
+      position: absolute;
+      top: -90px;
+      right: -90px;
+      width: 190px;
+      height: 190px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.07);
+      pointer-events: none;
+    }
+
+    .ai-take-page .question-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ai-take-page .question-card h2 {
+      font-size: clamp(1rem, 3.6vw, 1.25rem);
+      line-height: 1.42;
+      letter-spacing: -0.025em;
+    }
+
+    /* Options */
+    .ai-take-page .option-label {
+      min-height: 56px;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: 18px;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .ai-take-page .option-label:hover {
+      transform: translateX(4px);
+      border-color: #38bdf8;
+      background: #f0f9ff;
+      box-shadow: 0 10px 22px rgba(14, 165, 233, 0.08);
+    }
+
+    .ai-take-page .option-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: #0ea5e9;
+      flex: 0 0 auto;
+    }
+
+    .ai-take-page .option-label span:last-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    /* Submit button */
+    .ai-take-page .submit-wrap {
+      position: sticky;
+      bottom: 12px;
+      z-index: 25;
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+      pointer-events: none;
+    }
+
+    .ai-take-page .submit-btn {
+      pointer-events: auto;
+      min-height: 54px;
+      border-radius: 18px;
+      padding: 0 24px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .ai-take-page .submit-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.32);
+    }
+
+    .ai-take-page .submit-btn:disabled {
+      color: #64748b;
+    }
+
+    /* Result */
+    .ai-take-page .result-card {
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 34%),
+        #ffffff;
+    }
+
+    /* Dark mode support if html/body receives .dark from your theme script */
+    .dark .ai-take-page,
+    html.dark .ai-take-page,
+    html.dark body.ai-take-page {
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.14), transparent 28rem),
+        radial-gradient(circle at 90% 0%, rgba(129, 140, 248, 0.12), transparent 26rem),
+        #0f172a;
+      color: #f8fafc;
+    }
+
+    .dark .ai-take-page .quiz-topbar,
+    html.dark .ai-take-page .quiz-topbar {
+      background: rgba(15, 23, 42, 0.82);
+      border-color: rgba(148, 163, 184, 0.22);
+    }
+
+    .dark .ai-take-page .quiz-topbar > div,
+    html.dark .ai-take-page .quiz-topbar > div {
+      background: rgba(255,255,255,0.055) !important;
+      border-color: rgba(148, 163, 184, 0.22) !important;
+      color: #cbd5e1 !important;
+    }
+
+    .dark .ai-take-page .quiz-card,
+    .dark .ai-take-page .question-card,
+    .dark .ai-take-page .result-card,
+    html.dark .ai-take-page .quiz-card,
+    html.dark .ai-take-page .question-card,
+    html.dark .ai-take-page .result-card {
+      background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
+        #111827;
+      border-color: rgba(148, 163, 184, 0.22);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    .dark .ai-take-page #quiz-title,
+    .dark .ai-take-page .question-card h2,
+    .dark .ai-take-page .result-card h2 {
+      color: #f8fafc !important;
+    }
+
+    .dark .ai-take-page #quiz-meta,
+    .dark .ai-take-page #progress-text,
+    .dark .ai-take-page #result-details {
+      color: #cbd5e1 !important;
+    }
+
+    .dark .ai-take-page .option-label {
+      background: rgba(255,255,255,0.045);
+      border-color: rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+    }
+
+    .dark .ai-take-page .option-label:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: #38bdf8;
+    }
+
+    .dark .ai-take-page .option-label span:last-child {
+      color: #e2e8f0 !important;
+    }
+
+    .dark .ai-take-page .progress-track {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Tablet */
+    @media (max-width: 768px) {
+      .ai-take-page .quiz-topbar {
+        border-radius: 24px;
+      }
+
+      .ai-take-page .quiz-card {
+        border-radius: 28px;
+      }
+
+      .ai-take-page .flex.items-center.justify-between.gap-4 {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .ai-take-page .quiz-shell {
+        padding: 14px 10px 92px;
+      }
+
+      .ai-take-page .quiz-topbar {
+        position: relative;
+        top: auto;
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 22px;
+        margin-bottom: 16px;
+      }
+
+      .ai-take-page .quiz-topbar a,
+      .ai-take-page .quiz-topbar > div {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .ai-take-page .quiz-card {
+        padding: 20px !important;
+        border-radius: 24px;
+      }
+
+      .ai-take-page #quiz-title {
+        font-size: 1.75rem;
+      }
+
+      .ai-take-page #questions-container {
+        margin-top: 18px !important;
+        gap: 14px;
+      }
+
+      .ai-take-page .question-card {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .ai-take-page .question-card .flex.items-start.gap-3 {
+        gap: 10px;
+      }
+
+      .ai-take-page .question-card .w-10 {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 14px;
+      }
+
+      .ai-take-page .option-label {
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .ai-take-page .option-label:hover {
+        transform: none;
+      }
+
+      .ai-take-page .submit-wrap {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .ai-take-page .submit-btn {
+        width: 100%;
+        min-height: 56px;
+      }
+
+      .ai-take-page .result-card {
+        padding: 24px 18px;
+        border-radius: 24px;
+      }
+
+      .ai-take-page .result-card .flex {
+        width: 100%;
+      }
+
+      .ai-take-page .result-card .submit-btn {
+        width: 100%;
+      }
+    }
+
+    /* Small phones */
+    @media (max-width: 390px) {
+      .ai-take-page .quiz-shell {
+        padding-inline: 8px;
+      }
+
+      .ai-take-page .quiz-card,
+      .ai-take-page .question-card {
+        padding: 16px !important;
+      }
+
+      .ai-take-page .option-label {
+        font-size: 0.92rem;
+      }
+    }
   </style>
 </head>
 
-<body>
+<body class="ai-take-page">
   <main class="quiz-shell">
     <div class="quiz-topbar">
       <a href="ai-quiz-generator.html" class="inline-flex items-center gap-2 text-sm font-bold text-sky-700 hover:text-sky-900">

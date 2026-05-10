@@ -447,7 +447,7 @@ function _injectHeader(currentPage, session, userName) {
             </button>
 
             ${isLoggedIn ? `
-              <div class="relative">
+              <div class="relative overflow-visible z-[9999]">
                 <button id="open-auth-modal"
                         class="flex items-center justify-center w-11 h-11 rounded-full bg-blue-600 dark:bg-white hover:bg-blue-700 dark:hover:bg-gray-100 text-white dark:text-[#1e1e2e] transition-all active:scale-95 shadow-md"
                         type="button"
@@ -458,7 +458,7 @@ function _injectHeader(currentPage, session, userName) {
                 </button>
 
                 <div id="dashboard-dropdown"
-                     class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10 py-2 z-50">
+                     class="hidden absolute right-0 top-full mt-3 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-white/10 py-2 z-[9999]">
                   
                   <a href="${base}dashboard.html"
                      class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 no-underline">

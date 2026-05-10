@@ -32,7 +32,7 @@
 
 </head>
 
-<body class="font-sans text-[#1a1a2e] dark:text-gray-100">
+<body class="ai-quiz-page font-sans text-[#1a1a2e] dark:text-gray-100">
   <a href="#main-content" class="skip-link">Skip to quiz generator</a>
 
   <div id="app-header"></div>
@@ -192,13 +192,15 @@
 
       <!-- SIDE GUIDANCE PANEL -->
       <div class="md:col-span-5 flex flex-col gap-6" data-aos="fade-left">
-        <div class="bg-blue-50 dark:bg-blue-500/5 rounded-3xl p-8 border border-blue-100 dark:border-blue-500/10">
-          <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center mb-6">
-            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                Powered by Google Gemini AI
-            </span>
-            <span class="material-symbols-outlined text-white">psychology</span>
+        <div class="side-card premium-glass-card p-8 mb-6" data-aos="fade-left">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-blue-600/10 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <span class="material-symbols-outlined text-2xl">psychology</span>
+            </div>
+            <div class="ai-badge-pill">
+              <span class="ai-badge-dot"></span>
+              Powered by Google Gemini AI
+            </div>
           </div>
           <h3 class="text-xl font-bold mb-3">Smart Study Strategy</h3>
           <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
@@ -220,7 +222,7 @@
           </ul>
         </div>
 
-        <div class="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-8 border border-slate-200 dark:border-slate-800">
+        <div class="side-card premium-glass-card p-8" data-aos="fade-left" data-aos-delay="100">
           <h3 class="font-bold mb-2">Did you know?</h3>
           <p class="text-sm text-slate-500 leading-relaxed">
             Students who practice with AI-generated quizzes improve their retention rate by up to 40% compared to passive reading.

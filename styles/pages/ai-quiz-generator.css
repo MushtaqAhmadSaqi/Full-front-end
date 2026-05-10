@@ -594,3 +594,440 @@
     font-size: 3rem;
   }
 }
+
+/* =========================================================
+   AI QUIZ GENERATOR — PREMIUM RESPONSIVE PATCH
+   Front-end only. API/backend logic untouched.
+   ========================================================= */
+
+.ai-quiz-page {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.ai-quiz-page .generator-shell {
+  width: min(100%, 1180px);
+  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 28px) 88px;
+}
+
+.ai-quiz-page .generator-topbar {
+  width: 100%;
+}
+
+.ai-quiz-page .hero-section {
+  position: relative;
+  padding: clamp(24px, 5vw, 56px) 16px clamp(18px, 4vw, 34px);
+  margin-bottom: clamp(24px, 4vw, 42px);
+}
+
+.ai-quiz-page .hero-title {
+  font-size: clamp(2.15rem, 8vw, 4.7rem);
+  line-height: 0.98;
+}
+
+.ai-quiz-page .hero-subtitle {
+  max-width: 680px;
+  margin-inline: auto;
+  color: var(--text-muted);
+  font-size: clamp(0.96rem, 2vw, 1.1rem);
+  line-height: 1.75;
+}
+
+.ai-quiz-page .hero-trust-grid {
+  gap: 12px;
+}
+
+.ai-quiz-page .hero-trust-item {
+  min-height: 42px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
+/* Main generator layout */
+.ai-quiz-page .generator-layout {
+  width: min(100%, 1060px);
+  margin-inline: auto;
+  padding-inline: 0 !important;
+  align-items: start;
+}
+
+/* Form card: targets the existing md:col-span-7 card safely */
+.ai-quiz-page .generator-layout > .md\:col-span-7 {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px !important;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent) !important;
+  background:
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.13), transparent 32%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), var(--surface)) !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.1) !important;
+}
+
+.ai-quiz-page .dark .generator-layout > .md\:col-span-7,
+.dark .ai-quiz-page .generator-layout > .md\:col-span-7 {
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)),
+    #111827 !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44) !important;
+}
+
+/* Form header */
+.ai-quiz-page .generator-layout h2 {
+  font-size: clamp(1.55rem, 4vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.ai-quiz-page .generator-layout p {
+  line-height: 1.65;
+}
+
+/* Inputs */
+.ai-quiz-page select,
+.ai-quiz-page textarea,
+.ai-quiz-page input[type="text"],
+.ai-quiz-page input[type="number"] {
+  min-height: 52px;
+  border-radius: 18px !important;
+  border: 1.5px solid var(--border) !important;
+  background: color-mix(in srgb, var(--surface-3) 84%, var(--surface)) !important;
+  color: var(--text) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.ai-quiz-page textarea {
+  min-height: 112px !important;
+}
+
+.ai-quiz-page select:focus,
+.ai-quiz-page textarea:focus,
+.ai-quiz-page input:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 5px var(--ring) !important;
+}
+
+/* Button groups */
+.ai-quiz-page .exam-type-btn,
+.ai-quiz-page .difficulty-btn {
+  min-height: 52px;
+  border-radius: 18px !important;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.ai-quiz-page .exam-type-btn:hover,
+.ai-quiz-page .difficulty-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Question count quick chips */
+.ai-quiz-page button[type="button"] {
+  touch-action: manipulation;
+}
+
+/* Upload area */
+.ai-quiz-page .upload-area,
+.ai-quiz-page [class*="upload"] {
+  border-radius: 24px !important;
+}
+
+/* Generate button */
+.ai-quiz-page #generate-btn,
+.ai-quiz-page .generate-btn {
+  min-height: 58px;
+  border-radius: 22px !important;
+  background: linear-gradient(135deg, #0284c7, #2563eb, #4f46e5) !important;
+  box-shadow: 0 18px 38px rgba(37, 99, 235, 0.26) !important;
+}
+
+.ai-quiz-page #generate-btn:hover,
+.ai-quiz-page .generate-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 48px rgba(37, 99, 235, 0.34) !important;
+}
+
+/* Side panel */
+.ai-quiz-page .md\:col-span-5 {
+  min-width: 0;
+}
+
+.ai-quiz-page .md\:col-span-5 > div,
+.ai-quiz-page .generator-side-panel,
+.ai-quiz-page .side-panel-content {
+  border-radius: 28px !important;
+}
+
+/* Quiz preview */
+.ai-quiz-page #quiz-preview {
+  width: min(100%, 1060px);
+  margin-inline: auto;
+  border-radius: 32px !important;
+}
+
+.ai-quiz-page .quiz-preview-header {
+  gap: 18px;
+}
+
+.ai-quiz-page .preview-actions {
+  flex-wrap: wrap;
+}
+
+.ai-quiz-page #quiz-questions {
+  display: grid;
+  gap: 18px;
+}
+
+/* Question cards inside preview */
+.ai-quiz-page .qz-question-card {
+  padding: clamp(20px, 4vw, 36px);
+  border-radius: 26px;
+}
+
+.ai-quiz-page .qz-question-card h2 {
+  font-size: clamp(1rem, 3.2vw, 1.45rem);
+}
+
+.ai-quiz-page .qz-option {
+  align-items: flex-start;
+  min-height: 54px;
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .ai-quiz-page .generator-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ai-quiz-page .shortcut-chip {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ai-quiz-page .generator-layout {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+  }
+
+  .ai-quiz-page .generator-layout > .md\:col-span-7,
+  .ai-quiz-page .generator-layout > .md\:col-span-5 {
+    grid-column: auto / span 1 !important;
+  }
+
+  .ai-quiz-page .quiz-preview-header {
+    flex-direction: column;
+  }
+
+  .ai-quiz-page .preview-actions {
+    width: 100%;
+  }
+
+  .ai-quiz-page .timer-badge,
+  .ai-quiz-page .regenerate-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .ai-quiz-page .generator-shell {
+    padding: 18px 12px 72px;
+  }
+
+  .ai-quiz-page .hero-section {
+    text-align: left;
+    padding-inline: 4px;
+  }
+
+  .ai-quiz-page .hero-badge {
+    margin-bottom: 14px;
+  }
+
+  .ai-quiz-page .hero-title {
+    letter-spacing: -0.055em;
+  }
+
+  .ai-quiz-page .hero-subtitle {
+    margin-inline: 0;
+  }
+
+  .ai-quiz-page .hero-trust-grid {
+    justify-content: flex-start;
+  }
+
+  .ai-quiz-page .hero-trust-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .ai-quiz-page .generator-layout > .md\:col-span-7 {
+    padding: 20px !important;
+    border-radius: 26px !important;
+  }
+
+  .ai-quiz-page .generator-layout > .md\:col-span-7 > .flex {
+    align-items: flex-start;
+  }
+
+  .ai-quiz-page .exam-type-btn,
+  .ai-quiz-page .difficulty-btn {
+    min-height: 48px;
+    padding-inline: 10px;
+    font-size: 0.84rem;
+  }
+
+  .ai-quiz-page .difficulty-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-quiz-page select,
+  .ai-quiz-page textarea,
+  .ai-quiz-page input {
+    font-size: 16px;
+  }
+
+  .ai-quiz-page #generate-btn,
+  .ai-quiz-page .generate-btn {
+    width: 100%;
+    min-height: 56px;
+  }
+
+  .ai-quiz-page .privacy-note {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ai-quiz-page .qz-question-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .ai-quiz-page .qz-question-num-bg {
+    font-size: 72px;
+    top: -12px;
+    right: -6px;
+  }
+
+  .ai-quiz-page .qz-option {
+    gap: 10px;
+    padding: 13px 14px;
+  }
+
+  .ai-quiz-page .qz-radio {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+  }
+}
+
+/* Very small phones */
+
+/* =========================================================
+   ULTRA-PREMIUM AESTHETICS — SIDE PANEL & BADGES
+   Fixes badge clipping and adds glassy micro-interactions.
+   ========================================================= */
+
+.side-card {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+}
+
+.side-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12) !important;
+}
+
+.premium-glass-card {
+  background: 
+    linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5)),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 40%) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 32px !important;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.04) !important;
+}
+
+.dark .premium-glass-card {
+  background: 
+    linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.4)),
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* AI Badge Pill Fix */
+.ai-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+  border-radius: 999px;
+  color: #0369a1;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.dark .ai-badge-pill {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+}
+
+.ai-badge-dot {
+  width: 6px;
+  height: 6px;
+  background: #0ea5e9;
+  border-radius: 999px;
+  position: relative;
+}
+
+.ai-badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: #0ea5e9;
+  border-radius: 999px;
+  opacity: 0.4;
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(2.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* List refinements */
+.side-card ul li {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.side-card ul li strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* Section transitions */
+[data-aos="fade-left"] {
+  transform: translateX(30px);
+  opacity: 0;
+  transition-property: transform, opacity;
+}
+
+[data-aos="fade-left"].aos-animate {
+  transform: translateX(0);
+  opacity: 1;
+}
+
