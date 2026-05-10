@@ -642,6 +642,33 @@
           return;
         }
 
+        // ── Auth gate ────────────────────────────────────────────────────────
+        const supabaseClient = window.comsatsSupabase;
+        if (!supabaseClient) {
+          showToast('Page not ready. Please refresh and try again.', 'error');
+          return;
+        }
+
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+        if (sessionError || !sessionData?.session) {
+          sessionStorage.setItem('postAuthRedirect', 'ai-quiz-generator.html');
+          showToast('Please sign in to generate AI quizzes.', 'info');
+
+          const signInButton = document.getElementById('open-auth-modal');
+          const isLoggedInButton = signInButton && signInButton.hasAttribute('aria-expanded');
+
+          if (signInButton && !isLoggedInButton) {
+            signInButton.click();
+          } else {
+            window.location.href = 'auth.html?redirect=ai-quiz-generator.html';
+          }
+          return;
+        }
+
+        const accessToken = sessionData.session.access_token;
+        // ── End auth gate ────────────────────────────────────────────────────
+
         isGeneratingQuiz = true;
         const requestId = ++activeQuizRequestId;
 
@@ -671,7 +698,10 @@
         try {
           const response = await fetch('/api/generate-quiz', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
             body: JSON.stringify(formData)
           });
 
@@ -700,7 +730,16 @@
           sessionStorage.setItem('currentAIQuiz', JSON.stringify(quizSession));
 
           skeletonLoader.classList.add('hidden');
-          showToast('Quiz generated successfully! Opening quiz page...');
+
+          if (result.usage) {
+            const rem = result.usage.remaining;
+            showToast(
+              `Quiz generated! ${rem} AI generation${rem === 1 ? '' : 's'} remaining.`,
+              'success'
+            );
+          } else {
+            showToast('Quiz generated successfully! Opening quiz page...', 'success');
+          }
 
           window.location.href = `take-ai-quiz.html?id=${encodeURIComponent(attemptId)}`;
 

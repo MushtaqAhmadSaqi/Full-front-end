@@ -523,7 +523,7 @@
               </div>
             </a>
 
-            <a href="ai-quiz-generator.html" class="student-tool-card premium-tool-card ai-tool" data-aos="fade-up"
+            <a href="ai-quiz-generator.html" data-ai-quiz-link class="student-tool-card premium-tool-card ai-tool" data-aos="fade-up"
               data-aos-delay="160">
               <div class="tool-card-top">
                 <div class="student-tool-icon">
@@ -609,6 +609,46 @@
 
   <script type="module" src="js/layout.js"></script>
 
+
+
+  <!-- AI Quiz auth gate: checks login before navigating to the generator -->
+  <script type="module">
+    import { supabase } from './js/core.js';
+    import { openModal } from './js/auth-ui.js';
+
+    const AI_QUIZ_URL = 'ai-quiz-generator.html';
+
+    function openSignInModalForAIQuiz() {
+      sessionStorage.setItem('postAuthRedirect', AI_QUIZ_URL);
+      // If user is logged out, #open-auth-modal triggers the sign-in modal directly
+      const signInButton = document.getElementById('open-auth-modal');
+      const isLoggedInButton = signInButton && signInButton.hasAttribute('aria-expanded');
+
+      if (signInButton && !isLoggedInButton) {
+        signInButton.click();
+      } else {
+        // Fallback: call openModal directly (layout may not have rendered yet)
+        openModal('login');
+      }
+    }
+
+    document.querySelectorAll('[data-ai-quiz-link]').forEach(link => {
+      link.addEventListener('click', async event => {
+        event.preventDefault();
+
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (error || !data?.session) {
+            openSignInModalForAIQuiz();
+            return;
+          }
+          window.location.href = AI_QUIZ_URL;
+        } catch {
+          openSignInModalForAIQuiz();
+        }
+      });
+    });
+  </script>
 
   <script>
     function selectHeroSubject(btn, subject) {

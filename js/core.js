@@ -142,6 +142,10 @@ export function handleApiError(error, message = 'An error occurred. Please try a
 if (typeof window !== 'undefined') {
     window.showFeedbackStatus = showFeedbackStatus;
     window.handleApiError = handleApiError;
+
+    // Expose Supabase client + auth helper for non-module inline scripts
+    window.comsatsSupabase = supabase;
+    window.comsatsAuth = auth;
 }
 
 // ── Utility: XSS-safe HTML escape ─────────────────────────────────────────────

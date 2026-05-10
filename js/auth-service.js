@@ -240,7 +240,7 @@ export async function signInWithEmail({ email, password }) {
  * so caller mostly just needs to handle the error case.
  */
 export async function signInWithGoogle({
-  redirectTo = getDashboardUrl()
+  redirectTo = getPostAuthRedirectUrl()
 } = {}) {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -341,8 +341,39 @@ export async function getCurrentSession() {
 }
 
 /**
- * Small redirect helper for successful login flows
+ * Reads a stored post-auth redirect from sessionStorage or the ?redirect= query param.
+ * Validates same-origin to prevent open-redirect attacks.
+ */
+function getSafePostAuthRedirect() {
+  const storedRedirect = sessionStorage.getItem('postAuthRedirect');
+  const params = new URLSearchParams(window.location.search);
+  const queryRedirect = params.get('redirect');
+  const target = storedRedirect || queryRedirect;
+
+  if (!target) return null;
+
+  try {
+    const url = new URL(target, window.location.origin);
+    if (url.origin !== window.location.origin) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns the post-auth redirect URL, or falls back to the dashboard.
+ */
+export function getPostAuthRedirectUrl() {
+  return getSafePostAuthRedirect() || getDashboardUrl();
+}
+
+/**
+ * Small redirect helper for successful login flows.
+ * Honors any stored postAuthRedirect (e.g. from the AI Quiz auth gate).
  */
 export function redirectToDashboard() {
-  window.location.href = getDashboardUrl();
+  const target = getPostAuthRedirectUrl();
+  sessionStorage.removeItem('postAuthRedirect');
+  window.location.href = target;
 }
