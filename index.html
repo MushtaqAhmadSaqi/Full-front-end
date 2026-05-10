@@ -419,113 +419,151 @@
       </div>
     </section>
 
-    <!-- ═════════════════════════ STUDENT TOOLS CLEAN VERSION ═════════════════════════ -->
-    <section id="student-tools-section" class="student-tools-section section-shell student-tools-clean">
-      <div class="student-tools-pattern"></div>
+    <!-- ═════════════════════════ STUDENT TOOLS PREMIUM VERSION ═════════════════════════ -->
+    <section id="student-tools-section" class="student-tools-section section-shell student-tools-pro">
+      <div class="student-tools-bg-orb orb-one" aria-hidden="true"></div>
+      <div class="student-tools-bg-orb orb-two" aria-hidden="true"></div>
 
       <div class="student-tools-container">
-        <!-- Heading -->
         <div class="student-tools-header">
-          <span class="student-tools-label">Student Utilities</span>
+          <span class="student-tools-label">
+            <span class="material-symbols-outlined">school</span>
+            Student Utilities
+          </span>
 
-          <h2>Student Tools</h2>
+          <h2>Small tools, big exam help.</h2>
 
           <p>
-            Essential utilities to help COMSATS students calculate, track, and study smarter.
+            Quick study utilities designed to help COMSATS students calculate faster,
+            practice smarter, and stay exam-ready without extra confusion.
           </p>
         </div>
 
-        <!-- Tool Card -->
-        <a href="ComsatsGPA/gpa-calculator.html" class="tool-card ui-card ui-card-interactive student-tool-card" data-aos="fade-up">
-          <!-- Icon Area -->
-          <div class="student-tool-icon-wrap">
-            <div class="student-tool-icon">
-              <span class="material-symbols-outlined">calculate</span>
+        <div class="student-tools-layout">
+          <!-- Left visual panel -->
+          <div class="student-tools-showcase" data-aos="fade-up">
+            <div class="showcase-top">
+              <div>
+                <span class="showcase-kicker">Exam Week Kit</span>
+                <h3>Everything you need before the paper.</h3>
+              </div>
+
+              <div class="showcase-score">
+                <span>02</span>
+                <small>Active tools</small>
+              </div>
             </div>
-          </div>
 
-          <!-- Content -->
-          <div class="student-tool-content">
-            <div class="student-tool-title-row">
-              <h3>GPA Calculator</h3>
-              <span>New Sync</span>
-            </div>
+            <div class="showcase-mini-stack">
+              <div class="showcase-mini-card">
+                <span class="material-symbols-outlined">calculate</span>
+                <div>
+                  <strong>GPA planning</strong>
+                  <small>Track semester performance</small>
+                </div>
+              </div>
 
-            <p>
-              Track your semester GPA with official COMSATS weighting.
-              <strong>Login to safely sync your data across all devices.</strong>
-            </p>
+              <div class="showcase-mini-card">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                <div>
+                  <strong>AI practice</strong>
+                  <small>Generate topic-based quizzes</small>
+                </div>
+              </div>
 
-            <div class="student-tool-tags">
-              <span>
-                <span class="material-symbols-outlined">verified_user</span>
-                Supabase Secured
-              </span>
-
-              <span>
+              <div class="showcase-mini-card">
                 <span class="material-symbols-outlined">devices</span>
-                Cross-Device
-              </span>
-
-              <span>
-                <span class="material-symbols-outlined">speed</span>
-                Fast Tracking
-              </span>
+                <div>
+                  <strong>Study anywhere</strong>
+                  <small>Mobile-friendly learning flow</small>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Button -->
-          <div class="student-tool-button">
-            Open Calculator
-            <span class="material-symbols-outlined">arrow_forward</span>
+          <!-- Tool cards -->
+          <div class="student-tools-grid">
+            <a href="ComsatsGPA/gpa-calculator.html" class="student-tool-card premium-tool-card gpa-tool" data-aos="fade-up"
+              data-aos-delay="80">
+              <div class="tool-card-top">
+                <div class="student-tool-icon">
+                  <span class="material-symbols-outlined">calculate</span>
+                </div>
+
+                <span class="tool-status-badge">New Sync</span>
+              </div>
+
+              <div class="student-tool-content">
+                <h3>GPA Calculator</h3>
+
+                <p>
+                  Calculate your semester GPA with COMSATS-style weighting and keep
+                  your academic progress easier to understand.
+                </p>
+
+                <div class="student-tool-tags">
+                  <span>
+                    <span class="material-symbols-outlined">verified_user</span>
+                    Secure
+                  </span>
+                  <span>
+                    <span class="material-symbols-outlined">devices</span>
+                    Cross-device
+                  </span>
+                  <span>
+                    <span class="material-symbols-outlined">speed</span>
+                    Fast
+                  </span>
+                </div>
+              </div>
+
+              <div class="student-tool-footer">
+                <span>Open Calculator</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </div>
+            </a>
+
+            <a href="ai-quiz-generator.html" class="student-tool-card premium-tool-card ai-tool" data-aos="fade-up"
+              data-aos-delay="160">
+              <div class="tool-card-top">
+                <div class="student-tool-icon">
+                  <span class="material-symbols-outlined">auto_awesome</span>
+                </div>
+
+                <span class="tool-status-badge beta-badge">BETA</span>
+              </div>
+
+              <div class="student-tool-content">
+                <h3>AI Quiz Generator</h3>
+
+                <p>
+                  Create personalized COMSATS-style quizzes by topic, difficulty,
+                  and question count using AI-powered practice.
+                </p>
+
+                <div class="student-tool-tags">
+                  <span>
+                    <span class="material-symbols-outlined">psychology</span>
+                    Gemini
+                  </span>
+                  <span>
+                    <span class="material-symbols-outlined">instant_mix</span>
+                    Custom
+                  </span>
+                  <span>
+                    <span class="material-symbols-outlined">bolt</span>
+                    Instant
+                  </span>
+                </div>
+              </div>
+
+              <div class="student-tool-footer">
+                <span>Try AI Generator</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </div>
+            </a>
           </div>
-        </a>
-
-        <!-- AI Quiz Generator Tool Card -->
-        <a href="ai-quiz-generator.html" class="tool-card ui-card ui-card-interactive student-tool-card" data-aos="fade-up" data-aos-delay="100">
-          <!-- Icon Area -->
-          <div class="student-tool-icon-wrap">
-            <div class="student-tool-icon" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #2563eb;">
-              <span class="material-symbols-outlined">auto_awesome</span>
-            </div>
-          </div>
-
-          <!-- Content -->
-          <div class="student-tool-content">
-            <div class="student-tool-title-row">
-              <h3>AI Quiz Generator</h3>
-              <span style="background: #2563eb; color: white; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">BETA</span>
-            </div>
-
-            <p>
-              Generate personalized, syllabus-aligned quizzes using Google Gemini AI.
-              <strong>Customizable topics, difficulty, and question counts.</strong>
-            </p>
-
-            <div class="student-tool-tags">
-              <span>
-                <span class="material-symbols-outlined">psychology</span>
-                Gemini Powered
-              </span>
-
-              <span>
-                <span class="material-symbols-outlined">instant_mix</span>
-                Customizable
-              </span>
-
-              <span>
-                <span class="material-symbols-outlined">bolt</span>
-                Instant Results
-              </span>
-            </div>
-          </div>
-
-          <!-- Button -->
-          <div class="student-tool-button">
-            Try AI Generator
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </div>
-        </a>
+        </div>
       </div>
     </section>
 
