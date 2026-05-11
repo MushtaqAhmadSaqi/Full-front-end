@@ -72,21 +72,6 @@
       background: #f0f9ff;
     }
 
-    .option-label.selected {
-      border-color: #0ea5e9;
-      background: #e0f2fe;
-    }
-
-    .option-label.correct {
-      border-color: #22c55e;
-      background: #dcfce7;
-    }
-
-    .option-label.wrong {
-      border-color: #ef4444;
-      background: #fee2e2;
-    }
-
     .option-label.locked {
       cursor: default;
     }
@@ -347,6 +332,24 @@
       word-break: normal;
     }
 
+    .ai-take-page .option-label.selected {
+      border-color: #0ea5e9;
+      background: #e0f2fe;
+      box-shadow: 0 10px 22px rgba(14, 165, 233, 0.08);
+    }
+
+    .ai-take-page .option-label.correct {
+      border-color: #0ea5e9; /* Correct is blue */
+      background: #e0f2fe;
+      box-shadow: 0 10px 22px rgba(14, 165, 233, 0.08);
+    }
+
+    .ai-take-page .option-label.wrong {
+      border-color: #ef4444; /* Wrong is red */
+      background: #fee2e2;
+      box-shadow: 0 10px 22px rgba(239, 68, 68, 0.08);
+    }
+
     /* Submit button */
     .ai-take-page .submit-wrap {
       position: sticky;
@@ -450,6 +453,20 @@
 
     .dark .ai-take-page .option-label span:last-child {
       color: #e2e8f0 !important;
+    }
+
+    .dark .ai-take-page .option-label.selected,
+    html.dark .ai-take-page .option-label.selected,
+    .dark .ai-take-page .option-label.correct,
+    html.dark .ai-take-page .option-label.correct {
+      background: rgba(14, 165, 233, 0.15);
+      border-color: #0ea5e9;
+    }
+
+    .dark .ai-take-page .option-label.wrong,
+    html.dark .ai-take-page .option-label.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
     }
 
     .dark .ai-take-page .progress-track {
