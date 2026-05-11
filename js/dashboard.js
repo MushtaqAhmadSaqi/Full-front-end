@@ -240,9 +240,13 @@ function buildDashboardStats({ quizAttempts, subjectProgress, subjectNameMap }) 
     const subject = resolveSubjectLabel(item.subject_code, subjectNameMap);
     const score = clampPercent(Number(item.score_percent || 0));
 
+    const displayTitle = window.refineQuizTitle 
+      ? window.refineQuizTitle(item.quiz_title, subject.label)
+      : (item.quiz_title || `${subject.label} quiz`);
+
     return {
       type: 'quiz',
-      title: item.quiz_title || `${subject.label} quiz`,
+      title: displayTitle,
       meta: `${subject.code || subject.label} • ${score}% score`,
       score,
       date: item.completed_at

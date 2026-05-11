@@ -207,7 +207,7 @@ function _initImagePreview() {
       e.preventDefault();
       e.stopPropagation();
 
-      previewImg.src = img.src;
+      previewImg.src = img.currentSrc || img.src;
       previewImg.alt = img.alt;
 
       const parentCard = img.closest('.ghost-card, .founder-card-tw, .contributor-card');

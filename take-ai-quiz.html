@@ -736,13 +736,13 @@
     }
 
     function renderQuiz() {
-      quizTitle.textContent = quizData.title || 'AI Generated Quiz';
-
       const subject = quizData.metadata?.subject || quizData.subject || 'Subject';
       const code = quizData.metadata?.subjectCode || '';
       const examType = quizData.metadata?.examType || quizData.examType || 'Exam';
 
       const subjectLabel = code ? `${subject} (${code})` : subject;
+
+      quizTitle.textContent = window.refineQuizTitle ? window.refineQuizTitle(quizData.title, subjectLabel) : (quizData.title || 'AI Generated Quiz');
       quizMeta.textContent = `${subjectLabel} • ${examType} • ${quizData.questions.length} questions`;
 
       questionsContainer.innerHTML = '';

@@ -5,13 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | COMSATSPrepHub</title>
-    <meta name="description" content="Learn about the team and mission behind COMSATSPrepHub — a student-built platform for COMSATS academic excellence.">
+    <meta name="description"
+        content="Learn about the team and mission behind COMSATSPrepHub — a student-built platform for COMSATS academic excellence.">
     <!-- Fonts: single non-blocking load -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet"></noscript>
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    </noscript>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
 
     <!-- CSS -->
@@ -20,12 +23,45 @@
 
     <!-- AOS: inline so elements are never stuck invisible on slow connections -->
     <style>
-      [data-aos]{pointer-events:none}[data-aos].aos-animate{pointer-events:auto}
-      [data-aos='fade-up']{transform:translateY(20px);opacity:0;transition-property:transform,opacity;transition-duration:.7s}
-      [data-aos='fade-in']{opacity:0;transition-property:opacity;transition-duration:.7s}
-      [data-aos='zoom-in']{transform:scale(0.97);opacity:0;transition-property:transform,opacity;transition-duration:.7s}
-      [data-aos='fade-up'].aos-animate,[data-aos='fade-in'].aos-animate,[data-aos='zoom-in'].aos-animate{transform:none;opacity:1}
-      .aos-fallback-active [data-aos]:not(.aos-animate){opacity:1!important;transform:none!important}
+        [data-aos] {
+            pointer-events: none
+        }
+
+        [data-aos].aos-animate {
+            pointer-events: auto
+        }
+
+        [data-aos='fade-up'] {
+            transform: translateY(20px);
+            opacity: 0;
+            transition-property: transform, opacity;
+            transition-duration: .7s
+        }
+
+        [data-aos='fade-in'] {
+            opacity: 0;
+            transition-property: opacity;
+            transition-duration: .7s
+        }
+
+        [data-aos='zoom-in'] {
+            transform: scale(0.97);
+            opacity: 0;
+            transition-property: transform, opacity;
+            transition-duration: .7s
+        }
+
+        [data-aos='fade-up'].aos-animate,
+        [data-aos='fade-in'].aos-animate,
+        [data-aos='zoom-in'].aos-animate {
+            transform: none;
+            opacity: 1
+        }
+
+        .aos-fallback-active [data-aos]:not(.aos-animate) {
+            opacity: 1 !important;
+            transform: none !important
+        }
     </style>
 
     <script src="js/dark-mode.js" defer></script>
@@ -35,24 +71,32 @@
         .founder-card-tw {
             position: relative;
             overflow: hidden;
-            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
         }
+
         .founder-card-tw::before {
             content: '';
             position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 100%;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
             background: #0f766e;
             border-radius: 16px 0 0 16px;
-            transition: width 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .founder-card-tw:hover::before { width: 5px; }
+
+        .founder-card-tw:hover::before {
+            width: 5px;
+        }
+
         .founder-card-tw:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.09), 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.09), 0 4px 12px rgba(0, 0, 0, 0.04);
         }
+
         html.dark .founder-card-tw:hover {
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         /* Ghost contributor card */
@@ -65,30 +109,42 @@
             gap: 16px;
             transition: border-color 0.25s ease;
         }
-        .ghost-card:hover { border-color: #0f766e; }
-        html.dark .ghost-card { border-color: rgba(255,255,255,0.1); }
 
+        .ghost-card:hover {
+            border-color: #0f766e;
+        }
+
+        html.dark .ghost-card {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 
-<body class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
+<body
+    class="font-sans bg-[#f0f2f5] dark:bg-[#0f172a] text-[#1a1a2e] dark:text-gray-100 transition-colors duration-300 min-h-screen flex flex-col">
     <div id="app-header"></div>
     <main class="flex-1 page-transition" style="padding-bottom: 80px;">
 
         <!-- ═══ HERO ═══ -->
-        <section class="relative isolate z-10 overflow-hidden flex flex-col items-center justify-center text-center min-h-[60vh] px-6 py-24 md:px-16"
-            style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #0f766e 100%);"
-            data-aos="fade-in">
-            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;3&quot; cy=&quot;3&quot; r=&quot;2&quot; fill=&quot;white&quot; fill-opacity=&quot;0.5&quot;/%3E%3C/svg%3E'); background-size: 60px 60px;"></div>
+        <section
+            class="relative isolate z-10 overflow-hidden flex flex-col items-center justify-center text-center min-h-[60vh] px-6 py-24 md:px-16"
+            style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #0f766e 100%);" data-aos="fade-in">
+            <div class="absolute inset-0 opacity-10"
+                style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Ccircle cx=&quot;3&quot; cy=&quot;3&quot; r=&quot;2&quot; fill=&quot;white&quot; fill-opacity=&quot;0.5&quot;/%3E%3C/svg%3E'); background-size: 60px 60px;">
+            </div>
             <div class="relative z-10 max-w-2xl mx-auto">
-                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6" style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2);">
+                <span
+                    class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6"
+                    style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2);">
                     The People Behind The Platform
                 </span>
-                <h1 class="font-extrabold tracking-tight text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-6">
+                <h1
+                    class="font-extrabold tracking-tight text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-6">
                     Meet the <span class="text-teal-300">Team</span>
                 </h1>
                 <p class="text-white/70 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
-                    Built by students, for students. Every feature, every paper, every line of code — crafted with a single mission: make academic preparation effortless.
+                    Built by students, for students. Every feature, every paper, every line of code — crafted with a
+                    single mission: make academic preparation effortless.
                 </p>
             </div>
         </section>
@@ -98,18 +154,21 @@
             <div class="max-w-5xl mx-auto">
                 <div class="mb-12">
                     <span class="block text-xs font-bold tracking-widest uppercase text-primary mb-3">The Builder</span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1a1a2e] dark:text-white">Lead Developer</h2>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1a1a2e] dark:text-white">Lead
+                        Developer</h2>
                 </div>
 
                 <!-- Founder card — mirrors the Home page style exactly -->
-                <div class="founder-card-tw bg-[#f8f9fb] dark:bg-slate-800/50 rounded-2xl border border-[#e2e8f0] dark:border-white/5 p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
+                <div
+                    class="founder-card-tw bg-[#f8f9fb] dark:bg-slate-800/50 rounded-2xl border border-[#e2e8f0] dark:border-white/5 p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
                     <!-- Badge absolutely positioned -->
                     <div class="relative self-start md:self-auto flex-shrink-0">
-                        <div class="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg ring-2 ring-[#e2e8f0] dark:ring-white/5 transition-all duration-300">
+                        <div
+                            class="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg ring-2 ring-[#e2e8f0] dark:ring-white/5 transition-all duration-300">
                             <picture>
                                 <source srcset="My-image.webp" type="image/webp">
-                                <img src="My-image.png" 
-                                     srcset="My-image.png 1x" 
+                                <img src="My-image.webp" 
+                                     srcset="My-image.webp 1x" 
                                      sizes="(max-width: 640px) 160px, 192px"
                                      loading="lazy" 
                                      decoding="async" 
@@ -117,35 +176,51 @@
                                      class="w-full h-full object-cover" 
                                      onerror="this.style.display='none'; this.closest('picture').nextElementSibling.style.display='flex';">
                             </picture>
-                            <div class="w-full h-full bg-gradient-to-br from-teal-500 to-blue-600 items-center justify-center text-white font-black text-5xl" style="display:none;">M</div>
+                            <div class="w-full h-full bg-gradient-to-br from-teal-500 to-blue-600 items-center justify-center text-white font-black text-5xl"
+                                style="display:none;">M</div>
                         </div>
-                        <span class="absolute -top-2 -right-2 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-[#1a1a2e] dark:bg-slate-900 text-white shadow-md transform rotate-2">FOUNDER</span>
+                        <span
+                            class="absolute -top-2 -right-2 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-[#1a1a2e] dark:bg-slate-900 text-white shadow-md transform rotate-2">FOUNDER</span>
                     </div>
 
                     <div class="flex-1 text-center md:text-left">
-                        <p class="text-xs font-bold tracking-widest uppercase text-primary mb-1">Founder &amp; Lead Developer</p>
-                        <h3 class="text-2xl sm:text-3xl font-bold text-[#1a1a2e] dark:text-white mb-3 leading-tight">Mushtaq Ahmad Saqi</h3>
+                        <p class="text-xs font-bold tracking-widest uppercase text-primary mb-1">Founder &amp; Lead
+                            Developer</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-[#1a1a2e] dark:text-white mb-3 leading-tight">
+                            Mushtaq Ahmad Saqi</h3>
                         <p class="text-[#6b7280] dark:text-gray-400 text-[15px] leading-relaxed mb-5 max-w-xl">
                             Dedicated to bridging the gap between academic pressure and digital efficiency.
-                            Mushtaq designed and built this platform from scratch — every component, every database schema, and every user interaction — to ensure students have a premium, distraction-free environment to study and prepare.
+                            We designed and built this platform from scratch — every component, every database schema,
+                            and every user interaction — to ensure students have a premium, distraction-free environment
+                            to study and prepare.
                         </p>
                         <p class="text-[#6b7280] dark:text-gray-500 text-[15px] leading-relaxed mb-6 max-w-xl italic">
-                            "Our goal isn't just to help you pass; it's to help you master the material through curated clarity."
+                            "Our goal isn't just to help you pass; it's to help you master the material through curated
+                            clarity."
                         </p>
                         <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-6">
-                            <span class="px-3 py-1 rounded-full bg-[#ccfbf1] dark:bg-teal-900/30 text-primary dark:text-teal-400 text-xs font-semibold">UI/UX Design</span>
-                            <span class="px-3 py-1 rounded-full bg-[#dbeafe] dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold">Frontend Dev</span>
-                            <span class="px-3 py-1 rounded-full bg-[#f3e8ff] dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-semibold">Education Tech</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-[#ccfbf1] dark:bg-teal-900/30 text-primary dark:text-teal-400 text-xs font-semibold">UI/UX
+                                Design</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-[#dbeafe] dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold">Frontend
+                                Dev</span>
+                            <span
+                                class="px-3 py-1 rounded-full bg-[#f3e8ff] dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-semibold">Education
+                                Tech</span>
                             <!-- <span class="px-3 py-1 rounded-full bg-[#fef3c7] dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-semibold">Database Design</span> -->
                         </div>
                         <div class="flex gap-4 justify-center md:justify-start">
-                            <a href="https://linkedin.com/in/mushtaqahmad12/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
+                            <a href="https://linkedin.com/in/mushtaqahmad12/" target="_blank" rel="noopener noreferrer"
+                                class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
                                 <span class="material-symbols-outlined text-[16px]">link</span> LinkedIn
                             </a>
-                            <a href="mailto:mushtaqahmedsaqi1234@gmail.com" class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
+                            <a href="mailto:mushtaqahmedsaqi1234@gmail.com"
+                                class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
                                 <span class="material-symbols-outlined text-[16px]">mail</span> Email
                             </a>
-                            <a href="#" class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
+                            <a href="#"
+                                class="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors no-underline">
                                 <span class="material-symbols-outlined text-[16px]">open_in_new</span> Portfolio
                             </a>
                         </div>
@@ -158,10 +233,13 @@
         <section class="py-20 px-6 md:px-10 bg-[#f8f9fb] dark:bg-slate-900/50 transition-colors" data-aos="fade-up">
             <div class="max-w-5xl mx-auto">
                 <div class="mb-12">
-                    <span class="block text-xs font-bold tracking-widest uppercase text-primary mb-3">The Community</span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1a1a2e] dark:text-white mb-3">Contributors</h2>
+                    <span class="block text-xs font-bold tracking-widest uppercase text-primary mb-3">The
+                        Community</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1a1a2e] dark:text-white mb-3">
+                        Contributors</h2>
                     <p class="text-[#6b7280] dark:text-gray-400 text-[15px] leading-relaxed max-w-md">
-                        These incredible people help curate, verify, and expand the paper archive. Every contribution makes a real difference to thousands of students.
+                        These incredible people help curate, verify, and expand the paper archive. Every contribution
+                        makes a real difference to thousands of students.
                     </p>
                 </div>
 
@@ -170,13 +248,17 @@
 
 
                     <!-- Contributor: Moeed Ali Syed -->
-                    <div class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
-                        <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
-                            <img src="Moeed.png" alt="Moeed Ali Syed" class="w-full h-full object-cover scale-110" loading="lazy">
+                    <div
+                        class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
+                        <div
+                            class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
+                            <img src="Moeed.png" alt="Moeed Ali Syed" class="w-full h-full object-cover scale-110"
+                                loading="lazy">
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Moeed Ali Syed</p>
-                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor</p>
+                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor
+                            </p>
                         </div>
                     </div>
 
@@ -191,31 +273,41 @@
                     </div> -->
 
                     <!-- Contributor: M Umar Shafiq Somro -->
-                    <div class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
-                        <div class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
-                            <img src="Umar.png" alt="M Umar Shafiq Somro" class="w-full h-full object-cover scale-110" loading="lazy">
+                    <div
+                        class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
+                        <div
+                            class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
+                            <img src="Umar.png" alt="M Umar Shafiq Somro" class="w-full h-full object-cover scale-110"
+                                loading="lazy">
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">M Umar Shafiq Somro</p>
-                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor</p>
+                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Ghost slot 4 -->
-                    <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
+                    <!-- Contributor: Wazir M. Maikal -->
+                    <div
+                        class="ghost-card bg-white dark:bg-slate-800/40 !border-solid border-teal-500/20 hover:!border-teal-500 transition-all duration-300">
+                        <div
+                            class="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 ring-4 ring-teal-500/20 shadow-md">
+                            <img src="wazir.jpeg" alt="Wazir M. Maikal" class="w-full h-full object-cover scale-110"
+                                loading="lazy">
                         </div>
                         <div>
-                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
-                            <p class="text-xs text-[#6b7280] dark:text-gray-400 mt-0.5">Active Contributor</p>
+                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Wazir M. Maikal</p>
+                            <p class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-0.5">Active Contributor
+                            </p>
                         </div>
                     </div>
 
                     <!-- Ghost slot 5 -->
                     <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
+                        <div
+                            class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <span
+                                class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
                         </div>
                         <div>
                             <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
@@ -223,8 +315,10 @@
                         </div>
                     </div>
 
-                    <div class="ghost-card bg-white dark:bg-slate-800/40 border-primary/30 hover:border-primary dark:border-primary/20 dark:hover:border-primary/50 cursor-pointer group transition-colors" onclick="document.getElementById('contribute-section').scrollIntoView({behavior:'smooth'})">
-                        <div class="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+                    <div class="ghost-card bg-white dark:bg-slate-800/40 border-primary/30 hover:border-primary dark:border-primary/20 dark:hover:border-primary/50 cursor-pointer group transition-colors"
+                        onclick="document.getElementById('contribute-section').scrollIntoView({behavior:'smooth'})">
+                        <div
+                            class="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                             <span class="material-symbols-outlined text-primary text-[26px]">add_circle</span>
                         </div>
                         <div>
@@ -236,21 +330,22 @@
 
                 <!-- Feedback/Contact Card -->
                 <div class="team-feedback-card" data-aos="fade-up">
-                  <div class="team-feedback-icon">
-                    <span class="material-symbols-outlined">mail</span>
-                  </div>
+                    <div class="team-feedback-icon">
+                        <span class="material-symbols-outlined">mail</span>
+                    </div>
 
-                  <div class="team-feedback-content">
-                    <h3>Found something we can improve?</h3>
-                    <p>
-                      If you notice a wrong paper, broken link, missing subject, spelling mistake, or any issue in the website, please contact me.
-                    </p>
-                  </div>
+                    <div class="team-feedback-content">
+                        <h3>Found something we can improve?</h3>
+                        <p>
+                            If you notice a wrong paper, broken link, missing subject, spelling mistake, or any issue in
+                            the website, please contact me.
+                        </p>
+                    </div>
 
-                  <a href="mailto:mushtaqahmedsaqi1234@gmail.com" class="team-feedback-btn">
-                    Send Feedback
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                  </a>
+                    <a href="mailto:mushtaqahmedsaqi1234@gmail.com" class="team-feedback-btn">
+                        Send Feedback
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -260,13 +355,19 @@
             <div class="max-w-5xl mx-auto relative overflow-hidden rounded-2xl px-8 py-14 md:px-16 md:py-16"
                 style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #0f766e 100%);">
                 <!-- Background blobs -->
-                <div class="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none" style="background: rgba(15,150,144,0.15); filter: blur(70px); transform: translate(40%,-40%);"></div>
-                <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full pointer-events-none" style="background: rgba(26,115,232,0.12); filter: blur(50px); transform: translate(-30%,30%);"></div>
+                <div class="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
+                    style="background: rgba(15,150,144,0.15); filter: blur(70px); transform: translate(40%,-40%);">
+                </div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full pointer-events-none"
+                    style="background: rgba(26,115,232,0.12); filter: blur(50px); transform: translate(-30%,30%);">
+                </div>
 
                 <div class="relative z-10 flex flex-col lg:flex-row items-start gap-12 justify-between">
                     <!-- Left: Explanation -->
                     <div class="max-w-xl">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-5" style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.15);">
+                        <span
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-5"
+                            style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.15);">
                             <span class="w-1.5 h-1.5 rounded-full bg-teal-300 inline-block"></span>
                             Open Contribution
                         </span>
@@ -274,30 +375,41 @@
                             Contribute a<br><span class="text-teal-300">Past Paper</span>
                         </h2>
                         <p class="text-white/70 text-[15px] leading-relaxed mb-6">
-                            Knowledge grows when shared. If you have past papers, notes, or study materials from your COMSATS exams, uploading them takes just 2 minutes and helps thousands of students who come after you.
+                            Knowledge grows when shared. If you have past papers, notes, or study materials from your
+                            COMSATS exams, uploading them takes just 2 minutes and helps thousands of students who come
+                            after you.
                         </p>
 
                         <!-- Steps -->
                         <div class="space-y-4">
                             <div class="flex items-start gap-4">
-                                <div class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">1</div>
+                                <div
+                                    class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">
+                                    1</div>
                                 <div>
                                     <p class="text-white font-semibold text-sm">Upload your paper</p>
-                                    <p class="text-white/60 text-xs mt-0.5">Use our simple upload form — paste or attach your paper.</p>
+                                    <p class="text-white/60 text-xs mt-0.5">Use our simple upload form — paste or attach
+                                        your paper.</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-4">
-                                <div class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">2</div>
+                                <div
+                                    class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">
+                                    2</div>
                                 <div>
                                     <p class="text-white font-semibold text-sm">We verify it</p>
-                                    <p class="text-white/60 text-xs mt-0.5">Our team checks for quality and marks it with subject metadata.</p>
+                                    <p class="text-white/60 text-xs mt-0.5">Our team checks for quality and marks it
+                                        with subject metadata.</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-4">
-                                <div class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">3</div>
+                                <div
+                                    class="w-8 h-8 rounded-full bg-teal-400/20 border border-teal-400/30 flex items-center justify-center flex-shrink-0 text-teal-300 text-xs font-black">
+                                    3</div>
                                 <div>
                                     <p class="text-white font-semibold text-sm">It goes live for everyone</p>
-                                    <p class="text-white/60 text-xs mt-0.5">Your contribution is credited and available to all students instantly.</p>
+                                    <p class="text-white/60 text-xs mt-0.5">Your contribution is credited and available
+                                        to all students instantly.</p>
                                 </div>
                             </div>
                         </div>
@@ -305,12 +417,15 @@
 
                     <!-- Right: CTA card -->
                     <div class="flex-shrink-0 w-full lg:w-auto">
-                        <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center lg:min-w-[260px]">
-                            <div class="w-16 h-16 rounded-2xl bg-teal-300/20 border border-teal-300/30 flex items-center justify-center mx-auto mb-5">
+                        <div
+                            class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center lg:min-w-[260px]">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-teal-300/20 border border-teal-300/30 flex items-center justify-center mx-auto mb-5">
                                 <span class="material-symbols-outlined text-teal-300 text-3xl">cloud_upload</span>
                             </div>
                             <h3 class="text-white font-bold text-xl mb-2">Ready to share?</h3>
-                            <p class="text-white/60 text-sm mb-6 leading-relaxed">It's free, quick, and makes a real difference.</p>
+                            <p class="text-white/60 text-sm mb-6 leading-relaxed">It's free, quick, and makes a real
+                                difference.</p>
                             <a href="upload.html"
                                 class="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full bg-white text-[#1a1a2e] dark:text-slate-900 font-bold text-sm hover:bg-[#ccfbf1] hover:text-primary transition-all duration-300 no-underline shadow-lg">
                                 <span class="material-symbols-outlined text-lg">upload_file</span>

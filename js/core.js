@@ -146,6 +146,7 @@ if (typeof window !== 'undefined') {
     // Expose Supabase client + auth helper for non-module inline scripts
     window.comsatsSupabase = supabase;
     window.comsatsAuth = auth;
+    window.refineQuizTitle = refineQuizTitle;
 }
 
 // ── Utility: XSS-safe HTML escape ─────────────────────────────────────────────
@@ -165,6 +166,25 @@ export function debounce(fn, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => fn.apply(this, args), wait);
     };
+}
+
+/**
+ * Refines a robotic quiz title into a student-friendly one.
+ * Example: "Calculus — Generated Quiz #350" -> "Calculus — AI Practice Set"
+ * @param {string} title The raw title
+ * @param {string} subjectFallback A fallback subject name if title is missing
+ * @returns {string} The refined title
+ */
+export function refineQuizTitle(title, subjectFallback = 'AI Practice') {
+    if (!title) return `${subjectFallback} — AI Practice Set`;
+    
+    // If it contains the robotic "Generated Quiz #" pattern
+    if (title.includes('Generated Quiz #')) {
+        const subject = title.split(' — ')[0] || subjectFallback;
+        return `${subject} — AI Practice Set`;
+    }
+    
+    return title;
 }
 
 // ── Standard UI Messages ──────────────────────────────────────────────────────

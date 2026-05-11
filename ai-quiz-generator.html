@@ -715,8 +715,10 @@
             crypto?.randomUUID?.() ||
             `ai-quiz-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
+          const subjectLabel = selectedSubjectOption?.textContent || 'AI Subject';
           const quizSession = {
             ...result,
+            title: window.refineQuizTitle ? window.refineQuizTitle(result.title, subjectLabel) : result.title,
             attemptId,
             generatedAt: new Date().toISOString(),
           };
