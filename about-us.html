@@ -263,15 +263,6 @@
                         </div>
                     </div>
 
-                    <!-- Ghost slot -->
-                    <!-- <div class="ghost-card bg-white dark:bg-slate-800/40">
-                        <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[22px]">person_add</span>
-                        </div>
-                        <div>
-                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
-                        </div>
-                    </div> -->
 
                     <!-- Contributor: M Umar Shafiq Somro -->
                     <div
@@ -332,17 +323,44 @@
                             </p>
                         </div>
                     </div>
- 
+
                     <!-- Ghost slot: Your Name Here -->
-                    <div class="ghost-card bg-white dark:bg-slate-800/40">
+                    <div class="ghost-card bg-white dark:bg-slate-800/40 border-dashed border-gray-300 dark:border-white/10 hover:border-primary/50 transition-all cursor-pointer group"
+                        onclick="document.getElementById('contribute-section').scrollIntoView({behavior:'smooth'})">
                         <div
-                            class="w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            class="w-16 h-16 rounded-full bg-gray-50 dark:bg-slate-700/50 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/10 transition-colors">
                             <span
-                                class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px]">person_add</span>
+                                class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-[26px] group-hover:text-primary transition-colors">person_add</span>
                         </div>
                         <div>
-                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white">Your Name Here</p>
+                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white group-hover:text-primary transition-colors">Your Name Here</p>
                             <p class="text-xs text-[#6b7280] dark:text-gray-400 mt-0.5">Paper Verifier</p>
+                        </div>
+                    </div>
+
+                    <!-- Ghost slot: Join as Verifier -->
+                    <div class="ghost-card bg-white dark:bg-slate-800/40 border-dashed border-gray-300 dark:border-white/10 hover:border-emerald-500/50 transition-all cursor-pointer group"
+                        onclick="window.location.href='mailto:mushtaqahmedsaqi1234@gmail.com?subject=I want to help as a verifier'">
+                        <div
+                            class="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition-colors">
+                            <span class="material-symbols-outlined text-emerald-600/60 group-hover:text-emerald-500 text-[26px] transition-colors">verified_user</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white group-hover:text-emerald-500 transition-colors">Join as Verifier</p>
+                            <p class="text-xs text-[#6b7280] dark:text-gray-400 mt-0.5">Help check papers</p>
+                        </div>
+                    </div>
+
+                    <!-- Ghost slot: Notes Contributor -->
+                    <div class="ghost-card bg-white dark:bg-slate-800/40 border-dashed border-gray-300 dark:border-white/10 hover:border-amber-500/50 transition-all cursor-pointer group"
+                        onclick="document.getElementById('contribute-section').scrollIntoView({behavior:'smooth'})">
+                        <div
+                            class="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 transition-colors">
+                            <span class="material-symbols-outlined text-amber-600/60 group-hover:text-amber-500 text-[26px] transition-colors">description</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-[#1a1a2e] dark:text-white group-hover:text-amber-500 transition-colors">Notes Contributor</p>
+                            <p class="text-xs text-[#6b7280] dark:text-gray-400 mt-0.5">Share class materials</p>
                         </div>
                     </div>
 
