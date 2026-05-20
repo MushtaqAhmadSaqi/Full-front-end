@@ -595,12 +595,19 @@
 /* === DARK MODE OVERRIDES (additive) === */
 .dark .auth-modal { background: #1e293b; color: #f1f5f9; }
 .dark .am-form-panel { background: #1e293b; }
-.dark .am-input,
-.dark .am-input:focus { background: #1e293b; color: #f1f5f9; border-bottom-color: #38bdf8; }
-.dark .am-input::placeholder { color: #64748b; }
+.dark .am-in,
+.dark .am-in:focus { background: #0f172a; color: #f1f5f9; border-bottom-color: #38bdf8; }
+.dark .am-in::placeholder { color: #64748b; }
 .dark .am-btn-g { background: #1e293b; border-color: rgba(255,255,255,0.12); color: #f1f5f9; }
 .dark .am-btn-g:hover { background: #334155; }
 .dark .am-label { color: #94a3b8; }
-.dark .am-h2 { color: #fff; }
+.dark .am-h2, .dark .am-m-name { color: #fff; }
 .dark .am-h2-sub { color: #94a3b8; }
 .dark .am-ck-lbl { color: #94a3b8; }
+.dark .am-icon, .dark .am-eye { color: #94a3b8; }
+.dark .am-eye:hover { color: #f1f5f9; }
+.dark .am-swap { color: #cbd5e1; }
+.dark .am-swap a, .dark .am-swap a:link, .dark .am-swap a:visited { color: #38bdf8 !important; }
+.dark .am-swap a:hover { color: #7dd3fc !important; }
+.dark .am-label-link { color: #94a3b8; }
+.dark .am-label-link:hover { color: #f1f5f9; }

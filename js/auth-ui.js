@@ -285,8 +285,8 @@ function injectModalHTML() {
           <section class="am-form-panel">
             <div class="am-wrap">
               <div class="am-m-logo">
-                <div style="width:36px;height:3px;background:#006f1d;margin:0 auto 12px;border-radius:999px;"></div>
-                <div class="am-m-name" style="color:#5f5e5e;">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div>
+                <div style="width:36px;height:3px;background:var(--brand, #0ea5e9);margin:0 auto 12px;border-radius:999px;"></div>
+                <div class="am-m-name">COMSATS<span style="color: #0ea5e9;">PrepHub</span></div>
               </div>
 
               <div class="am-head">

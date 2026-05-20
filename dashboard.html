@@ -1882,23 +1882,23 @@
               gap: 12px;
               align-items: center;
             ">
-              <strong style="font-size: 13px;">Quiz ${index + 1}</strong>
+              <strong style="font-size: 13px; color: var(--text);">Quiz ${index + 1}</strong>
 
               <div style="
                 height: 12px;
                 border-radius: 999px;
-                background: #e2e8f0;
+                background: var(--border);
                 overflow: hidden;
               ">
                 <div style="
                   height: 100%;
                   width: ${Number(item.percentage || 0)}%;
                   border-radius: 999px;
-                  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+                  background: linear-gradient(135deg, var(--brand), var(--brand-ink));
                 "></div>
               </div>
 
-              <strong style="text-align: right;">${Number(item.percentage || 0)}%</strong>
+              <strong style="text-align: right; color: var(--text);">${Number(item.percentage || 0)}%</strong>
             </div>
           `).join('')}
         </div>
@@ -1934,24 +1934,24 @@
                 align-items: center;
                 gap: 14px;
                 padding: 14px 16px;
-                border: 1px solid #e2e8f0;
+                border: 1px solid var(--border);
                 border-radius: 18px;
-                background: #ffffff;
+                background: var(--surface);
               ">
                 <div>
-                  <p style="font-weight: 900; margin: 0 0 4px;">
+                  <p style="font-weight: 900; margin: 0 0 4px; color: var(--text);">
                     ${escapeHTML(item.title)}
                   </p>
-                  <p style="font-size: 13px; color: #64748b; margin: 0;">
+                  <p style="font-size: 13px; color: var(--text-subtle); margin: 0;">
                     ${escapeHTML(item.subject)} • ${escapeHTML(item.examType)} • ${date}
                   </p>
                 </div>
 
                 <div style="text-align: right;">
-                  <p style="font-weight: 950; font-size: 22px; color: #0284c7; margin: 0;">
+                  <p style="font-weight: 950; font-size: 22px; color: var(--brand); margin: 0;">
                     ${Number(item.percentage || 0)}%
                   </p>
-                  <p style="font-size: 12px; color: #64748b; margin: 0;">
+                  <p style="font-size: 12px; color: var(--text-subtle); margin: 0;">
                     ${Number(item.score || 0)}/${Number(item.total || 0)}
                   </p>
                 </div>
@@ -2008,30 +2008,31 @@
           ${subjects.map((item) => `
             <div style="
               padding: 14px 16px;
-              border: 1px solid #e2e8f0;
+              border: 1px solid var(--border);
               border-radius: 18px;
-              background: #ffffff;
+              background: var(--surface);
+              color: var(--text);
             ">
               <div style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
                 <strong>${escapeHTML(item.subject)}</strong>
-                <strong style="color: #0284c7;">${item.average}%</strong>
+                <strong style="color: var(--brand);">${item.average}%</strong>
               </div>
 
               <div style="
                 height: 10px;
                 border-radius: 999px;
-                background: #e2e8f0;
+                background: var(--surface-3);
                 overflow: hidden;
               ">
                 <div style="
                   width: ${item.average}%;
                   height: 100%;
                   border-radius: 999px;
-                  background: linear-gradient(135deg, #10b981, #0284c7);
+                  background: linear-gradient(135deg, var(--success), var(--brand));
                 "></div>
               </div>
 
-              <p style="font-size: 12px; color: #64748b; margin: 8px 0 0;">
+              <p style="font-size: 12px; color: var(--text-subtle); margin: 8px 0 0;">
                 ${item.attempts} attempt${item.attempts > 1 ? 's' : ''}
               </p>
             </div>
@@ -2062,13 +2063,13 @@
           ${weakResults.slice(0, 5).map((item) => `
             <div style="
               padding: 14px 16px;
-              border: 1px solid #fecaca;
+              border: 1px solid var(--border);
               border-radius: 18px;
-              background: #fff7f7;
+              background: var(--surface);
             ">
-              <strong>${escapeHTML(item.subject)}</strong>
-              <p style="margin: 6px 0 0; color: #64748b; font-size: 13px;">
-                Score: ${Number(item.percentage || 0)}% — revise this subject first.
+              <strong style="color: var(--text);">${escapeHTML(item.subject)}</strong>
+              <p style="margin: 6px 0 0; color: var(--text-subtle); font-size: 13px;">
+                Score: <span style="color: var(--danger); font-weight: 800;">${Number(item.percentage || 0)}%</span> — revise this subject first.
               </p>
             </div>
           `).join('')}
